@@ -1,6 +1,275 @@
+"use client";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { drunkenSailor } from "../songs/drunken-sailor";
+import { SongContextProvider, useSong, useSongContext } from "./songContext";
+import {
+  Bar as BarType,
+  Beat as BeatType,
+  CellRow,
+  Cell as CellType,
+  Note,
+  SubCell as SubCellType,
+} from "./types";
+
+interface CellItemProps {
+  subCell: SubCellType;
+  isFirst: boolean;
+  isActive: boolean;
+  onClick: () => void;
+  onChange: (newSubCell: SubCellType) => void;
+  row: CellRow;
+}
+
+const SubCell = ({
+  subCell,
+  isFirst,
+  isActive,
+  onClick,
+  onChange,
+  row,
+}: CellItemProps) => {
+  const items = subCell.items;
+  return (
+    <div
+      className={`flex flex-1 items-center flex-col justify-around ${
+        !isFirst ? "border-l border-gray-700 border-dotted" : ""
+      }
+      ${isActive ? "bg-lime-100" : ""}
+      `}
+      onClick={() => onClick()}
+      // contentEditable={isActive}
+      // onInput={(e) => console.log(e.currentTarget)}
+    >
+      {/* {items.map((item) => (item.type === "note" ? item.button : "-"))} */}
+      {isActive && (
+        <textarea
+          className="text-center outline-none bg-transparent w-full"
+          onChange={(e) => {
+            console.log(`start
+${e.currentTarget.value}
+end`);
+            console.log("subCell", subCell);
+
+            if (typeof row === "number") {
+              // Melodic rows
+              const newItemsValues = e.currentTarget.value.split("\n");
+              // TODO: verify that all are either empty or number
+              console.log("newItems", newItemsValues);
+
+              const newItems = newItemsValues.map<Note>((value) => ({
+                type: "note",
+                button: value,
+              }));
+
+              console.log("new items", newItems);
+
+              onChange({ items: newItems });
+            }
+          }}
+          value={items
+            .map((item) => (item.type === "note" ? item.button : "-"))
+            .join("\n")}
+          autoFocus
+        />
+      )}
+      {!isActive &&
+        items
+          .filter((item) => (item.type === "note" ? !!item.button : true))
+          .map((item, index) => (
+            <div key={index}>{item.type === "note" ? item.button : "-"}</div>
+          ))}
+    </div>
+  );
+};
+interface BeatCellProps {
+  lastBeat: boolean;
+  cell: CellType;
+  barIndex: number;
+  beatIndex: number;
+}
+
+const Cell = ({ lastBeat, cell, barIndex, beatIndex }: BeatCellProps) => {
+  const { activeCell, setActiveCell, setMelodicSubCells, splitCell } =
+    useSongContext();
+  const [activeSubCell, setActiveSubCell] = useState<number | null>(null);
+
+  const isCellActive =
+    activeCell &&
+    activeCell.barIndex === barIndex &&
+    activeCell.beatIndex === beatIndex &&
+    activeCell.row === cell.row;
+
+  const cellPosition = {
+    barIndex,
+    beatIndex,
+    row: cell.row,
+  };
+
+  return (
+    <div
+      className={`flex border border-black h-11 border-b-0 hover:bg-yellow-50 cursor-pointer relative ${
+        lastBeat ? "" : "border-r-0"
+      }`}
+    >
+      {cell.subCells.map((subCell, i) => (
+        <SubCell
+          key={i}
+          subCell={subCell}
+          isFirst={i === 0}
+          isActive={!!(isCellActive && activeSubCell === i)}
+          onClick={() => {
+            console.log("on click");
+            setActiveCell(cellPosition);
+            setActiveSubCell(i);
+          }}
+          onChange={(newSubCell: SubCellType) => {
+            setMelodicSubCells(
+              cell.subCells.map((sc, ii) => (ii === i ? newSubCell : sc)),
+              {
+                barIndex,
+                beatIndex,
+                row: cell.row,
+              }
+            );
+          }}
+          row={cell.row}
+        />
+      ))}
+      <AnimatePresence>
+        {isCellActive && (
+          <motion.div
+            key="menu"
+            exit={{ opacity: 0 }}
+            className="min-w-10 min-h-4 border-gray-400 border ml-1 -mt-1 bg-white rounded-sm py-2 absolute z-10 left-11 mr-1 drop-shadow-md text-sm"
+          >
+            {/* <span>menu</span> */}
+            <button
+              className="text-nowrap px-2 py-1 hover:bg-gray-100 w-full text-left"
+              onClick={() => {
+                console.log("rozdeliť bunku");
+                splitCell(cellPosition, false);
+                setActiveSubCell(null);
+              }}
+            >
+              Rozdeliť bunku
+            </button>
+            <button
+              className="text-nowrap px-2 py-1 hover:bg-gray-100 w-full text-left"
+              onClick={() => splitCell(cellPosition, true)}
+            >
+              Rozdeliť dobu
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+interface BeatProps {
+  last: boolean;
+  beat: BeatType;
+  previousBeat?: BeatType;
+  barIndex: number;
+  beatIndex: number;
+}
+
+const Beat = ({ beat, last, barIndex, beatIndex }: BeatProps) => {
+  return (
+    <div className="w-11">
+      {beat.melodic
+        .toSorted((cellA, cellB) =>
+          typeof cellA.row === "number" && typeof cellB.row === "number"
+            ? cellB.row - cellA.row
+            : 0
+        )
+        .map((cell, i) => (
+          <Cell
+            key={i}
+            lastBeat={last}
+            cell={cell}
+            barIndex={barIndex}
+            beatIndex={beatIndex}
+          />
+        ))}
+      <Cell
+        lastBeat={last}
+        cell={beat.bass}
+        barIndex={barIndex}
+        beatIndex={beatIndex}
+      />
+      <div className="border border-black h-5">
+        {beat.direction === "pull" ? "<" : ">"}
+      </div>
+    </div>
+  );
+};
+
+interface BarProps {
+  bar: BarType;
+  lastBar: BarType;
+  barIndex: number;
+}
+const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
+  return (
+    <div className="flex">
+      {bar.beats.map((beat, i) => (
+        <Beat
+          key={i}
+          beatIndex={i}
+          barIndex={barIndex}
+          last={i === bar.beats.length - 1}
+          beat={beat}
+          previousBeat={
+            i === 0 ? lastBar?.beats[bar.beats.length - 1] : bar.beats[i - 1]
+          }
+        />
+      ))}
+    </div>
+  );
+};
+
+const SongWrapper = () => {
+  const { song, setActiveCell } = useSongContext();
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as HTMLElement)
+      ) {
+        setActiveCell(null);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  });
+
+  return (
+    <div className="w-full flex justify-center pt-10" ref={wrapperRef}>
+      <div className="flex">
+        {song.bars.map((bar, i) => (
+          <Bar key={i} bar={bar} barIndex={i} lastBar={song.bars[i - 1]} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
+  return (
+    <SongContextProvider initialSong={drunkenSailor}>
+      <SongWrapper />
+    </SongContextProvider>
+  );
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
