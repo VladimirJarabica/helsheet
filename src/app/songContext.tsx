@@ -1,5 +1,15 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { CellItem, CellRow, Note, Song, SubCell } from "./types";
+import {
+  CellItem,
+  CellRow,
+  CellNote,
+  Song,
+  SubCell,
+  Direction,
+  Beat,
+  Cell,
+} from "./types";
+import { uniqBy } from "ramda";
 
 type CellPosition = {
   barIndex: number;
@@ -7,12 +17,25 @@ type CellPosition = {
   row: CellRow;
 };
 
+type ActiveBeat = {
+  barIndex: number;
+  beatIndex: number;
+  subBeatIndex: number;
+};
+
 type SongContext = {
   song: Song;
   activeCell: CellPosition | null;
+  activeBeat: ActiveBeat | null;
   setActiveCell: (position: CellPosition | null) => void;
+  setActiveBeat: (position: ActiveBeat | null) => void;
   setMelodicSubCells: (newItems: SubCell[], cellPosition: CellPosition) => void;
   splitCell: (position: CellPosition, splitBeat: boolean) => void;
+  setMelodicButton: (
+    row: number,
+    button: number,
+    direction: Exclude<Direction, "empty">
+  ) => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -21,9 +44,12 @@ const songContext = createContext<SongContext>({
     bars: [],
   },
   activeCell: null,
+  activeBeat: null,
   setActiveCell: () => {},
+  setActiveBeat: () => {},
   setMelodicSubCells: () => {},
   splitCell: () => {},
+  setMelodicButton: () => {},
 });
 
 interface SongContextProviderProps {
@@ -36,6 +62,7 @@ export const SongContextProvider = ({
 }: SongContextProviderProps) => {
   const [song, setSong] = useState<Song>(initialSong);
   const [activeCell, setActiveCell] = useState<CellPosition | null>(null);
+  const [activeBeat, setActiveBeat] = useState<ActiveBeat | null>(null);
 
   console.log("song", song);
 
@@ -63,6 +90,65 @@ export const SongContextProvider = ({
                       ),
                     }
                   : beat
+              ),
+            }
+          : bar
+      ),
+    }));
+  };
+
+  const setMelodicButton = (
+    row: number,
+    button: number,
+    direction: Exclude<Direction, "empty">
+  ) => {
+    if (!activeBeat) return;
+
+    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+    const differentDirection = oldBeat.direction !== direction;
+
+    const newBeat: Beat = differentDirection
+      ? {
+          // TODO: clean also bass part
+          ...oldBeat,
+          direction,
+          melodic: oldBeat.melodic.map<Cell>((cell) => ({
+            ...cell,
+            subCells: cell.subCells.map<SubCell>((_, index) => ({
+              items:
+                cell.row === row && index === activeBeat.subBeatIndex
+                  ? [{ type: "note", button }]
+                  : [{ type: "empty" }],
+            })),
+          })),
+        }
+      : {
+          ...oldBeat,
+          direction,
+          melodic: oldBeat.melodic.map<Cell>((cell) => ({
+            ...cell,
+            subCells: cell.subCells.map<SubCell>((subCell, index) => ({
+              ...subCell,
+              items:
+                cell.row === row && index === activeBeat.subBeatIndex
+                  ? // TODO: filter out duplicities
+                    uniqBy<CellItem, number | string>(
+                      (i) => ("button" in i ? i.button : i.type),
+                      [...subCell.items, { type: "note", button }]
+                    )
+                  : subCell.items,
+            })),
+          })),
+        };
+
+    setSong((prev) => ({
+      ...prev,
+      bars: prev.bars.map((bar, barIndex) =>
+        barIndex === activeBeat.barIndex
+          ? {
+              ...bar,
+              beats: bar.beats.map((beat, beatIndex) =>
+                beatIndex === activeBeat.beatIndex ? newBeat : beat
               ),
             }
           : bar
@@ -122,7 +208,10 @@ export const SongContextProvider = ({
           activeCell,
           setActiveCell,
           setMelodicSubCells,
+          activeBeat,
+          setActiveBeat,
           splitCell,
+          setMelodicButton,
         }}
       >
         {children}

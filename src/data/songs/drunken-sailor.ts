@@ -1,4 +1,4 @@
-import { Song } from "../app/types";
+import { Song } from "../../app/types";
 
 export const drunkenSailor: Song = {
   timeSignature: "4/4",

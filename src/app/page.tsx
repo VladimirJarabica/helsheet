@@ -2,16 +2,19 @@
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { drunkenSailor } from "../songs/drunken-sailor";
+import { drunkenSailor } from "../data/songs/drunken-sailor";
 import { SongContextProvider, useSong, useSongContext } from "./songContext";
 import {
   Bar as BarType,
   Beat as BeatType,
   CellRow,
   Cell as CellType,
-  Note,
+  CellNote,
   SubCell as SubCellType,
 } from "./types";
+import MelodicSettings from "./components/MelodicSettings";
+import { TuningContextProvider } from "./tuningContext";
+import { empty } from "../data/songs/empty";
 
 interface CellItemProps {
   subCell: SubCellType;
@@ -37,28 +40,21 @@ const SubCell = ({
         !isFirst ? "border-l border-gray-700 border-dotted" : ""
       }
       ${isActive ? "bg-lime-100" : ""}
+      ${items.length > 2 ? "text-xs leading-none" : ""}
       `}
       onClick={() => onClick()}
-      // contentEditable={isActive}
-      // onInput={(e) => console.log(e.currentTarget)}
     >
-      {/* {items.map((item) => (item.type === "note" ? item.button : "-"))} */}
-      {isActive && (
+      {/* {isActive && (
         <textarea
-          className="text-center outline-none bg-transparent w-full"
+          className="text-center outline-none bg-transparent w-full h-full"
           onChange={(e) => {
-            console.log(`start
-${e.currentTarget.value}
-end`);
-            console.log("subCell", subCell);
-
             if (typeof row === "number") {
               // Melodic rows
               const newItemsValues = e.currentTarget.value.split("\n");
               // TODO: verify that all are either empty or number
               console.log("newItems", newItemsValues);
 
-              const newItems = newItemsValues.map<Note>((value) => ({
+              const newItems = newItemsValues.map<CellNote>((value) => ({
                 type: "note",
                 button: value,
               }));
@@ -73,13 +69,12 @@ end`);
             .join("\n")}
           autoFocus
         />
-      )}
-      {!isActive &&
-        items
-          .filter((item) => (item.type === "note" ? !!item.button : true))
-          .map((item, index) => (
-            <div key={index}>{item.type === "note" ? item.button : "-"}</div>
-          ))}
+      )} */}
+      {items
+        .filter((item) => (item.type === "note" ? !!item.button : true))
+        .map((item, index) => (
+          <div key={index}>{item.type === "note" ? item.button : "-"}</div>
+        ))}
     </div>
   );
 };
@@ -91,60 +86,59 @@ interface BeatCellProps {
 }
 
 const Cell = ({ lastBeat, cell, barIndex, beatIndex }: BeatCellProps) => {
-  const { activeCell, setActiveCell, setMelodicSubCells, splitCell } =
+  const { setMelodicSubCells, splitCell, setActiveBeat, activeBeat } =
     useSongContext();
-  const [activeSubCell, setActiveSubCell] = useState<number | null>(null);
-
-  const isCellActive =
-    activeCell &&
-    activeCell.barIndex === barIndex &&
-    activeCell.beatIndex === beatIndex &&
-    activeCell.row === cell.row;
-
-  const cellPosition = {
-    barIndex,
-    beatIndex,
-    row: cell.row,
-  };
 
   return (
     <div
-      className={`flex border border-black h-11 border-b-0 hover:bg-yellow-50 cursor-pointer relative ${
+      className={`flex border border-black h-12 border-b-0 hover:bg-yellow-50 cursor-pointer relative ${
         lastBeat ? "" : "border-r-0"
       }`}
     >
-      {cell.subCells.map((subCell, i) => (
-        <SubCell
-          key={i}
-          subCell={subCell}
-          isFirst={i === 0}
-          isActive={!!(isCellActive && activeSubCell === i)}
-          onClick={() => {
-            console.log("on click");
-            setActiveCell(cellPosition);
-            setActiveSubCell(i);
-          }}
-          onChange={(newSubCell: SubCellType) => {
-            setMelodicSubCells(
-              cell.subCells.map((sc, ii) => (ii === i ? newSubCell : sc)),
-              {
+      {cell.subCells.map((subCell, i) => {
+        const isSubCellActive =
+          activeBeat &&
+          activeBeat.barIndex === barIndex &&
+          activeBeat.beatIndex === beatIndex &&
+          activeBeat.subBeatIndex === i;
+
+        return (
+          <SubCell
+            key={i}
+            subCell={subCell}
+            isFirst={i === 0}
+            isActive={!!isSubCellActive}
+            onClick={() => {
+              console.log("on click");
+              // setActiveCell(cellPosition);
+              // setActiveSubCell(i);
+              setActiveBeat({
                 barIndex,
                 beatIndex,
-                row: cell.row,
-              }
-            );
-          }}
-          row={cell.row}
-        />
-      ))}
-      <AnimatePresence>
+                subBeatIndex: i,
+              });
+            }}
+            onChange={(newSubCell: SubCellType) => {
+              setMelodicSubCells(
+                cell.subCells.map((sc, ii) => (ii === i ? newSubCell : sc)),
+                {
+                  barIndex,
+                  beatIndex,
+                  row: cell.row,
+                }
+              );
+            }}
+            row={cell.row}
+          />
+        );
+      })}
+      {/* <AnimatePresence>
         {isCellActive && (
           <motion.div
             key="menu"
             exit={{ opacity: 0 }}
-            className="min-w-10 min-h-4 border-gray-400 border ml-1 -mt-1 bg-white rounded-sm py-2 absolute z-10 left-11 mr-1 drop-shadow-md text-sm"
+            className="min-w-10 min-h-4 border-gray-400 border ml-1 -mt-1 bg-white rounded-sm py-2 absolute z-10 left-12 mr-1 drop-shadow-md text-sm"
           >
-            {/* <span>menu</span> */}
             <button
               className="text-nowrap px-2 py-1 hover:bg-gray-100 w-full text-left"
               onClick={() => {
@@ -163,7 +157,7 @@ const Cell = ({ lastBeat, cell, barIndex, beatIndex }: BeatCellProps) => {
             </button>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </div>
   );
 };
@@ -178,7 +172,7 @@ interface BeatProps {
 
 const Beat = ({ beat, last, barIndex, beatIndex }: BeatProps) => {
   return (
-    <div className="w-11">
+    <div className="w-12">
       {beat.melodic
         .toSorted((cellA, cellB) =>
           typeof cellA.row === "number" && typeof cellB.row === "number"
@@ -232,42 +226,47 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
 };
 
 const SongWrapper = () => {
-  const { song, setActiveCell } = useSongContext();
+  const { song, setActiveCell, activeBeat } = useSongContext();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as HTMLElement)
-      ) {
-        setActiveCell(null);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClick = (event: MouseEvent) => {
+  //     if (
+  //       wrapperRef.current &&
+  //       !wrapperRef.current.contains(event.target as HTMLElement)
+  //     ) {
+  //       setActiveCell(null);
+  //     }
+  //   };
 
-    document.addEventListener("click", handleClick);
+  //   document.addEventListener("click", handleClick);
 
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  });
+  //   return () => {
+  //     document.removeEventListener("click", handleClick);
+  //   };
+  // });
 
   return (
-    <div className="w-full flex justify-center pt-10" ref={wrapperRef}>
-      <div className="flex">
-        {song.bars.map((bar, i) => (
-          <Bar key={i} bar={bar} barIndex={i} lastBar={song.bars[i - 1]} />
-        ))}
+    <>
+      <div className="w-full flex justify-center pt-10" ref={wrapperRef}>
+        <div className="flex">
+          {song.bars.map((bar, i) => (
+            <Bar key={i} bar={bar} barIndex={i} lastBar={song.bars[i - 1]} />
+          ))}
+        </div>
       </div>
-    </div>
+      {activeBeat && <MelodicSettings />}
+    </>
   );
 };
 
 export default function Home() {
   return (
-    <SongContextProvider initialSong={drunkenSailor}>
-      <SongWrapper />
+    <SongContextProvider initialSong={empty}>
+      <TuningContextProvider>
+        <SongWrapper />
+      </TuningContextProvider>
     </SongContextProvider>
   );
   return (
