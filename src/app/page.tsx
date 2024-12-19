@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -11,35 +12,36 @@ import {
   Cell as CellType,
   CellNote,
   SubCell as SubCellType,
+  CellItem,
 } from "./types";
 import MelodicSettings from "./components/MelodicSettings";
 import { TuningContextProvider } from "./tuningContext";
 import { empty } from "../data/songs/empty";
 
-interface CellItemProps {
-  subCell: SubCellType;
+interface CellItemProps<Item extends CellItem> {
+  subCell: SubCellType<Item>;
   isFirst: boolean;
   isActive: boolean;
   onClick: () => void;
-  onChange: (newSubCell: SubCellType) => void;
-  row: CellRow;
+  // onChange: (newSubCell: SubCellType) => void;
+  // row: CellRow;
 }
 
-const SubCell = ({
+const SubCell = <Item extends CellItem>({
   subCell,
   isFirst,
   isActive,
   onClick,
-  onChange,
-  row,
-}: CellItemProps) => {
+}: // onChange,
+// row,
+CellItemProps<Item>) => {
   const items = subCell.items;
   return (
     <div
       className={`flex flex-1 items-center flex-col justify-around ${
         !isFirst ? "border-l border-gray-700 border-dotted" : ""
       }
-      ${isActive ? "bg-lime-100" : ""}
+      ${isActive ? "bg-green-50" : ""}
       ${items.length > 2 ? "text-xs leading-none" : ""}
       `}
       onClick={() => onClick()}
@@ -73,21 +75,29 @@ const SubCell = ({
       {items
         .filter((item) => (item.type === "note" ? !!item.button : true))
         .map((item, index) => (
-          <div key={index}>{item.type === "note" ? item.button : "-"}</div>
+          <React.Fragment key={index}>
+            {item.type === "note" && <div>{item.button}</div>}
+            {item.type === "bass" && <div>{item.note.note}</div>}
+            {item.type === "empty" && <div>-</div>}
+          </React.Fragment>
         ))}
     </div>
   );
 };
-interface BeatCellProps {
+interface BeatCellProps<Item extends CellItem> {
   lastBeat: boolean;
-  cell: CellType;
+  cell: CellType<Item>;
   barIndex: number;
   beatIndex: number;
 }
 
-const Cell = ({ lastBeat, cell, barIndex, beatIndex }: BeatCellProps) => {
-  const { setMelodicSubCells, splitCell, setActiveBeat, activeBeat } =
-    useSongContext();
+const Cell = <Item extends CellItem>({
+  lastBeat,
+  cell,
+  barIndex,
+  beatIndex,
+}: BeatCellProps<Item>) => {
+  const { setActiveBeat, activeBeat } = useSongContext();
 
   return (
     <div
@@ -118,17 +128,16 @@ const Cell = ({ lastBeat, cell, barIndex, beatIndex }: BeatCellProps) => {
                 subBeatIndex: i,
               });
             }}
-            onChange={(newSubCell: SubCellType) => {
-              setMelodicSubCells(
-                cell.subCells.map((sc, ii) => (ii === i ? newSubCell : sc)),
-                {
-                  barIndex,
-                  beatIndex,
-                  row: cell.row,
-                }
-              );
-            }}
-            row={cell.row}
+            // onChange={(newSubCell: SubCellType<CellNote>) => {
+            //   setMelodicSubCells(
+            //     cell.subCells.map((sc, ii) => (ii === i ? newSubCell : sc)),
+            //     {
+            //       barIndex,
+            //       beatIndex,
+            //       row: cell.row,
+            //     }
+            //   );
+            // }}
           />
         );
       })}
@@ -195,7 +204,9 @@ const Beat = ({ beat, last, barIndex, beatIndex }: BeatProps) => {
         beatIndex={beatIndex}
       />
       <div className="border border-black h-5">
-        {beat.direction === "pull" ? "<" : ">"}
+        {beat.direction === "pull" && "<"}
+        {beat.direction === "push" && ">"}
+        {beat.direction === "empty" && "-"}
       </div>
     </div>
   );

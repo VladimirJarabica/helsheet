@@ -68,7 +68,7 @@ export const empty: Song = {
             },
           ],
           bass: {
-            subCells: [{ items: [{ type: "empty" }] }],
+            subCells: [{ items: [{ type: "bass", note: { note: "F" } }] }],
             row: "bass",
           },
           direction: "empty",

@@ -39,8 +39,7 @@ export type CellNote = {
 
 export type CellBass = {
   type: "bass";
-  note?: Bass;
-  button: number;
+  note: Bass;
   finger?: 1 | 2 | 3 | 4 | 5;
 };
 
@@ -48,34 +47,34 @@ export type CellBass = {
 //   type: "ligature";
 // };
 
-type Empty = {
+export type EmptyCell = {
   type: "empty";
 };
 
-export type CellItem = CellNote | CellBass | Empty;
+export type CellItem = CellNote | CellBass | EmptyCell;
 
 export type CellRow = number | "bass" | "direction";
 
-export type SubCell = {
-  items: CellItem[];
+export type SubCell<Item extends CellItem> = {
+  items: Item[];
 };
 
-export type Cell = {
+export type Cell<Item extends CellItem> = {
   // E.g. [[Note]] one button pressed per beat
   // [[Note(D), Note(dm)]] both D and dm pressed together per one beat
   // [[Note(1)][Note(1)]] beat is split to 2 parts, pressing "1" in each
   // [[Ligature]] - ligature
   // [[Ligature], [Note(1)]] - ligature to half and then 1 pressed on second half
   // [] - empty
-  subCells: SubCell[];
+  subCells: SubCell<Item>[];
   row: CellRow;
 };
 
 export type Direction = "pull" | "push" | "empty";
 
 export type Beat = {
-  melodic: Cell[];
-  bass: Cell;
+  melodic: Cell<CellNote | EmptyCell>[];
+  bass: Cell<CellBass | EmptyCell>;
   direction: Direction;
 };
 
