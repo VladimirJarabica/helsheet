@@ -46,32 +46,6 @@ CellItemProps<Item>) => {
       `}
       onClick={() => onClick()}
     >
-      {/* {isActive && (
-        <textarea
-          className="text-center outline-none bg-transparent w-full h-full"
-          onChange={(e) => {
-            if (typeof row === "number") {
-              // Melodic rows
-              const newItemsValues = e.currentTarget.value.split("\n");
-              // TODO: verify that all are either empty or number
-              console.log("newItems", newItemsValues);
-
-              const newItems = newItemsValues.map<CellNote>((value) => ({
-                type: "note",
-                button: value,
-              }));
-
-              console.log("new items", newItems);
-
-              onChange({ items: newItems });
-            }
-          }}
-          value={items
-            .map((item) => (item.type === "note" ? item.button : "-"))
-            .join("\n")}
-          autoFocus
-        />
-      )} */}
       {items
         .filter((item) => (item.type === "note" ? !!item.button : true))
         .map((item, index) => (

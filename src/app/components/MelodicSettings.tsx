@@ -3,6 +3,7 @@ import { useTuningContext } from "../tuningContext";
 import MelodeonButton, { MelodeonButtonWrapper } from "./MelodeonButton";
 import { Bass, Note } from "../types";
 import { useSongContext } from "../songContext";
+import MusicSheetSelector from "./MusicSheetSelector";
 
 const MelodicSettings = () => {
   const { tuning } = useTuningContext();
@@ -27,7 +28,7 @@ const MelodicSettings = () => {
   console.log("beat", beat);
 
   return (
-    <div className="absolute">
+    <div className="absolute p-20">
       Settings
       <div className="flex items-center justify-between">
         <div className="flex items-center flex-row">
@@ -98,6 +99,7 @@ const MelodicSettings = () => {
               <div key={row.row} className="flex flex-col-reverse">
                 {row.buttons.map((button) => (
                   <MelodeonButton
+                    key={button.button}
                     onClick={(direction) => {
                       console.log("clicked");
                       setMelodicButton(row.row, button.button, direction);
@@ -115,6 +117,7 @@ const MelodicSettings = () => {
           })}
         </div>
       </div>
+      <MusicSheetSelector setHoveredNote={setHoveredNote} />
       {/* <div onMouseEnter={() => setHoveredNote("c")}>C</div>
       <div onMouseEnter={() => setHoveredNote("d")}>D</div>
       <div onMouseEnter={() => setHoveredNote("e")}>E</div>
