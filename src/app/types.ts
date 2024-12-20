@@ -1,10 +1,40 @@
 export type Note = {
-  note: "c" | "d" | "dis" | "e" | "f" | "fis" | "g" | "gis" | "a" | "h" | "b";
+  note:
+    | "c"
+    | "cis"
+    | "d"
+    | "dis"
+    | "e"
+    | "es"
+    | "f"
+    | "fis"
+    | "g"
+    | "gis"
+    | "a"
+    | "h"
+    | "b";
   pitch: 0 | 1 | 2 | 3 | 4;
 };
 export type Bass = {
   note: "F" | "f" | "G" | "g" | "A" | "a" | "B" | "b" | "C" | "c" | "D" | "d";
 };
+
+export type ScaleSignature =
+  | ""
+  | "b"
+  | "bb"
+  | "bbb"
+  | "bbbb"
+  | "bbbbb"
+  | "bbbbbb"
+  | "bbbbbbb"
+  | "#"
+  | "##"
+  | "###"
+  | "####"
+  | "#####"
+  | "######"
+  | "#######";
 
 export type TuningNoteButton = {
   button: number;
@@ -70,7 +100,9 @@ export type Cell<Item extends CellItem> = {
   row: CellRow;
 };
 
-export type Direction = "pull" | "push" | "empty";
+export type DefinedDirection = "pull" | "push";
+
+export type Direction = DefinedDirection | "empty";
 
 export type Beat = {
   melodic: Cell<CellNote | EmptyCell>[];

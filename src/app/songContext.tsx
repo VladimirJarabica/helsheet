@@ -45,6 +45,8 @@ type SongContext = {
   ) => void;
   setBassButton: (note: Bass, direction: Exclude<Direction, "empty">) => void;
   setDirection: (newDirection: Direction) => void;
+  splitMelodicPart: () => void;
+  splitBassPart: () => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -61,6 +63,8 @@ const songContext = createContext<SongContext>({
   setMelodicButton: () => {},
   setBassButton: () => {},
   setDirection: () => {},
+  splitMelodicPart: () => {},
+  splitBassPart: () => {},
 });
 
 interface SongContextProviderProps {
@@ -243,6 +247,38 @@ export const SongContextProvider = ({
     setBeat(newBeat, activeBeat);
   };
 
+  const splitMelodicPart = () => {
+    if (!activeBeat) return;
+    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+
+    if (oldBeat.melodic[0].subCells.length > 1) return;
+
+    const newBeat: Beat = {
+      ...oldBeat,
+      melodic: oldBeat.melodic.map((cell) => ({
+        ...cell,
+        subCells: [...cell.subCells, { items: [{ type: "empty" }] }],
+      })),
+    };
+
+    setBeat(newBeat, activeBeat);
+  };
+  const splitBassPart = () => {
+    if (!activeBeat) return;
+    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+    if (oldBeat.bass.subCells.length > 1) return;
+
+    const newBeat: Beat = {
+      ...oldBeat,
+      bass: {
+        ...oldBeat.bass,
+        subCells: [...oldBeat.bass.subCells, { items: [{ type: "empty" }] }],
+      },
+    };
+
+    setBeat(newBeat, activeBeat);
+  };
+
   //   const splitCell = (cellPosition: CellPosition, splitBeat: boolean) => {
   //     console.log("split", { cellPosition, splitBeat });
   //     setSong((prev) => ({
@@ -300,6 +336,8 @@ export const SongContextProvider = ({
           setMelodicButton,
           setBassButton,
           setDirection,
+          splitMelodicPart,
+          splitBassPart,
         }}
       >
         {children}

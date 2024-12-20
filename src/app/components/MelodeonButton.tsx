@@ -15,7 +15,7 @@ export const MelodeonButtonWrapper = ({
       onClick={() => onClick?.()}
       className={`
       w-14
-      h-10
+      h-8
       flex
       justify-center
       items-center
@@ -24,18 +24,20 @@ export const MelodeonButtonWrapper = ({
       text-sm
       whitespace-nowrap
       
-      rounded-full
+      rounded-xl
       border
       border-solid
       border-black
-      border-b-[3px]
       cursor-pointer
       
       ${
         !selected
           ? `
-      hover:border-b-[4px]
-      hover:-translate-y-[1px]`
+      border-b-[6px]
+    //hover:border-b-[8px]
+    //hover:-translate-y-[2px]
+      bg-green-50
+      `
           : ""
       }
       
@@ -43,13 +45,13 @@ export const MelodeonButtonWrapper = ({
       active:translate-y-[2px]
 
       overflow-hidden
-      bg-green-50
 
       ${
         selected
           ? `
       border-b-[1px]
-      translate-y-[2px]`
+      bg-green-300
+      `
           : ""
       }
       `}
