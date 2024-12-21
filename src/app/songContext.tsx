@@ -12,6 +12,7 @@ import {
   EmptyCell,
   Note,
   Bass,
+  DefinedDirection,
 } from "./types";
 import { uniqBy } from "ramda";
 
@@ -41,12 +42,18 @@ type SongContext = {
   setMelodicButton: (
     row: number,
     button: number,
-    direction: Exclude<Direction, "empty">
+    direction: DefinedDirection
   ) => void;
-  setBassButton: (note: Bass, direction: Exclude<Direction, "empty">) => void;
+  setBassButton: (note: Bass, direction: DefinedDirection) => void;
   setDirection: (newDirection: Direction) => void;
   splitMelodicPart: () => void;
   splitBassPart: () => void;
+  joinMelodicPart: () => void;
+  joinBassPart: () => void;
+  setMelodicButtons: (
+    buttons: { row: number; button: number }[],
+    direction: DefinedDirection
+  ) => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -65,6 +72,9 @@ const songContext = createContext<SongContext>({
   setDirection: () => {},
   splitMelodicPart: () => {},
   splitBassPart: () => {},
+  joinMelodicPart: () => {},
+  joinBassPart: () => {},
+  setMelodicButtons: () => {},
 });
 
 interface SongContextProviderProps {
@@ -162,7 +172,7 @@ export const SongContextProvider = ({
   const setMelodicButton = (
     row: number,
     button: number,
-    direction: Exclude<Direction, "empty">
+    direction: DefinedDirection
   ) => {
     if (!activeBeat) return;
 
@@ -204,10 +214,51 @@ export const SongContextProvider = ({
     setBeat(newBeat, activeBeat);
   };
 
-  const setBassButton = (
-    note: Bass,
-    direction: Exclude<Direction, "empty">
+  const setMelodicButtons = (
+    buttons: { row: number; button: number }[],
+    direction: DefinedDirection
   ) => {
+    if (!activeBeat) return;
+
+    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+    const oldBeatToChange =
+      oldBeat.direction !== direction ? getEmptyBeat(oldBeat) : oldBeat;
+
+    const newBeat: Beat = {
+      ...oldBeatToChange,
+      melodic: oldBeatToChange.melodic.map<Cell<CellNote | EmptyCell>>(
+        (cell) => {
+          const rowButton = buttons.filter((button) => button.row === cell.row);
+          return {
+            ...cell,
+            subCells: cell.subCells.map<SubCell<CellNote | EmptyCell>>(
+              (subCell, index) => ({
+                ...subCell,
+                items:
+                  index === activeBeat.subBeatIndex
+                    ? rowButton
+                        .map<CellNote>((button) => ({
+                          type: "note",
+                          button: button.button,
+                        }))
+                        .toSorted((a, b) =>
+                          a.type === "note" && b.type === "note"
+                            ? b.button - a.button
+                            : 0
+                        )
+                    : subCell.items,
+              })
+            ),
+          };
+        }
+      ),
+      direction,
+    };
+
+    setBeat(newBeat, activeBeat);
+  };
+
+  const setBassButton = (note: Bass, direction: DefinedDirection) => {
     if (!activeBeat) return;
 
     const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
@@ -263,6 +314,23 @@ export const SongContextProvider = ({
 
     setBeat(newBeat, activeBeat);
   };
+
+  const joinMelodicPart = () => {
+    if (!activeBeat) return;
+    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+
+    const newBeat: Beat = {
+      ...oldBeat,
+      melodic: oldBeat.melodic.map((cell) => ({
+        ...cell,
+        subCells: cell.subCells.filter(
+          (_, index) => index === activeBeat.subBeatIndex
+        ),
+      })),
+    };
+
+    setBeat(newBeat, activeBeat);
+  };
   const splitBassPart = () => {
     if (!activeBeat) return;
     const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
@@ -273,6 +341,24 @@ export const SongContextProvider = ({
       bass: {
         ...oldBeat.bass,
         subCells: [...oldBeat.bass.subCells, { items: [{ type: "empty" }] }],
+      },
+    };
+
+    setBeat(newBeat, activeBeat);
+  };
+
+  const joinBassPart = () => {
+    if (!activeBeat) return;
+    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+    if (oldBeat.bass.subCells.length === 1) return;
+
+    const newBeat: Beat = {
+      ...oldBeat,
+      bass: {
+        ...oldBeat.bass,
+        subCells: oldBeat.bass.subCells.filter(
+          (_, index) => index === activeBeat.subBeatIndex
+        ),
       },
     };
 
@@ -338,6 +424,9 @@ export const SongContextProvider = ({
           setDirection,
           splitMelodicPart,
           splitBassPart,
+          joinMelodicPart,
+          joinBassPart,
+          setMelodicButtons,
         }}
       >
         {children}

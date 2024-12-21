@@ -1,4 +1,9 @@
-import { Direction, TuningBassButton, TuningNoteButton } from "../types";
+import {
+  DefinedDirection,
+  Direction,
+  TuningBassButton,
+  TuningNoteButton,
+} from "../types";
 
 interface MelodeonButtonWrapperProps {
   children: React.ReactNode;
@@ -64,7 +69,7 @@ export const MelodeonButtonWrapper = ({
 interface MelodeonButtonProps<
   ButtonType extends TuningNoteButton | TuningBassButton
 > {
-  onClick: (direction: Exclude<Direction, "empty">) => void;
+  onClick: (direction: DefinedDirection) => void;
   disabled?: boolean;
   button: ButtonType;
   buttonNumberHidden?: boolean;
