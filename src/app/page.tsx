@@ -7,7 +7,7 @@ import { drunkenSailor } from "../data/songs/drunken-sailor";
 import { SongContextProvider, useSong, useSongContext } from "./songContext";
 import {
   Bar as BarType,
-  Beat as BeatType,
+  Column as ColumnType,
   CellRow,
   Cell as CellType,
   CellNote,
@@ -58,33 +58,33 @@ CellItemProps<Item>) => {
     </div>
   );
 };
-interface BeatCellProps<Item extends CellItem> {
-  lastBeat: boolean;
+interface ColumnCellProps<Item extends CellItem> {
+  lastColumn: boolean;
   cell: CellType<Item>;
   barIndex: number;
-  beatIndex: number;
+  columnIndex: number;
 }
 
 const Cell = <Item extends CellItem>({
-  lastBeat,
+  lastColumn,
   cell,
   barIndex,
-  beatIndex,
-}: BeatCellProps<Item>) => {
-  const { setActiveBeat, activeBeat } = useSongContext();
+  columnIndex,
+}: ColumnCellProps<Item>) => {
+  const { setActiveColumn, activeColumn } = useSongContext();
 
   return (
     <div
       className={`flex border border-black h-12 border-b-0 hover:bg-yellow-50 cursor-pointer relative ${
-        lastBeat ? "" : "border-r-0"
+        lastColumn ? "" : "border-r-0"
       }`}
     >
       {cell.subCells.map((subCell, i) => {
         const isSubCellActive =
-          activeBeat &&
-          activeBeat.barIndex === barIndex &&
-          activeBeat.beatIndex === beatIndex &&
-          activeBeat.subBeatIndex === i;
+          activeColumn &&
+          activeColumn.barIndex === barIndex &&
+          activeColumn.columnIndex === columnIndex &&
+          activeColumn.subColumnIndex === i;
 
         return (
           <SubCell
@@ -96,10 +96,10 @@ const Cell = <Item extends CellItem>({
               console.log("on click");
               // setActiveCell(cellPosition);
               // setActiveSubCell(i);
-              setActiveBeat({
+              setActiveColumn({
                 barIndex,
-                beatIndex,
-                subBeatIndex: i,
+                columnIndex: columnIndex,
+                subColumnIndex: i,
               });
             }}
             // onChange={(newSubCell: SubCellType<CellNote>) => {
@@ -145,18 +145,18 @@ const Cell = <Item extends CellItem>({
   );
 };
 
-interface BeatProps {
+interface ColumnProps {
   last: boolean;
-  beat: BeatType;
-  previousBeat?: BeatType;
+  column: ColumnType;
+  previousColumn?: ColumnType;
   barIndex: number;
-  beatIndex: number;
+  columnIndex: number;
 }
 
-const Beat = ({ beat, last, barIndex, beatIndex }: BeatProps) => {
+const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
   return (
     <div className="w-12">
-      {beat.melodic
+      {column.melodic
         .toSorted((cellA, cellB) =>
           typeof cellA.row === "number" && typeof cellB.row === "number"
             ? cellB.row - cellA.row
@@ -165,22 +165,22 @@ const Beat = ({ beat, last, barIndex, beatIndex }: BeatProps) => {
         .map((cell, i) => (
           <Cell
             key={i}
-            lastBeat={last}
+            lastColumn={last}
             cell={cell}
             barIndex={barIndex}
-            beatIndex={beatIndex}
+            columnIndex={columnIndex}
           />
         ))}
       <Cell
-        lastBeat={last}
-        cell={beat.bass}
+        lastColumn={last}
+        cell={column.bass}
         barIndex={barIndex}
-        beatIndex={beatIndex}
+        columnIndex={columnIndex}
       />
       <div className="border border-black h-5">
-        {beat.direction === "pull" && "<"}
-        {beat.direction === "push" && ">"}
-        {beat.direction === "empty" && "-"}
+        {column.direction === "pull" && "<"}
+        {column.direction === "push" && ">"}
+        {column.direction === "empty" && "-"}
       </div>
     </div>
   );
@@ -194,15 +194,17 @@ interface BarProps {
 const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
   return (
     <div className="flex">
-      {bar.beats.map((beat, i) => (
-        <Beat
+      {bar.columns.map((column, i) => (
+        <Column
           key={i}
-          beatIndex={i}
+          columnIndex={i}
           barIndex={barIndex}
-          last={i === bar.beats.length - 1}
-          beat={beat}
-          previousBeat={
-            i === 0 ? lastBar?.beats[bar.beats.length - 1] : bar.beats[i - 1]
+          last={i === bar.columns.length - 1}
+          column={column}
+          previousColumn={
+            i === 0
+              ? lastBar?.columns[bar.columns.length - 1]
+              : bar.columns[i - 1]
           }
         />
       ))}
@@ -211,7 +213,7 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
 };
 
 const SongWrapper = () => {
-  const { song, setActiveCell, activeBeat } = useSongContext();
+  const { song, setActiveCell, activeColumn } = useSongContext();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -241,7 +243,7 @@ const SongWrapper = () => {
           ))}
         </div>
       </div>
-      {activeBeat && <MelodicSettings />}
+      {activeColumn && <MelodicSettings />}
     </>
   );
 };

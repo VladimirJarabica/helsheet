@@ -15,7 +15,7 @@ import MusicSheetSelector from "./MusicSheetSelector";
 const MelodicSettings = () => {
   const { tuning } = useTuningContext();
   const {
-    activeBeat,
+    activeColumn,
     song,
     setMelodicButton,
     setBassButton,
@@ -27,11 +27,6 @@ const MelodicSettings = () => {
     setMelodicButtons,
   } = useSongContext();
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
-
-  console.log("Active beat", {
-    activeBeat,
-    song,
-  });
 
   const [hoveredNote, setHoveredNote] = useState<Note | null>({
     note: "c",
@@ -57,12 +52,13 @@ const MelodicSettings = () => {
     // }
   };
 
-  if (!activeBeat) {
+  if (!activeColumn) {
     return null;
   }
 
-  const beat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
-  const direction: Direction = beat.direction;
+  const column =
+    song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+  const direction: Direction = column.direction;
 
   const suggestedButtons = useMemo(() => {
     const pullButtons = tuning.melodic.flatMap((row) => {
@@ -153,14 +149,14 @@ const MelodicSettings = () => {
     };
   }, [selectedNotes, tuning.melodic]);
 
-  const hasBassPart = !!beat.bass.subCells[activeBeat.subBeatIndex];
-  const hasMelodicPart = beat.melodic.some(
-    (cell) => !!cell.subCells[activeBeat.subBeatIndex]
+  const hasBassPart = !!column.bass.subCells[activeColumn.subColumnIndex];
+  const hasMelodicPart = column.melodic.some(
+    (cell) => !!cell.subCells[activeColumn.subColumnIndex]
   );
 
   const isMelodicPartSplit =
-    hasMelodicPart && beat.melodic.some((cell) => cell.subCells.length > 1);
-  const isBasPartSplit = hasBassPart && beat.bass.subCells.length > 1;
+    hasMelodicPart && column.melodic.some((cell) => cell.subCells.length > 1);
+  const isBasPartSplit = hasBassPart && column.bass.subCells.length > 1;
 
   return (
     <div className="absolute p-20">
@@ -177,7 +173,7 @@ const MelodicSettings = () => {
             <div className="flex items-center flex-row">
               {tuning.bass.map((row) => {
                 const cellItems =
-                  beat.bass.subCells[activeBeat.subBeatIndex].items;
+                  column.bass.subCells[activeColumn.subColumnIndex].items;
                 const activeNotes = new Set(
                   cellItems.map((item) =>
                     item.type === "bass" ? item.note.note : null
@@ -245,8 +241,9 @@ const MelodicSettings = () => {
             <div className="flex items-center flex-row-reverse">
               {tuning.melodic.map((row) => {
                 const cellItems =
-                  beat.melodic[row.row - 1].subCells[activeBeat.subBeatIndex]
-                    .items;
+                  column.melodic[row.row - 1].subCells[
+                    activeColumn.subColumnIndex
+                  ].items;
                 const activeButtons = new Set(
                   cellItems.map((item) =>
                     item.type === "note" ? item.button : null

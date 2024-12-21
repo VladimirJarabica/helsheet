@@ -4,7 +4,7 @@ export const drunkenSailor: Song = {
   timeSignature: "4/4",
   bars: [
     {
-      beats: [
+      columns: [
         {
           melodic: [
             {

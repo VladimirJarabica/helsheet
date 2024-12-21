@@ -104,14 +104,14 @@ export type DefinedDirection = "pull" | "push";
 
 export type Direction = DefinedDirection | "empty";
 
-export type Beat = {
+export type Column = {
   melodic: Cell<CellNote | EmptyCell>[];
   bass: Cell<CellBass | EmptyCell>;
   direction: Direction;
 };
 
 export type Bar = {
-  beats: Beat[];
+  columns: Column[];
   repeat: "start" | "end" | null;
 };
 

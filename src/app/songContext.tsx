@@ -1,44 +1,41 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { uniqBy } from "ramda";
+import { createContext, useContext, useState } from "react";
 import {
-  CellItem,
-  CellRow,
-  CellNote,
-  Song,
-  SubCell,
-  Direction,
-  Beat,
+  Bass,
+  Column,
   Cell,
   CellBass,
-  EmptyCell,
-  Note,
-  Bass,
+  CellNote,
+  CellRow,
   DefinedDirection,
+  Direction,
+  EmptyCell,
+  Song,
+  SubCell,
 } from "./types";
-import { uniqBy } from "ramda";
 
 type CellPosition = {
   barIndex: number;
-  beatIndex: number;
+  columnIndex: number;
   row: CellRow;
 };
 
-type ActiveBeatPosition = {
+type ActiveColumnPosition = {
   barIndex: number;
-  beatIndex: number;
+  columnIndex: number;
 };
 
-type ActiveSubBeatPosition = ActiveBeatPosition & {
-  subBeatIndex: number;
+type ActiveSubColumnPosition = ActiveColumnPosition & {
+  subColumnIndex: number;
 };
 
 type SongContext = {
   song: Song;
   activeCell: CellPosition | null;
-  activeBeat: ActiveSubBeatPosition | null;
+  activeColumn: ActiveSubColumnPosition | null;
   setActiveCell: (position: CellPosition | null) => void;
-  setActiveBeat: (position: ActiveSubBeatPosition | null) => void;
-  //   setMelodicSubCells: (newItems: SubCell[], cellPosition: CellPosition) => void;
-  //   splitCell: (position: CellPosition, splitBeat: boolean) => void;
+  setActiveColumn: (position: ActiveSubColumnPosition | null) => void;
+
   setMelodicButton: (
     row: number,
     button: number,
@@ -62,9 +59,9 @@ const songContext = createContext<SongContext>({
     bars: [],
   },
   activeCell: null,
-  activeBeat: null,
+  activeColumn: null,
   setActiveCell: () => {},
-  setActiveBeat: () => {},
+  setActiveColumn: () => {},
   //   setMelodicSubCells: () => {},
   //   splitCell: () => {},
   setMelodicButton: () => {},
@@ -87,52 +84,23 @@ export const SongContextProvider = ({
 }: SongContextProviderProps) => {
   const [song, setSong] = useState<Song>(initialSong);
   const [activeCell, setActiveCell] = useState<CellPosition | null>(null);
-  const [activeBeat, setActiveBeat] = useState<ActiveSubBeatPosition | null>(
-    null
-  );
+  const [activeColumn, setActiveColumn] =
+    useState<ActiveSubColumnPosition | null>(null);
 
   console.log("song", song);
 
-  //   const setMelodicSubCells = (
-  //     newSubCells: SubCell<CellNote>[],
-  //     cellPosition: CellPosition
-  //   ) => {
-  //     setSong((prev) => ({
-  //       ...prev,
-  //       bars: prev.bars.map((bar, barIndex) =>
-  //         barIndex === cellPosition.barIndex
-  //           ? {
-  //               ...bar,
-  //               beats: bar.beats.map((beat, beatIndex) =>
-  //                 beatIndex === cellPosition.beatIndex
-  //                   ? {
-  //                       ...beat,
-  //                       melodic: beat.melodic.map((cell) =>
-  //                         cell.row === cellPosition.row
-  //                           ? {
-  //                               ...cell,
-  //                               subCells: newSubCells,
-  //                             }
-  //                           : cell
-  //                       ),
-  //                     }
-  //                   : beat
-  //               ),
-  //             }
-  //           : bar
-  //       ),
-  //     }));
-  //   };
-
-  const setBeat = (newBeat: Beat, beatPosition: ActiveBeatPosition) => {
+  const setColumn = (
+    newColumn: Column,
+    columnPosition: ActiveColumnPosition
+  ) => {
     setSong((prev) => ({
       ...prev,
       bars: prev.bars.map((bar, barIndex) =>
-        barIndex === beatPosition.barIndex
+        barIndex === columnPosition.barIndex
           ? {
               ...bar,
-              beats: bar.beats.map((beat, beatIndex) =>
-                beatIndex === beatPosition.beatIndex ? newBeat : beat
+              columns: bar.columns.map((column, columnIndex) =>
+                columnIndex === columnPosition.columnIndex ? newColumn : column
               ),
             }
           : bar
@@ -140,9 +108,9 @@ export const SongContextProvider = ({
     }));
   };
 
-  const getEmptyBeat = (oldBeat: Beat): Beat => ({
-    ...oldBeat,
-    melodic: oldBeat.melodic.map((cell) => ({
+  const getEmptyColumn = (oldColumn: Column): Column => ({
+    ...oldColumn,
+    melodic: oldColumn.melodic.map((cell) => ({
       ...cell,
       subCells: cell.subCells.map((subCell) => ({
         ...subCell,
@@ -150,8 +118,8 @@ export const SongContextProvider = ({
       })),
     })),
     bass: {
-      ...oldBeat.bass,
-      subCells: oldBeat.bass.subCells.map((subCell) => ({
+      ...oldColumn.bass,
+      subCells: oldColumn.bass.subCells.map((subCell) => ({
         ...subCell,
         items: [{ type: "empty" }],
       })),
@@ -160,13 +128,17 @@ export const SongContextProvider = ({
   });
 
   const setDirection = (newDirection: Direction) => {
-    if (!activeBeat) return;
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
-    if (oldBeat.direction === newDirection) return;
+    if (!activeColumn) return;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+    if (oldColumn.direction === newDirection) return;
 
-    const newBeat: Beat = { ...getEmptyBeat(oldBeat), direction: newDirection };
+    const newColumn: Column = {
+      ...getEmptyColumn(oldColumn),
+      direction: newDirection,
+    };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
 
   const setMelodicButton = (
@@ -174,22 +146,23 @@ export const SongContextProvider = ({
     button: number,
     direction: DefinedDirection
   ) => {
-    if (!activeBeat) return;
+    if (!activeColumn) return;
 
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
-    const oldBeatToChange =
-      oldBeat.direction !== direction ? getEmptyBeat(oldBeat) : oldBeat;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+    const oldColumnToChange =
+      oldColumn.direction !== direction ? getEmptyColumn(oldColumn) : oldColumn;
 
-    const newBeat: Beat = {
-      ...oldBeatToChange,
-      melodic: oldBeatToChange.melodic.map<Cell<CellNote | EmptyCell>>(
+    const newColumn: Column = {
+      ...oldColumnToChange,
+      melodic: oldColumnToChange.melodic.map<Cell<CellNote | EmptyCell>>(
         (cell) => ({
           ...cell,
           subCells: cell.subCells.map<SubCell<CellNote | EmptyCell>>(
             (subCell, index) => ({
               ...subCell,
               items:
-                cell.row === row && index === activeBeat.subBeatIndex
+                cell.row === row && index === activeColumn.subColumnIndex
                   ? uniqBy<CellNote | EmptyCell, number | string>(
                       (i) => ("button" in i ? i.button : i.type),
                       [
@@ -211,22 +184,23 @@ export const SongContextProvider = ({
       direction,
     };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
 
   const setMelodicButtons = (
     buttons: { row: number; button: number }[],
     direction: DefinedDirection
   ) => {
-    if (!activeBeat) return;
+    if (!activeColumn) return;
 
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
-    const oldBeatToChange =
-      oldBeat.direction !== direction ? getEmptyBeat(oldBeat) : oldBeat;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+    const oldColumnToChange =
+      oldColumn.direction !== direction ? getEmptyColumn(oldColumn) : oldColumn;
 
-    const newBeat: Beat = {
-      ...oldBeatToChange,
-      melodic: oldBeatToChange.melodic.map<Cell<CellNote | EmptyCell>>(
+    const newColumn: Column = {
+      ...oldColumnToChange,
+      melodic: oldColumnToChange.melodic.map<Cell<CellNote | EmptyCell>>(
         (cell) => {
           const rowButton = buttons.filter((button) => button.row === cell.row);
           return {
@@ -235,7 +209,7 @@ export const SongContextProvider = ({
               (subCell, index) => ({
                 ...subCell,
                 items:
-                  index === activeBeat.subBeatIndex
+                  index === activeColumn.subColumnIndex
                     ? rowButton
                         .map<CellNote>((button) => ({
                           type: "note",
@@ -255,26 +229,27 @@ export const SongContextProvider = ({
       direction,
     };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
 
   const setBassButton = (note: Bass, direction: DefinedDirection) => {
-    if (!activeBeat) return;
+    if (!activeColumn) return;
 
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
-    const oldBeatToChange =
-      oldBeat.direction !== direction ? getEmptyBeat(oldBeat) : oldBeat;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+    const oldColumnToChange =
+      oldColumn.direction !== direction ? getEmptyColumn(oldColumn) : oldColumn;
 
-    const newBeat: Beat = {
-      ...oldBeatToChange,
+    const newColumn: Column = {
+      ...oldColumnToChange,
       bass: {
-        ...oldBeatToChange.bass,
-        subCells: oldBeatToChange.bass.subCells.map<
+        ...oldColumnToChange.bass,
+        subCells: oldColumnToChange.bass.subCells.map<
           SubCell<CellBass | EmptyCell>
         >((subCell, index) => ({
           ...subCell,
           items:
-            index === activeBeat.subBeatIndex
+            index === activeColumn.subColumnIndex
               ? uniqBy<CellBass | EmptyCell, string>(
                   (i) => ("note" in i ? i.note.note : i.type),
                   [
@@ -295,117 +270,79 @@ export const SongContextProvider = ({
       direction,
     };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
 
   const splitMelodicPart = () => {
-    if (!activeBeat) return;
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+    if (!activeColumn) return;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
 
-    if (oldBeat.melodic[0].subCells.length > 1) return;
+    if (oldColumn.melodic[0].subCells.length > 1) return;
 
-    const newBeat: Beat = {
-      ...oldBeat,
-      melodic: oldBeat.melodic.map((cell) => ({
+    const newColumn: Column = {
+      ...oldColumn,
+      melodic: oldColumn.melodic.map((cell) => ({
         ...cell,
         subCells: [...cell.subCells, { items: [{ type: "empty" }] }],
       })),
     };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
 
   const joinMelodicPart = () => {
-    if (!activeBeat) return;
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
+    if (!activeColumn) return;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
 
-    const newBeat: Beat = {
-      ...oldBeat,
-      melodic: oldBeat.melodic.map((cell) => ({
+    const newColumn: Column = {
+      ...oldColumn,
+      melodic: oldColumn.melodic.map((cell) => ({
         ...cell,
         subCells: cell.subCells.filter(
-          (_, index) => index === activeBeat.subBeatIndex
+          (_, index) => index === activeColumn.subColumnIndex
         ),
       })),
     };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
   const splitBassPart = () => {
-    if (!activeBeat) return;
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
-    if (oldBeat.bass.subCells.length > 1) return;
+    if (!activeColumn) return;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+    if (oldColumn.bass.subCells.length > 1) return;
 
-    const newBeat: Beat = {
-      ...oldBeat,
+    const newColumn: Column = {
+      ...oldColumn,
       bass: {
-        ...oldBeat.bass,
-        subCells: [...oldBeat.bass.subCells, { items: [{ type: "empty" }] }],
+        ...oldColumn.bass,
+        subCells: [...oldColumn.bass.subCells, { items: [{ type: "empty" }] }],
       },
     };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
 
   const joinBassPart = () => {
-    if (!activeBeat) return;
-    const oldBeat = song.bars[activeBeat.barIndex].beats[activeBeat.beatIndex];
-    if (oldBeat.bass.subCells.length === 1) return;
+    if (!activeColumn) return;
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+    if (oldColumn.bass.subCells.length === 1) return;
 
-    const newBeat: Beat = {
-      ...oldBeat,
+    const newColumn: Column = {
+      ...oldColumn,
       bass: {
-        ...oldBeat.bass,
-        subCells: oldBeat.bass.subCells.filter(
-          (_, index) => index === activeBeat.subBeatIndex
+        ...oldColumn.bass,
+        subCells: oldColumn.bass.subCells.filter(
+          (_, index) => index === activeColumn.subColumnIndex
         ),
       },
     };
 
-    setBeat(newBeat, activeBeat);
+    setColumn(newColumn, activeColumn);
   };
-
-  //   const splitCell = (cellPosition: CellPosition, splitBeat: boolean) => {
-  //     console.log("split", { cellPosition, splitBeat });
-  //     setSong((prev) => ({
-  //       ...prev,
-  //       bars: prev.bars.map((bar, barIndex) =>
-  //         barIndex === cellPosition.barIndex
-  //           ? {
-  //               ...bar,
-  //               beats: bar.beats.map((beat, beatIndex) =>
-  //                 beatIndex === cellPosition.beatIndex
-  //                   ? {
-  //                       ...beat,
-  //                       melodic: beat.melodic.map((cell) =>
-  //                         cell.row === cellPosition.row || splitBeat
-  //                           ? {
-  //                               ...cell,
-  //                               subCells: [
-  //                                 ...cell.subCells,
-  //                                 { items: [{ type: "empty" }] },
-  //                               ],
-  //                             }
-  //                           : cell
-  //                       ),
-  //                       bass:
-  //                         cellPosition.row === "bass" || splitBeat
-  //                           ? {
-  //                               ...beat.bass,
-  //                               subCells: [
-  //                                 ...beat.bass.subCells,
-  //                                 { items: [{ type: "empty" }] },
-  //                               ],
-  //                             }
-  //                           : beat.bass,
-  //                     }
-  //                   : beat
-  //               ),
-  //             }
-  //           : bar
-  //       ),
-  //     }));
-  //   };
 
   console.log("activeCell", activeCell);
 
@@ -417,8 +354,8 @@ export const SongContextProvider = ({
           activeCell,
           setActiveCell,
           //   setMelodicSubCells,
-          activeBeat,
-          setActiveBeat,
+          activeColumn: activeColumn,
+          setActiveColumn: setActiveColumn,
           setMelodicButton,
           setBassButton,
           setDirection,
