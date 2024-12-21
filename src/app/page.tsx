@@ -71,14 +71,36 @@ const Cell = <Item extends CellItem>({
   barIndex,
   columnIndex,
 }: ColumnCellProps<Item>) => {
-  const { setActiveColumn, activeColumn } = useSongContext();
+  const { setActiveColumn, activeColumn, ligatures } = useSongContext();
+
+  const cellLigatures =
+    ligatures[barIndex]?.[columnIndex]?.[cell.row as number | "bass"];
+  if (cellLigatures) {
+    console.log("cellLigatures", cellLigatures, cell, barIndex, columnIndex);
+  }
 
   return (
     <div
-      className={`flex border border-black h-12 border-b-0 hover:bg-yellow-50 cursor-pointer relative ${
+      className={`flex border border-black  h-12 border-b-0 hover:bg-yellow-50 cursor-pointer relative ${
         lastColumn ? "" : "border-r-0"
       }`}
     >
+      {cellLigatures?.ligatures &&
+        cellLigatures.ligatures.map((ligature, i) => (
+          <div
+            key={i}
+            className={`
+            absolute
+            w-full
+            h-[1px]
+            bg-black
+            top-3/4
+
+            ${ligature.type === "start" ? "w-1/2 left-1/2" : ""}
+            ${ligature.type === "end" ? "w-1/2" : ""}
+            `}
+          />
+        ))}
       {cell.subCells.map((subCell, i) => {
         const isSubCellActive =
           activeColumn &&
@@ -213,7 +235,7 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
 };
 
 const SongWrapper = () => {
-  const { song, setActiveCell, activeColumn } = useSongContext();
+  const { song, setActiveCell, activeColumn, addBar } = useSongContext();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -237,10 +259,18 @@ const SongWrapper = () => {
   return (
     <>
       <div className="w-full flex justify-center pt-10" ref={wrapperRef}>
-        <div className="flex">
+        <div className="flex flex-wrap">
           {song.bars.map((bar, i) => (
             <Bar key={i} bar={bar} barIndex={i} lastBar={song.bars[i - 1]} />
           ))}
+          <button
+            className="border border-black px-1 rounded-md bg-gray-50"
+            onClick={() => {
+              addBar();
+            }}
+          >
+            Pridať takt
+          </button>
         </div>
       </div>
       {activeColumn && <MelodicSettings />}
@@ -250,11 +280,11 @@ const SongWrapper = () => {
 
 export default function Home() {
   return (
-    <SongContextProvider initialSong={empty}>
-      <TuningContextProvider>
+    <TuningContextProvider>
+      <SongContextProvider initialSong={empty}>
         <SongWrapper />
-      </TuningContextProvider>
-    </SongContextProvider>
+      </SongContextProvider>
+    </TuningContextProvider>
   );
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

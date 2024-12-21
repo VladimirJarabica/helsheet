@@ -98,6 +98,7 @@ export type Cell<Item extends CellItem> = {
   // [] - empty
   subCells: SubCell<Item>[];
   row: CellRow;
+  length?: number;
 };
 
 export type DefinedDirection = "pull" | "push";
@@ -115,7 +116,33 @@ export type Bar = {
   repeat: "start" | "end" | null;
 };
 
+export type TimeSignature = "3/4" | "4/4" | "2/4";
 export type Song = {
-  timeSignature: "3/4" | "4/4";
+  timeSignature: TimeSignature;
   bars: Bar[];
+};
+
+export type CellLigature = {
+  type: "start" | "end" | "middle";
+  fullLigatureLength: number;
+  range: {
+    from: number;
+    to: number;
+  };
+  // TODO: need to specify range for creating nice ligature effect
+  // range: {
+  //   start: {}
+  // }
+};
+export type Ligatures = {
+  [barIndex: number]: {
+    [columnIndex: number]: {
+      [rowIndex: number]: {
+        ligatures: CellLigature[];
+      };
+      bass?: {
+        ligatures: CellLigature[];
+      };
+    };
+  };
 };

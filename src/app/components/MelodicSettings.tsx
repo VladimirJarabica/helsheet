@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as R from "ramda";
 import { useTuningContext } from "../tuningContext";
 import MelodeonButton, { MelodeonButtonWrapper } from "./MelodeonButton";
@@ -25,6 +25,7 @@ const MelodicSettings = () => {
     joinMelodicPart,
     joinBassPart,
     setMelodicButtons,
+    setLength,
   } = useSongContext();
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
 
@@ -37,8 +38,14 @@ const MelodicSettings = () => {
     buttons: { row: number; button: number }[];
     direction: DefinedDirection;
   } | null>(null);
-  console.log("selectedMelodicButtons", selectedMelodicButtons);
   const [hoveredBass, setHoveredBass] = useState<Bass | null>(null);
+
+  useEffect(() => {
+    setSelectedNotes([]);
+    setHoveredNote(null);
+    setHoveredBass(null);
+    setSelectedMelodicButtons(null);
+  }, [activeColumn]);
 
   const handleAddSelectedNote = (note: Note, newDirection?: Direction) => {
     setSelectedNotes((sn) =>
@@ -385,6 +392,47 @@ const MelodicSettings = () => {
             ))}
           </div>
         ))} */}
+      </div>
+      <div>
+        <div>Dĺžka nôt (počet stĺpcov)</div>
+        {tuning.melodic
+          .toSorted((a, b) => b.row - a.row)
+          .map((row) => (
+            <div key={row.row}>
+              Rada {row.row}:
+              <select
+                className="w-20"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  console.log("value", value, typeof value, parseInt(value));
+                  setLength(parseInt(value), row.row);
+                }}
+              >
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    {index + 1}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        <div>
+          Basy:
+          <select
+            className="w-20"
+            onChange={(e) => {
+              const value = e.target.value;
+              console.log("value", value, typeof value, parseInt(value));
+              setLength(parseInt(value), "bass");
+            }}
+          >
+            {Array.from({ length: 8 }).map((_, index) => (
+              <option key={index + 1} value={index + 1}>
+                {index + 1}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       {/* <div onMouseEnter={() => setHoveredNote("c")}>C</div>
       <div onMouseEnter={() => setHoveredNote("d")}>D</div>
