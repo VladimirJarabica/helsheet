@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import * as R from "ramda";
+import { useSongContext } from "../songContext";
 import { useTuningContext } from "../tuningContext";
-import MelodeonButton, { MelodeonButtonWrapper } from "./MelodeonButton";
 import {
   Bass,
   DefinedDirection,
@@ -9,7 +8,7 @@ import {
   Note,
   TuningNoteButton,
 } from "../types";
-import { useSongContext } from "../songContext";
+import MelodeonButton, { MelodeonButtonWrapper } from "./MelodeonButton";
 import MusicSheetSelector from "./MusicSheetSelector";
 
 const MelodicSettings = () => {
@@ -17,7 +16,6 @@ const MelodicSettings = () => {
   const {
     activeColumn,
     song,
-    setMelodicButton,
     setBassButton,
     setDirection,
     splitMelodicPart,
@@ -47,7 +45,7 @@ const MelodicSettings = () => {
     setSelectedMelodicButtons(null);
   }, [activeColumn]);
 
-  const handleAddSelectedNote = (note: Note, newDirection?: Direction) => {
+  const handleAddSelectedNote = (note: Note) => {
     setSelectedNotes((sn) =>
       sn.find((n) => n.note === note.note && n.pitch === note.pitch)
         ? sn.filter((n) => n.note !== note.note || n.pitch !== note.pitch)
@@ -59,13 +57,10 @@ const MelodicSettings = () => {
     // }
   };
 
-  if (!activeColumn) {
-    return null;
-  }
-
-  const column =
-    song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
-  const direction: Direction = column.direction;
+  const column = activeColumn
+    ? song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex]
+    : null;
+  const direction: Direction = column?.direction ?? "empty";
 
   const suggestedButtons = useMemo(() => {
     const pullButtons = tuning.melodic.flatMap((row) => {
@@ -156,6 +151,10 @@ const MelodicSettings = () => {
     };
   }, [selectedNotes, tuning.melodic]);
 
+  if (!activeColumn || !column) {
+    return null;
+  }
+
   const hasBassPart = !!column.bass.subCells[activeColumn.subColumnIndex];
   const hasMelodicPart = column.melodic.some(
     (cell) => !!cell.subCells[activeColumn.subColumnIndex]
@@ -190,6 +189,7 @@ const MelodicSettings = () => {
                   <div key={row.row} className="flex flex-col">
                     {row.buttons.map((button) => (
                       <MelodeonButton
+                        key={button.button}
                         onClick={(direction) => {
                           console.log("clicked");
                           // const note =
@@ -264,7 +264,7 @@ const MelodicSettings = () => {
                         onClick={(direction) => {
                           console.log("clicked");
                           // setMelodicButton(row.row, button.button, direction);
-                          handleAddSelectedNote(button[direction], direction);
+                          handleAddSelectedNote(button[direction]);
                         }}
                         // disabled={!!hoveredNote && button.pull.note != hoveredNote}
                         button={button}
@@ -292,7 +292,7 @@ const MelodicSettings = () => {
       <div className="flex">
         Vybrané noty:
         {selectedNotes.map((note) => (
-          <div>
+          <div key={note.note + note.pitch}>
             {note.note}
             <sup className="top-[-0.5em]">{note.pitch}</sup>
           </div>
@@ -333,6 +333,7 @@ const MelodicSettings = () => {
           const suggestedDirection = buttons[0]?.direction;
           return (
             <div
+              key={buttons.map((button) => button.row + button.button).join("")}
               className="flex border border-black p-1 cursor-pointer mx-1"
               onMouseEnter={() =>
                 buttons[0] &&
@@ -358,7 +359,7 @@ const MelodicSettings = () => {
               {suggestedDirection &&
                 (buttons[0].direction === "pull" ? "<" : ">")}
               {buttons.map((button) => (
-                <div>
+                <div key={button.button}>
                   {button.button}
                   <sup className="top-[-0.5em]">{button.row}</sup>
                 </div>

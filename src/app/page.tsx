@@ -1,22 +1,17 @@
 "use client";
-import React from "react";
-import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { drunkenSailor } from "../data/songs/drunken-sailor";
-import { SongContextProvider, useSong, useSongContext } from "./songContext";
+import React, { ChangeEvent, useRef } from "react";
+import { empty } from "../data/songs/empty";
+import MelodicSettings from "./components/MelodicSettings";
+import { SongContextProvider, useSongContext } from "./songContext";
+import { TuningContextProvider } from "./tuningContext";
 import {
   Bar as BarType,
-  Column as ColumnType,
-  CellRow,
-  Cell as CellType,
-  CellNote,
-  SubCell as SubCellType,
   CellItem,
+  Cell as CellType,
+  Column as ColumnType,
+  SubCell as SubCellType,
 } from "./types";
-import MelodicSettings from "./components/MelodicSettings";
-import { TuningContextProvider } from "./tuningContext";
-import { empty } from "../data/songs/empty";
 
 interface CellItemProps<Item extends CellItem> {
   subCell: SubCellType<Item>;
@@ -192,6 +187,17 @@ interface ColumnProps {
 }
 
 const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
+  const { setText } = useSongContext();
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (ref.current) {
+      ref.current.style.height = "auto";
+      ref.current.style.height = e.target.scrollHeight + "px";
+    }
+    setText(e.target.value, { barIndex, columnIndex });
+  };
+
   return (
     <div className="w-12">
       {column.melodic
@@ -220,6 +226,12 @@ const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
         {column.direction === "push" && ">"}
         {column.direction === "empty" && "-"}
       </div>
+      <textarea
+        ref={ref}
+        className="border-gray-500 border-b w-full text-sm outline-none mx-[1px] resize-none h-10 print:border-none"
+        value={column.text ?? ""}
+        onChange={handleInput}
+      />
     </div>
   );
 };
@@ -251,7 +263,7 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
 };
 
 const SongWrapper = () => {
-  const { song, setActiveCell, activeColumn, addBar } = useSongContext();
+  const { song, activeColumn, addBar } = useSongContext();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 

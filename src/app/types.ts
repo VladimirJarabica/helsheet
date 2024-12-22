@@ -109,6 +109,7 @@ export type Column = {
   melodic: Cell<CellNote | EmptyCell>[];
   bass: Cell<CellBass | EmptyCell>;
   direction: Direction;
+  text: string | null;
 };
 
 export type Bar = {

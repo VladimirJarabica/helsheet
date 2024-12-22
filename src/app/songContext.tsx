@@ -38,6 +38,7 @@ type SongContext = {
   ligatures: Ligatures;
   activeCell: CellPosition | null;
   activeColumn: SubColumnPosition | null;
+  columnsInBar: number;
   setActiveCell: (position: CellPosition | null) => void;
   setActiveColumn: (position: SubColumnPosition | null) => void;
 
@@ -58,6 +59,7 @@ type SongContext = {
   ) => void;
   addBar: () => void;
   setLength: (length: number, row: CellRow) => void;
+  setText: (text: string, position: ColumnPosition) => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -68,6 +70,7 @@ const songContext = createContext<SongContext>({
   ligatures: {},
   activeCell: null,
   activeColumn: null,
+  columnsInBar: 4,
   setActiveCell: () => {},
   setActiveColumn: () => {},
   //   setMelodicSubCells: () => {},
@@ -82,6 +85,7 @@ const songContext = createContext<SongContext>({
   setMelodicButtons: () => {},
   addBar: () => {},
   setLength: () => {},
+  setText: () => {},
 });
 
 interface SongContextProviderProps {
@@ -105,6 +109,8 @@ export const SongContextProvider = ({
   );
   const { tuning } = useTuningContext();
 
+  const columnsInBar = COLUMNS_FOR_TIME_SIGNATURES[song.timeSignature];
+
   console.log("song", song);
 
   const addBar = () => {
@@ -113,21 +119,18 @@ export const SongContextProvider = ({
       bars: [
         ...prev.bars,
         {
-          columns: new Array(COLUMNS_FOR_TIME_SIGNATURES[song.timeSignature])
-            .fill(null)
-            .map(() => ({
-              melodic: tuning.melodic.map<Cell<CellNote | EmptyCell>>(
-                (row) => ({
-                  row: row.row,
-                  subCells: [{ items: [{ type: "empty" }] }],
-                })
-              ),
-              bass: {
-                row: "bass",
-                subCells: [{ items: [{ type: "empty" }] }],
-              },
-              direction: "empty",
+          columns: new Array(columnsInBar).fill(null).map(() => ({
+            melodic: tuning.melodic.map<Cell<CellNote | EmptyCell>>((row) => ({
+              row: row.row,
+              subCells: [{ items: [{ type: "empty" }] }],
             })),
+            bass: {
+              row: "bass",
+              subCells: [{ items: [{ type: "empty" }] }],
+            },
+            direction: "empty",
+            text: null,
+          })),
           repeat: null,
         },
       ],
@@ -315,6 +318,13 @@ export const SongContextProvider = ({
     setColumn(newColumn, activeColumn);
   };
 
+  const setText = (text: string, position: ColumnPosition) => {
+    setColumn(
+      { ...song.bars[position.barIndex].columns[position.columnIndex], text },
+      position
+    );
+  };
+
   const splitMelodicPart = () => {
     if (!activeColumn) return;
     const oldColumn =
@@ -438,7 +448,7 @@ export const SongContextProvider = ({
       row: CellRow,
       length: number
     ) => {
-      const columnsInTuning = COLUMNS_FOR_TIME_SIGNATURES[song.timeSignature];
+      const columnsInTuning = columnsInBar;
       for (let i = 0; i < length; i++) {
         const columnIndex = (position.columnIndex + i) % columnsInTuning;
 
@@ -517,7 +527,7 @@ export const SongContextProvider = ({
     });
 
     return lig;
-  }, [song]);
+  }, [columnsInBar, song.bars]);
 
   console.log("activeCell", activeCell);
   console.log("ligatures", ligatures);
@@ -530,6 +540,7 @@ export const SongContextProvider = ({
           ligatures,
           activeCell,
           setActiveCell,
+          columnsInBar,
           //   setMelodicSubCells,
           activeColumn: activeColumn,
           setActiveColumn: setActiveColumn,
@@ -543,6 +554,7 @@ export const SongContextProvider = ({
           setMelodicButtons,
           addBar,
           setLength,
+          setText,
         }}
       >
         {children}

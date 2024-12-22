@@ -21,6 +21,7 @@ export const empty: Song = {
             row: "bass",
           },
           direction: "pull",
+          text: null,
         },
         {
           melodic: [
@@ -38,6 +39,7 @@ export const empty: Song = {
             row: "bass",
           },
           direction: "empty",
+          text: null,
         },
         {
           melodic: [
@@ -55,6 +57,7 @@ export const empty: Song = {
             row: "bass",
           },
           direction: "empty",
+          text: null,
         },
         {
           melodic: [
@@ -72,6 +75,7 @@ export const empty: Song = {
             row: "bass",
           },
           direction: "empty",
+          text: null,
         },
       ],
       repeat: null,

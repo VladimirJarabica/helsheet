@@ -70,7 +70,6 @@ interface MelodeonButtonProps<
   ButtonType extends TuningNoteButton | TuningBassButton
 > {
   onClick: (direction: DefinedDirection) => void;
-  disabled?: boolean;
   button: ButtonType;
   buttonNumberHidden?: boolean;
   hoveredNote?: ButtonType["push"] | ButtonType["pull"] | null;
@@ -85,7 +84,6 @@ const MelodeonButton = <
   ButtonType extends TuningNoteButton | TuningBassButton
 >({
   onClick,
-  disabled,
   button,
   buttonNumberHidden,
   hoveredNote,
