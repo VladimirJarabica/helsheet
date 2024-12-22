@@ -79,6 +79,8 @@ const Cell = <Item extends CellItem>({
     console.log("cellLigatures", cellLigatures, cell, barIndex, columnIndex);
   }
 
+  const hasMultipleSubcells = cell.subCells.length > 1;
+
   return (
     <div
       className={`flex border border-black  h-12 border-b-0 hover:bg-yellow-50 cursor-pointer relative ${
@@ -86,10 +88,12 @@ const Cell = <Item extends CellItem>({
       }`}
     >
       {cellLigatures?.ligatures &&
-        cellLigatures.ligatures.map((ligature, i) => (
-          <div
-            key={i}
-            className={`
+        cellLigatures.ligatures.map((ligature, i) => {
+          const length = ligature.range.to - ligature.range.from;
+          return (
+            <div
+              key={i}
+              className={`
             absolute
             w-full
             h-[1px]
@@ -97,10 +101,22 @@ const Cell = <Item extends CellItem>({
             top-3/4
 
             ${ligature.type === "start" ? "w-1/2 left-1/2" : ""}
+            ${
+              ligature.type === "start" && length === 0.5
+                ? "w-1/4 left-3/4"
+                : ""
+            }
             ${ligature.type === "end" ? "w-1/2" : ""}
+            ${ligature.type === "end" && length === 0.5 ? "w-1/4" : ""}
+            ${
+              hasMultipleSubcells && ligature.type === "end" && length === 1
+                ? "w-3/4"
+                : ""
+            }
             `}
-          />
-        ))}
+            />
+          );
+        })}
       {cell.subCells.map((subCell, i) => {
         const isSubCellActive =
           activeColumn &&

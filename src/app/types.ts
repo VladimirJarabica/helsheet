@@ -87,6 +87,7 @@ export type CellRow = number | "bass" | "direction";
 
 export type SubCell<Item extends CellItem> = {
   items: Item[];
+  length?: number;
 };
 
 export type Cell<Item extends CellItem> = {
@@ -98,7 +99,6 @@ export type Cell<Item extends CellItem> = {
   // [] - empty
   subCells: SubCell<Item>[];
   row: CellRow;
-  length?: number;
 };
 
 export type DefinedDirection = "pull" | "push";

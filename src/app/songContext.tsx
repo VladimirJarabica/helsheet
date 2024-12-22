@@ -387,21 +387,42 @@ export const SongContextProvider = ({
   };
 
   const setLength = (length: number, row: CellRow) => {
-    console.log("setLength", { length, row });
     if (!activeColumn) return;
 
     const oldColumn =
       song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
     const newColumn: Column = {
       ...oldColumn,
-      melodic: oldColumn.melodic.map<Cell<CellNote | EmptyCell>>((cell) =>
+      melodic: oldColumn.melodic.map((cell) =>
         cell.row === row
-          ? { ...cell, length: length > 1 ? length : undefined }
+          ? {
+              ...cell,
+              subCells: cell.subCells.map((subCell, index) =>
+                index === activeColumn.subColumnIndex
+                  ? {
+                      ...subCell,
+                      // TODO: allow length: 1 only if cell is split
+                      length: length > 1 ? length : undefined,
+                    }
+                  : subCell
+              ),
+            }
           : cell
       ),
       bass:
         row === "bass"
-          ? { ...oldColumn.bass, length: length > 1 ? length : undefined }
+          ? {
+              ...oldColumn.bass,
+              subCells: oldColumn.bass.subCells.map((subCell, index) =>
+                index === activeColumn.subColumnIndex
+                  ? {
+                      ...subCell,
+                      // TODO: allow length: 1 only if cell is split
+                      length: length > 1 ? length : undefined,
+                    }
+                  : subCell
+              ),
+            }
           : oldColumn.bass,
     };
 
@@ -413,7 +434,7 @@ export const SongContextProvider = ({
   const ligatures = useMemo(() => {
     const lig: Ligatures = {};
     const setLigatures = (
-      position: ColumnPosition,
+      position: SubColumnPosition,
       row: CellRow,
       length: number
     ) => {
@@ -438,13 +459,17 @@ export const SongContextProvider = ({
           };
         }
 
+        const lengthOffset = position.subColumnIndex > 0 ? 0.5 : 0;
+
+        const rangeValue = i - lengthOffset;
+
         const ligature: CellLigature = {
           type: "middle",
           fullLigatureLength: length,
           range: {
             // TODO: will need to update this once allow subcells ligatures
-            from: i,
-            to: i + 1,
+            from: Math.max(0, rangeValue),
+            to: rangeValue + 1,
           },
         };
 
@@ -453,9 +478,9 @@ export const SongContextProvider = ({
         if (i === 0) {
           ligature.type = "start";
           // ligature.range.from = 0;
-          // ligature.range.to = (length - numberOfMiddleParts) / 1;
-        } else if (i === length - 1) {
+        } else if (i >= length - 1) {
           ligature.type = "end";
+          ligature.range.to = length;
         } else {
           ligature.type = "middle";
         }
@@ -468,18 +493,26 @@ export const SongContextProvider = ({
     song.bars.forEach((bar, barIndex) => {
       bar.columns.forEach((column, columnIndex) => {
         column.melodic.forEach((cell) => {
-          if (cell.length && cell.length > 1) {
+          cell.subCells.forEach((subCell, subCellIndex) => {
+            if (subCell.length && subCell.length > 1) {
+              setLigatures(
+                { barIndex, columnIndex, subColumnIndex: subCellIndex },
+                cell.row as number,
+                subCell.length
+              );
+            }
+          });
+        });
+
+        column.bass.subCells.forEach((subCell, subCellIndex) => {
+          if (subCell.length && subCell.length > 1) {
             setLigatures(
-              { barIndex, columnIndex },
-              cell.row as number,
-              cell.length
+              { barIndex, columnIndex, subColumnIndex: subCellIndex },
+              "bass",
+              subCell.length
             );
           }
         });
-        if (column.bass.length && column.bass.length > 1) {
-          console.log("basssss more", column.bass);
-          setLigatures({ barIndex, columnIndex }, "bass", column.bass.length);
-        }
       });
     });
 

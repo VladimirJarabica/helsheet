@@ -404,15 +404,18 @@ const MelodicSettings = () => {
                 className="w-20"
                 onChange={(e) => {
                   const value = e.target.value;
-                  console.log("value", value, typeof value, parseInt(value));
-                  setLength(parseInt(value), row.row);
+                  console.log("value", value, typeof value, parseFloat(value));
+                  setLength(parseFloat(value), row.row);
                 }}
               >
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    {index + 1}
-                  </option>
-                ))}
+                {Array.from({ length: 16 }).map((_, index) => {
+                  const value = (index + 1) / 2;
+                  return (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           ))}
@@ -422,26 +425,21 @@ const MelodicSettings = () => {
             className="w-20"
             onChange={(e) => {
               const value = e.target.value;
-              console.log("value", value, typeof value, parseInt(value));
-              setLength(parseInt(value), "bass");
+              console.log("value", value, typeof value, parseFloat(value));
+              setLength(parseFloat(value), "bass");
             }}
           >
-            {Array.from({ length: 8 }).map((_, index) => (
-              <option key={index + 1} value={index + 1}>
-                {index + 1}
-              </option>
-            ))}
+            {Array.from({ length: 16 }).map((_, index) => {
+              const value = (index + 1) / 2;
+              return (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              );
+            })}
           </select>
         </div>
       </div>
-      {/* <div onMouseEnter={() => setHoveredNote("c")}>C</div>
-      <div onMouseEnter={() => setHoveredNote("d")}>D</div>
-      <div onMouseEnter={() => setHoveredNote("e")}>E</div>
-      <div onMouseEnter={() => setHoveredNote("f")}>F</div>
-      <div onMouseEnter={() => setHoveredNote("g")}>G</div>
-      <div onMouseEnter={() => setHoveredNote("a")}>A</div>
-      <div onMouseEnter={() => setHoveredNote("b")}>B</div>
-      <div onMouseEnter={() => setHoveredNote("h")}>H</div> */}
     </div>
   );
 };
