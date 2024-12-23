@@ -41,7 +41,8 @@ export const MelodeonButtonWrapper = ({
       border-b-[6px]
     //hover:border-b-[8px]
     //hover:-translate-y-[2px]
-      bg-green-50
+      //bg-green-50
+      bg-[#e3d9bc]
       `
           : ""
       }
@@ -55,7 +56,8 @@ export const MelodeonButtonWrapper = ({
         selected
           ? `
       border-b-[1px]
-      bg-green-300
+      //bg-green-300
+      bg-[#dbc991]
       `
           : ""
       }
@@ -103,7 +105,7 @@ const MelodeonButton = <
               ("pitch" in button.push && "pitch" in hoveredNote
                 ? button.push.pitch === hoveredNote.pitch
                 : true)
-                ? "bg-green-300"
+                ? "bg-[#dbc991]"
                 : ""
             }
             `}
@@ -127,7 +129,7 @@ const MelodeonButton = <
               ("pitch" in button.pull && "pitch" in hoveredNote
                 ? button.pull.pitch === hoveredNote.pitch
                 : true)
-                ? "bg-green-300"
+                ? "bg-[#dbc991]"
                 : ""
             }
             `}

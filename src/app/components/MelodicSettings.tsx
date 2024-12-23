@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSongContext } from "../songContext";
-import { useTuningContext } from "../tuningContext";
+import { useSongContext } from "./editor/songContext";
+import { useTuningContext } from "./editor/tuningContext";
 import {
   Bass,
   DefinedDirection,

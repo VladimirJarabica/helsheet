@@ -15,7 +15,7 @@ import {
   TimeSignature,
   Ligatures,
   CellLigature,
-} from "./types";
+} from "../../types";
 import { useTuningContext } from "./tuningContext";
 
 type CellPosition = {

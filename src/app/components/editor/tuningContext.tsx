@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import { Tuning } from "./types";
-import { CFTuning } from "../data/tunings/cf";
+import { Tuning } from "../../types";
+import { CFTuning } from "../../../data/tunings/cf";
 import { Tuning as TuningType } from "@prisma/client";
 
 const TUNINGS: Record<TuningType, Tuning> = {
