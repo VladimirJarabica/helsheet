@@ -1,0 +1,27 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Tuning {
+  CF
+  AD
+  DG
+}
+
+model Sheet {
+  id         Int     @id @default(autoincrement())
+  name       String
+  tuning     Tuning
+  content    Json
+  version    Int
+  author     String
+  editSecret String
+  sourceText String?
+  sourceUrl  String?
+}
