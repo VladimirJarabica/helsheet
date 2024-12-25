@@ -58,6 +58,8 @@ type SongContext = {
     direction: DefinedDirection
   ) => void;
   addBar: () => void;
+  duplicateBar: (barIndex: number) => void;
+  removeBar: (barIndex: number) => void;
   setLength: (length: number, row: CellRow) => void;
   setText: (text: string, position: ColumnPosition) => void;
 };
@@ -84,6 +86,8 @@ const songContext = createContext<SongContext>({
   joinBassPart: () => {},
   setMelodicButtons: () => {},
   addBar: () => {},
+  duplicateBar: () => {},
+  removeBar: () => {},
   setLength: () => {},
   setText: () => {},
 });
@@ -135,6 +139,31 @@ export const SongContextProvider = ({
         },
       ],
     }));
+  };
+
+  const duplicateBar = (barIndex: number) => {
+    setSong((prev) => {
+      const barToDuplicate = prev.bars[barIndex];
+      if (!barToDuplicate) return prev;
+      return {
+        ...prev,
+        bars: [
+          ...prev.bars.slice(0, barIndex + 1),
+          barToDuplicate,
+          ...prev.bars.slice(barIndex + 1),
+        ],
+      };
+    });
+  };
+
+  const removeBar = (barIndex: number) => {
+    setActiveColumn(null);
+    setSong((prev) => {
+      return {
+        ...prev,
+        bars: prev.bars.filter((_, index) => index !== barIndex),
+      };
+    });
   };
 
   const setColumn = (newColumn: Column, columnPosition: ColumnPosition) => {
@@ -553,6 +582,8 @@ export const SongContextProvider = ({
           joinBassPart,
           setMelodicButtons,
           addBar,
+          duplicateBar,
+          removeBar,
           setLength,
           setText,
         }}
