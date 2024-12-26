@@ -89,11 +89,11 @@ type NoteSymbolProps = {
 const NoteSymbol = ({ note, textPosition, onClick }: NoteSymbolProps) => {
   return (
     <div
-      className="h-[42px] w-4 relative rounded-br-xl cursor-pointer group"
+      className="h-[30px] w-3 relative rounded-br-xl cursor-pointer group"
       onClick={onClick}
     >
-      <div className="absolute w-[1px] right-0 h-[80%] bg-gray-700 group-hover:bg-black" />
-      <div className="rounded-full bg-gray-700 group-hover:bg-black w-4 h-3 bottom-0 absolute right-0 -skew-y-12" />
+      <div className="absolute w-[1px] right-0 h-[80%] bg-gray-500 group-hover:bg-black" />
+      <div className="rounded-full bg-gray-500 group-hover:bg-black w-3 h-[9px] bottom-0 absolute right-0 -skew-y-12" />
       <div
         className={`absolute text-sm ${
           textPosition === "top" ? "bottom-full" : "top-full"
@@ -117,10 +117,11 @@ const MusicSheetSelector = ({
 }: MusicSheetSelectorProps) => {
   const [scale, setScale] = useState<Scale>(Scales[4]);
   return (
-    <div className="relative my-20 w-[550px]">
+    <div className="relative my-20 w-[430px]">
       <div className="flex flex-col w-32">
         <label>Stupnica</label>
         <select
+          className="bg-transparent"
           value={scale.signature}
           onChange={(e) => {
             const newScale = Scales.find(
@@ -139,17 +140,17 @@ const MusicSheetSelector = ({
         </select>
       </div>
       <div>
-        <div className="w-full h-3 border border-black" />
-        <div className="w-full h-3 border border-t-0 border-black" />
-        <div className="w-full h-3 border border-t-0 border-black" />
-        <div className="w-full h-3 border border-t-0 border-black" />
+        <div className="w-full h-[9px] border border-black" />
+        <div className="w-full h-[9px] border border-t-0 border-black" />
+        <div className="w-full h-[9px] border border-t-0 border-black" />
+        <div className="w-full h-[9px] border border-t-0 border-black" />
       </div>
       {Notes.filter((note) => scale.notes.includes(note.note)).map(
         (note, index) => (
           <div
             key={scale.signature + note.note + note.pitch}
             className="absolute"
-            style={{ bottom: 6 * note.position, left: 5 + index * 26 }}
+            style={{ bottom: 4.5 * note.position, left: 5 + index * 19 }}
             onMouseEnter={() => setHoveredNote(note)}
             onMouseLeave={() => setHoveredNote(null)}
           >
@@ -158,11 +159,11 @@ const MusicSheetSelector = ({
               textPosition={note.position < 1 ? "bottom" : "top"}
               onClick={() => onSelectNote(note)}
             />
-            {(note.position < -2 || note.position > 9) && (
+            {(note.position < -2 || note.position > 7) && (
               <div
-                className="w-[26px] h-[1px] bg-black absolute left-[-5px]"
+                className="w-[24px] h-[1px] bg-gray-500 absolute left-[-5px]"
                 style={{
-                  bottom: note.position % 2 === 0 ? 12 : 6,
+                  bottom: note.position % 2 === 0 ? 9 : 4.5,
                 }}
               />
             )}

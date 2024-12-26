@@ -65,12 +65,14 @@ export type CellNote = {
   note?: Note; // e.g. "c0", "a1"...
   button: number; // "1" | "2" | "D";
   finger?: 1 | 2 | 3 | 4 | 5;
+  length?: number;
 };
 
 export type CellBass = {
   type: "bass";
   note: Bass;
   finger?: 1 | 2 | 3 | 4 | 5;
+  length?: number;
 };
 
 // type Ligature = {
@@ -87,7 +89,6 @@ export type CellRow = number | "bass" | "direction";
 
 export type SubCell<Item extends CellItem> = {
   items: Item[];
-  length?: number;
 };
 
 export type Cell<Item extends CellItem> = {
@@ -123,8 +124,16 @@ export type Song = {
   bars: Bar[];
 };
 
+export type CellLigaturePosition = {
+  // E.g. First (current) note of 4 notes (ofNotes). - will be rendered at the top position
+  // or current=1 of 1 notes (center) - will be rendered in the middle
+  current: number;
+  ofNotes: number;
+};
 export type CellLigature = {
   type: "start" | "end" | "middle";
+  // Position based
+  position: CellLigaturePosition;
   fullLigatureLength: number;
   range: {
     from: number;

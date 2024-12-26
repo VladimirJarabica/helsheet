@@ -30,13 +30,16 @@ const SongWrapper = () => {
   // });
 
   return (
-    <>
-      <div className="w-full flex justify-center pt-10" ref={wrapperRef}>
+    <div className="h-[100vh] flex flex-col">
+      <div
+        className="w-full flex justify-center pt-10 overflow-y-auto flex-1"
+        ref={wrapperRef}
+      >
         <div className="flex flex-wrap w-[1100px] max-w-full">
           {song.bars.map((bar, i) => (
             <Bar key={i} bar={bar} barIndex={i} lastBar={song.bars[i - 1]} />
           ))}
-          <div className="flex flex-col justify-center">
+          <div className="">
             <button
               className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
               onClick={() => {
@@ -48,8 +51,8 @@ const SongWrapper = () => {
           </div>
         </div>
       </div>
-      {activeColumn && <MelodicSettings />}
-    </>
+      <div className="max-h-[75%]">{activeColumn && <MelodicSettings />}</div>
+    </div>
   );
 };
 

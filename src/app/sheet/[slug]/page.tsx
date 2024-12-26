@@ -1,3 +1,4 @@
+import { Sheet, Tuning } from "@prisma/client";
 import { dbClient } from "../../../services/db";
 import { getSheetIdFromParam } from "../../../utils/sheet";
 import Editor from "../../components/editor/Editor";
@@ -21,20 +22,31 @@ const Sheet = async (props: {
     return <div>not found</div>;
   }
 
-  const song = await dbClient.sheet.findUnique({
-    select: {
-      id: true,
-      name: true,
-      tuning: true,
-      content: true,
-      version: true,
-      author: true,
-      sourceText: true,
-      sourceUrl: true,
-      editSecret: true,
-    },
-    where: { id },
-  });
+  // const song = await dbClient.sheet.findUnique({
+  //   select: {
+  //     id: true,
+  //     name: true,
+  //     tuning: true,
+  //     content: true,
+  //     version: true,
+  //     author: true,
+  //     sourceText: true,
+  //     sourceUrl: true,
+  //     editSecret: true,
+  //   },
+  //   where: { id },
+  // });
+  const song: Sheet = {
+    id: 1,
+    name: "Empty",
+    tuning: Tuning.CF,
+    content: { bars: [], timeSignature: "4/4" },
+    version: 1,
+    editSecret: "fJR7qYRiZw",
+    author: "Vlado",
+    sourceText: null,
+    sourceUrl: null,
+  };
 
   if (!song) {
     return <div>not found</div>;

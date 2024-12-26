@@ -7,19 +7,29 @@ import {
 
 interface MelodeonButtonWrapperProps {
   children: React.ReactNode;
-  selected: boolean;
+  selected?: boolean;
   onClick?: () => void;
+  onHover?: (hovered: boolean) => void;
+  noPadding?: boolean;
 }
 export const MelodeonButtonWrapper = ({
   selected,
   children,
   onClick,
+  onHover,
+  noPadding,
 }: MelodeonButtonWrapperProps) => {
   return (
     <div
       onClick={() => onClick?.()}
+      {...(onHover
+        ? {
+            onMouseEnter: () => onHover(true),
+            onMouseLeave: () => onHover(false),
+          }
+        : {})}
       className={`
-      w-14
+      ${!noPadding ? "px-3" : ""}
       h-8
       flex
       justify-center
@@ -95,10 +105,11 @@ const MelodeonButton = <
 }: MelodeonButtonProps<ButtonType>) => {
   return (
     <div className="flex items-center">
-      <MelodeonButtonWrapper selected={selected}>
-        {direction !== "pull" && (
-          <div
-            className={`w-[50%] text-center h-full flex items-center justify-center
+      <MelodeonButtonWrapper selected={selected} noPadding>
+        <div className="w-14 h-full flex justify-center">
+          {direction !== "pull" && (
+            <div
+              className={`flex-1 text-center h-full flex items-center justify-center
             ${direction === "push" ? "w-full" : ""}
             ${
               hoveredNote?.note === button.push.note &&
@@ -109,19 +120,19 @@ const MelodeonButton = <
                 : ""
             }
             `}
-            onMouseEnter={() => setHoveredNote?.(button.push)}
-            onMouseLeave={() => setHoveredNote?.(null)}
-            onClick={() => onClick("push")}
-          >
-            {button.push.note}
-            {"pitch" in button.push && button.push.pitch !== 0 ? (
-              <sup className="top-[-0.5em]">{button.push.pitch}</sup>
-            ) : null}
-          </div>
-        )}
-        {direction !== "push" && (
-          <div
-            className={`w-[50%] text-center h-full flex items-center justify-center
+              onMouseEnter={() => setHoveredNote?.(button.push)}
+              onMouseLeave={() => setHoveredNote?.(null)}
+              onClick={() => onClick("push")}
+            >
+              {button.push.note}
+              {"pitch" in button.push && button.push.pitch !== 0 ? (
+                <sup className="top-[-0.5em]">{button.push.pitch}</sup>
+              ) : null}
+            </div>
+          )}
+          {direction !== "push" && (
+            <div
+              className={`flex-1 text-center h-full flex items-center justify-center
             ${direction === "pull" ? "w-full" : ""}
             ${direction === "empty" ? "border-l border-black" : ""}
             ${
@@ -133,16 +144,17 @@ const MelodeonButton = <
                 : ""
             }
             `}
-            onMouseEnter={() => setHoveredNote?.(button.pull)}
-            onMouseLeave={() => setHoveredNote?.(null)}
-            onClick={() => onClick("pull")}
-          >
-            {button.pull.note}
-            {"pitch" in button.pull && button.pull.pitch !== 0 ? (
-              <sup className="top-[-0.5em]">{button.pull.pitch}</sup>
-            ) : null}
-          </div>
-        )}
+              onMouseEnter={() => setHoveredNote?.(button.pull)}
+              onMouseLeave={() => setHoveredNote?.(null)}
+              onClick={() => onClick("pull")}
+            >
+              {button.pull.note}
+              {"pitch" in button.pull && button.pull.pitch !== 0 ? (
+                <sup className="top-[-0.5em]">{button.pull.pitch}</sup>
+              ) : null}
+            </div>
+          )}
+        </div>
       </MelodeonButtonWrapper>
       {!buttonNumberHidden && button.button}
     </div>

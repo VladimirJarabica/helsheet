@@ -27,10 +27,13 @@ const MelodicSettings = () => {
   } = useSongContext();
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
 
-  const [hoveredNote, setHoveredNote] = useState<Note | null>({
-    note: "c",
-    pitch: 2,
-  });
+  const [hoveredNote, setHoveredNote] = useState<Note | null>(
+    null
+    //   {
+    //   note: "c",
+    //   pitch: 2,
+    // }
+  );
 
   const [selectedMelodicButtons, setSelectedMelodicButtons] = useState<{
     buttons: { row: number; button: number }[];
@@ -164,281 +167,266 @@ const MelodicSettings = () => {
     hasMelodicPart && column.melodic.some((cell) => cell.subCells.length > 1);
   const isBasPartSplit = hasBassPart && column.bass.subCells.length > 1;
 
+  const bassItems = column.bass.subCells[activeColumn.subColumnIndex].items;
+
   return (
-    <div className="absolute p-20">
-      <div className="flex gap-4 flex-wrap">
-        <div>
-          Výber nôt zo stupnice:
-          <MusicSheetSelector
-            setHoveredNote={setHoveredNote}
-            onSelectNote={handleAddSelectedNote}
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          {hasBassPart && (
-            <div className="flex items-center flex-row">
-              {tuning.bass.map((row) => {
-                const cellItems =
-                  column.bass.subCells[activeColumn.subColumnIndex].items;
-                const activeNotes = new Set(
-                  cellItems.map((item) =>
-                    item.type === "bass" ? item.note.note : null
-                  )
-                );
-                return (
-                  <div key={row.row} className="flex flex-col">
-                    {row.buttons.map((button) => (
-                      <MelodeonButton
-                        key={button.button}
-                        onClick={(direction) => {
-                          console.log("clicked");
-                          // const note =
-                          //   direction === "pull" ? button.pull : button.push;
-                          setBassButton(button[direction], direction);
-                          // handleAddSelectedBass(button[direction], direction);
-                        }}
-                        // disabled={!!hoveredNote && button.pull.note != hoveredNote}
-                        button={button}
-                        buttonNumberHidden
-                        hoveredNote={hoveredBass}
-                        setHoveredNote={setHoveredBass}
-                        direction={
-                          selectedMelodicButtons?.direction ?? direction
-                        }
-                        selected={
-                          activeNotes.has(button.pull.note) ||
-                          activeNotes.has(button.push.note)
-                        }
-                      />
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          <div className="flex gap-5 mx-8">
-            <MelodeonButtonWrapper
-              selected={
-                selectedMelodicButtons
-                  ? selectedMelodicButtons.direction === "pull"
-                  : direction === "pull"
-              }
-              onClick={() => setDirection("pull")}
-            >
-              {"<----"}
-            </MelodeonButtonWrapper>
-            <MelodeonButtonWrapper
-              selected={!selectedMelodicButtons && direction === "empty"}
-              onClick={() => setDirection("empty")}
-            >
-              {"-"}
-            </MelodeonButtonWrapper>
-            <MelodeonButtonWrapper
-              selected={
-                selectedMelodicButtons
-                  ? selectedMelodicButtons.direction === "push"
-                  : direction === "push"
-              }
-              onClick={() => setDirection("push")}
-            >
-              {"--->"}
-            </MelodeonButtonWrapper>
-          </div>
-          {hasMelodicPart && (
-            <div className="flex items-center flex-row-reverse">
-              {tuning.melodic.map((row) => {
-                const cellItems =
-                  column.melodic[row.row - 1].subCells[
-                    activeColumn.subColumnIndex
-                  ].items;
-                const activeButtons = new Set(
-                  cellItems.map((item) =>
-                    item.type === "note" ? item.button : null
-                  )
-                );
-                return (
-                  <div key={row.row} className="flex flex-col-reverse">
-                    {row.buttons.map((button) => (
-                      <MelodeonButton
-                        key={row.row + button.button}
-                        onClick={(direction) => {
-                          console.log("clicked");
-                          // setMelodicButton(row.row, button.button, direction);
-                          handleAddSelectedNote(button[direction]);
-                        }}
-                        // disabled={!!hoveredNote && button.pull.note != hoveredNote}
-                        button={button}
-                        hoveredNote={hoveredNote}
-                        setHoveredNote={setHoveredNote}
-                        direction={
-                          selectedMelodicButtons?.direction ?? direction
-                        }
-                        selected={
-                          activeButtons.has(button.button) ||
-                          !!selectedMelodicButtons?.buttons.find(
-                            (b) =>
-                              b.button === button.button && b.row === row.row
-                          )
-                        }
-                      />
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="flex">
-        Vybrané noty:
-        {selectedNotes.map((note) => (
-          <div key={note.note + note.pitch}>
-            {note.note}
-            <sup className="top-[-0.5em]">{note.pitch}</sup>
-          </div>
-        ))}
-        <button
-          className="border border-black px-1 rounded-md bg-gray-50"
-          onClick={() => {
-            setSelectedNotes([]);
-            // setSelectedDirection("empty");
-          }}
-        >
-          Vymazať vybrané noty
-        </button>
-      </div>
-      <button
-        className="border border-black px-1 rounded-md bg-gray-50"
-        onClick={() =>
-          isMelodicPartSplit ? joinMelodicPart() : splitMelodicPart()
-        }
-      >
-        {isMelodicPartSplit
-          ? "Zlúčiť melodickú časť"
-          : "Rozdeliť melodickú časť"}
-      </button>
-      <button
-        className="border border-black px-1 rounded-md bg-gray-50"
-        onClick={() => (isBasPartSplit ? joinBassPart() : splitBassPart())}
-      >
-        {isBasPartSplit ? "Zlúčiť basovú časť" : "Rozdeliť basovú časť"}
-      </button>
-      <div className="flex">
-        Navrhované kombinácie:
-        {selectedNotes.length > 0 &&
-          suggestedButtons.pull.length === 0 &&
-          suggestedButtons.push.length === 0 &&
-          " Pre zadané noty neexistujú žiadne kombinácie"}
-        {[...suggestedButtons.push, ...suggestedButtons.pull].map((buttons) => {
-          const suggestedDirection = buttons[0]?.direction;
-          return (
-            <div
-              key={buttons.map((button) => button.row + button.button).join("")}
-              className="flex border border-black p-1 cursor-pointer mx-1"
-              onMouseEnter={() =>
-                buttons[0] &&
-                setSelectedMelodicButtons({
-                  buttons: buttons.map((button) => ({
-                    row: button.row,
-                    button: button.button,
-                  })),
-                  direction: buttons[0].direction,
-                })
-              }
-              onMouseLeave={() => setSelectedMelodicButtons(null)}
-              onClick={() => {
-                setMelodicButtons(
-                  buttons.map((button) => ({
-                    row: button.row,
-                    button: button.button,
-                  })),
-                  suggestedDirection
-                );
-              }}
-            >
-              {suggestedDirection &&
-                (buttons[0].direction === "pull" ? "<" : ">")}
-              {buttons.map((button) => (
-                <div key={button.button}>
-                  {button.button}
-                  <sup className="top-[-0.5em]">{button.row}</sup>
+    <div className="p-5 flex flex-col items-center shadow shadow-gray-700">
+      <div className="flex flex-col items-start">
+        <div className="flex gap-10 w-full mb-4 h-[100px]">
+          <div className="flex flex-col items-start">
+            <div className="flex h-8">
+              <div>Vybrané noty:</div>
+              {/* <div>Dĺžka:</div> */}
+
+              {selectedNotes.map((note) => (
+                <div key={note.note + note.pitch}>
+                  <MelodeonButtonWrapper
+                    onHover={(hovered) => setHoveredNote(hovered ? note : null)}
+                    onClick={() =>
+                      setSelectedNotes((sn) =>
+                        sn.filter(
+                          (s) => s.note != note.note || s.pitch != note.pitch
+                        )
+                      )
+                    }
+                  >
+                    {note.note}
+                    <sup className="top-[-0.5em]">{note.pitch}</sup>
+                  </MelodeonButtonWrapper>
                 </div>
               ))}
-              {suggestedDirection &&
-                direction !== "empty" &&
-                suggestedDirection !== direction && <div>Opačný smer</div>}
             </div>
-          );
-        })}
-        {/* {suggestedButtons.pull.map((buttons) => (
-          <div
-            className="flex border border-black p-1 cursor-pointer mx-1"
-            onMouseEnter={() =>
-              setSelectedMelodicButtons({
-                buttons: buttons.map((button) => ({
-                  row: button.row,
-                  button: button.button,
-                })),
-                direction: "pull",
-              })
-            }
-            onMouseLeave={() => setSelectedMelodicButtons(null)}
-          >
-            {"<"}
-            {buttons.map((button) => (
-              <div>
-                {button.button}
-                <sup className="top-[-0.5em]">{button.row}</sup>
-              </div>
-            ))}
-          </div>
-        ))} */}
-      </div>
-      <div>
-        <div>Dĺžka nôt (počet stĺpcov)</div>
-        {tuning.melodic
-          .toSorted((a, b) => b.row - a.row)
-          .map((row) => (
-            <div key={row.row}>
-              Rada {row.row}:
-              <select
-                className="w-20"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  console.log("value", value, typeof value, parseFloat(value));
-                  setLength(parseFloat(value), row.row);
+            <div className="flex gap-1 mt-4">
+              <button
+                className="border border-black p-1 h-8 text-sm rounded-md bg-[#0a0809] text-[#e0dac8]"
+                onClick={() => {
+                  setSelectedNotes([]);
+                  // setSelectedDirection("empty");
                 }}
               >
-                {Array.from({ length: 16 }).map((_, index) => {
-                  const value = (index + 1) / 2;
+                Vymazať
+              </button>
+              <button
+                className="border border-black p-1 h-8 text-sm rounded-md bg-[#0a0809] text-[#e0dac8]"
+                onClick={() =>
+                  isMelodicPartSplit ? joinMelodicPart() : splitMelodicPart()
+                }
+              >
+                {isMelodicPartSplit
+                  ? "Zlúčiť melodickú časť"
+                  : "Rozdeliť melodickú časť"}
+              </button>
+              <button
+                className="border border-black p-1 h-8 text-sm rounded-md bg-[#0a0809] text-[#e0dac8]"
+                onClick={() =>
+                  isBasPartSplit ? joinBassPart() : splitBassPart()
+                }
+              >
+                {isBasPartSplit ? "Zlúčiť basovú časť" : "Rozdeliť basovú časť"}
+              </button>
+            </div>
+          </div>
+          <div className="flex">
+            Navrhované kombinácie:
+            {selectedNotes.length > 0 &&
+              suggestedButtons.pull.length === 0 &&
+              suggestedButtons.push.length === 0 &&
+              " Pre zadané noty neexistujú žiadne kombinácie"}
+            {[...suggestedButtons.push, ...suggestedButtons.pull].map(
+              (buttons) => {
+                const suggestedDirection = buttons[0]?.direction;
+
+                const isOppositeDirection =
+                  suggestedDirection &&
+                  direction !== "empty" &&
+                  suggestedDirection !== direction;
+                return (
+                  <div
+                    key={buttons
+                      .map(
+                        (button) =>
+                          button[suggestedDirection].note +
+                          button[suggestedDirection].pitch +
+                          button.row +
+                          button.button
+                      )
+                      .join("")}
+                    className="flex border border-black cursor-pointer mx-1 flex-col"
+                    onMouseEnter={() =>
+                      buttons[0] &&
+                      setSelectedMelodicButtons({
+                        buttons: buttons.map((button) => ({
+                          row: button.row,
+                          button: button.button,
+                        })),
+                        direction: buttons[0].direction,
+                      })
+                    }
+                    onMouseLeave={() => setSelectedMelodicButtons(null)}
+                    onClick={() => {
+                      setMelodicButtons(
+                        buttons.map((button) => ({
+                          row: button.row,
+                          button: button.button,
+                        })),
+                        suggestedDirection
+                      );
+                    }}
+                  >
+                    {tuning.melodic.toReversed().map((row) => {
+                      const rowButtons = buttons.filter(
+                        (button) => button.row === row.row
+                      );
+                      return (
+                        <div className="border-b border-black w-8 h-6 flex justify-center items-center">
+                          {rowButtons.map((button) => button.button).join(" ")}
+                        </div>
+                      );
+                    })}
+                    <div className="border-b border-black w-8 h-6 flex justify-center items-center">
+                      {isOppositeDirection
+                        ? ""
+                        : bassItems
+                            .map((bassItem) =>
+                              "note" in bassItem ? bassItem.note.note : null
+                            )
+                            .join(" ")}
+                    </div>
+                    <div
+                      className={`w-8 h-6 flex justify-center items-center ${
+                        isOppositeDirection ? "bg-red-100" : ""
+                      }`}
+                    >
+                      {suggestedDirection === "pull" ? "<" : ">"}
+                    </div>
+                  </div>
+                );
+              }
+            )}
+          </div>
+        </div>
+        <div className="flex gap-4 flex-wrap">
+          <div>
+            Výber nôt zo stupnice:
+            <MusicSheetSelector
+              setHoveredNote={setHoveredNote}
+              onSelectNote={handleAddSelectedNote}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            {hasBassPart && (
+              <div className="flex items-center flex-row">
+                {tuning.bass.map((row) => {
+                  const activeBasses = new Set(
+                    bassItems.map((item) =>
+                      item.type === "bass" ? item.note.note : null
+                    )
+                  );
+                  console.log("activeBasses", activeBasses);
                   return (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
+                    <div key={row.row} className="flex flex-col">
+                      {row.buttons.map((button) => (
+                        <MelodeonButton
+                          key={button.button}
+                          onClick={(direction) => {
+                            console.log("clicked");
+                            // const note =
+                            //   direction === "pull" ? button.pull : button.push;
+                            setBassButton(button[direction], direction);
+                            // handleAddSelectedBass(button[direction], direction);
+                          }}
+                          // disabled={!!hoveredNote && button.pull.note != hoveredNote}
+                          button={button}
+                          buttonNumberHidden
+                          hoveredNote={hoveredBass}
+                          setHoveredNote={setHoveredBass}
+                          direction={
+                            selectedMelodicButtons?.direction ?? direction
+                          }
+                          selected={
+                            // TODO: fix if direction is picked
+                            activeBasses.has(button.pull.note) ||
+                            activeBasses.has(button.push.note)
+                          }
+                        />
+                      ))}
+                    </div>
                   );
                 })}
-              </select>
+              </div>
+            )}
+            <div className="flex gap-2 mx-4">
+              <MelodeonButtonWrapper
+                selected={
+                  selectedMelodicButtons
+                    ? selectedMelodicButtons.direction === "pull"
+                    : direction === "pull"
+                }
+                onClick={() => setDirection("pull")}
+              >
+                {"<--"}
+              </MelodeonButtonWrapper>
+              <MelodeonButtonWrapper
+                selected={!selectedMelodicButtons && direction === "empty"}
+                onClick={() => setDirection("empty")}
+              >
+                {"-"}
+              </MelodeonButtonWrapper>
+              <MelodeonButtonWrapper
+                selected={
+                  selectedMelodicButtons
+                    ? selectedMelodicButtons.direction === "push"
+                    : direction === "push"
+                }
+                onClick={() => setDirection("push")}
+              >
+                {"-->"}
+              </MelodeonButtonWrapper>
             </div>
-          ))}
-        <div>
-          Basy:
-          <select
-            className="w-20"
-            onChange={(e) => {
-              const value = e.target.value;
-              console.log("value", value, typeof value, parseFloat(value));
-              setLength(parseFloat(value), "bass");
-            }}
-          >
-            {Array.from({ length: 16 }).map((_, index) => {
-              const value = (index + 1) / 2;
-              return (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              );
-            })}
-          </select>
+            {hasMelodicPart && (
+              <div className="flex items-center flex-row-reverse">
+                {tuning.melodic.map((row) => {
+                  const cellItems =
+                    column.melodic[row.row - 1].subCells[
+                      activeColumn.subColumnIndex
+                    ].items;
+                  const activeButtons = new Set(
+                    cellItems.map((item) =>
+                      item.type === "note" ? item.button : null
+                    )
+                  );
+                  return (
+                    <div key={row.row} className="flex flex-col-reverse">
+                      {row.buttons.map((button) => (
+                        <MelodeonButton
+                          key={row.row + button.button}
+                          onClick={(direction) => {
+                            console.log("clicked");
+                            // setMelodicButton(row.row, button.button, direction);
+                            handleAddSelectedNote(button[direction]);
+                          }}
+                          // disabled={!!hoveredNote && button.pull.note != hoveredNote}
+                          button={button}
+                          hoveredNote={hoveredNote}
+                          setHoveredNote={setHoveredNote}
+                          direction={
+                            selectedMelodicButtons?.direction ?? direction
+                          }
+                          selected={
+                            activeButtons.has(button.button) ||
+                            !!selectedMelodicButtons?.buttons.find(
+                              (b) =>
+                                b.button === button.button && b.row === row.row
+                            )
+                          }
+                        />
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ import {
   CellLigature,
 } from "../../types";
 import { useTuningContext } from "./tuningContext";
+import { useLigatures } from "../useLigatures";
 
 type CellPosition = {
   barIndex: number;
@@ -29,7 +30,7 @@ type ColumnPosition = {
   columnIndex: number;
 };
 
-type SubColumnPosition = ColumnPosition & {
+export type SubColumnPosition = ColumnPosition & {
   subColumnIndex: number;
 };
 
@@ -320,26 +321,36 @@ export const SongContextProvider = ({
         ...oldColumnToChange.bass,
         subCells: oldColumnToChange.bass.subCells.map<
           SubCell<CellBass | EmptyCell>
-        >((subCell, index) => ({
-          ...subCell,
-          items:
-            index === activeColumn.subColumnIndex
-              ? uniqBy<CellBass | EmptyCell, string>(
-                  (i) => ("note" in i ? i.note.note : i.type),
-                  [
-                    ...subCell.items.filter(
-                      (subCellItem) => subCellItem.type !== "empty"
-                    ),
-                    { type: "bass", note },
-                  ]
-                ).toSorted((a, b) =>
-                  // TODO: correctly sort basses
-                  a.type === "bass" && b.type === "bass"
-                    ? b.note.note.localeCompare(a.note.note)
-                    : 0
-                )
-              : subCell.items,
-        })),
+        >((subCell, index) => {
+          if (index !== activeColumn.subColumnIndex) {
+            return subCell;
+          }
+          const alreadyHasBass = subCell.items.some(
+            (item) => item.type === "bass" && item.note.note === note.note
+          );
+          const newItems = alreadyHasBass
+            ? subCell.items.filter(
+                (item) => item.type !== "bass" || item.note.note !== note.note
+              )
+            : uniqBy<CellBass | EmptyCell, string>(
+                (i) => ("note" in i ? i.note.note : i.type),
+                [
+                  ...subCell.items.filter(
+                    (subCellItem) => subCellItem.type !== "empty"
+                  ),
+                  { type: "bass", note },
+                ]
+              ).toSorted((a, b) =>
+                // TODO: correctly sort basses
+                a.type === "bass" && b.type === "bass"
+                  ? b.note.note.localeCompare(a.note.note)
+                  : 0
+              );
+          return {
+            ...subCell,
+            items: newItems.length === 0 ? [{ type: "empty" }] : newItems,
+          };
+        }),
       },
       direction,
     };
@@ -425,7 +436,11 @@ export const SongContextProvider = ({
     setColumn(newColumn, activeColumn);
   };
 
-  const setLength = (length: number, row: CellRow) => {
+  const setLength = (
+    length: number,
+    row: number,
+    subColumnPosition: SubColumnPosition
+  ) => {
     if (!activeColumn) return;
 
     const oldColumn =
@@ -470,93 +485,10 @@ export const SongContextProvider = ({
     setColumn(newColumn, activeColumn);
   };
 
-  const ligatures = useMemo(() => {
-    const lig: Ligatures = {};
-    const setLigatures = (
-      position: SubColumnPosition,
-      row: CellRow,
-      length: number
-    ) => {
-      const columnsInTuning = columnsInBar;
-      for (let i = 0; i < length; i++) {
-        const columnIndex = (position.columnIndex + i) % columnsInTuning;
-
-        const barIndex =
-          position.barIndex +
-          Math.floor((position.columnIndex + i) / columnsInTuning);
-
-        console.log("indexes", { columnIndex, barIndex });
-        if (!lig[barIndex]) {
-          lig[barIndex] = {};
-        }
-        if (!lig[barIndex][columnIndex]) {
-          lig[barIndex][columnIndex] = {};
-        }
-        if (!lig[barIndex][columnIndex][row as number | "bass"]) {
-          lig[barIndex][columnIndex][row as number | "bass"] = {
-            ligatures: [],
-          };
-        }
-
-        const lengthOffset = position.subColumnIndex > 0 ? 0.5 : 0;
-
-        const rangeValue = i - lengthOffset;
-
-        const ligature: CellLigature = {
-          type: "middle",
-          fullLigatureLength: length,
-          range: {
-            // TODO: will need to update this once allow subcells ligatures
-            from: Math.max(0, rangeValue),
-            to: rangeValue + 1,
-          },
-        };
-
-        // const numberOfMiddleParts = length - 2;
-
-        if (i === 0) {
-          ligature.type = "start";
-          // ligature.range.from = 0;
-        } else if (i >= length - 1) {
-          ligature.type = "end";
-          ligature.range.to = length;
-        } else {
-          ligature.type = "middle";
-        }
-
-        lig[barIndex][columnIndex][row as number | "bass"]?.ligatures.push(
-          ligature
-        );
-      }
-    };
-    song.bars.forEach((bar, barIndex) => {
-      bar.columns.forEach((column, columnIndex) => {
-        column.melodic.forEach((cell) => {
-          cell.subCells.forEach((subCell, subCellIndex) => {
-            if (subCell.length && subCell.length > 1) {
-              setLigatures(
-                { barIndex, columnIndex, subColumnIndex: subCellIndex },
-                cell.row as number,
-                subCell.length
-              );
-            }
-          });
-        });
-
-        column.bass.subCells.forEach((subCell, subCellIndex) => {
-          if (subCell.length && subCell.length > 1) {
-            setLigatures(
-              { barIndex, columnIndex, subColumnIndex: subCellIndex },
-              "bass",
-              subCell.length
-            );
-          }
-        });
-      });
-    });
-
-    return lig;
-  }, [columnsInBar, song.bars]);
+  const ligatures = useLigatures({
+    columnsInTuning: columnsInBar,
+    bars: song.bars,
+  });
 
   console.log("activeCell", activeCell);
   console.log("ligatures", ligatures);
