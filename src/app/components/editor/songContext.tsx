@@ -1,25 +1,24 @@
 import { uniqBy } from "ramda";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import { groupByFn } from "../../../utils/fnUtils";
 import {
   Bass,
-  Column,
   Cell,
   CellBass,
   CellNote,
   CellRow,
+  Column,
   DefinedDirection,
   Direction,
   EmptyCell,
+  Ligatures,
   Song,
   SubCell,
   TimeSignature,
-  Ligatures,
-  CellLigature,
 } from "../../types";
-import { useTuningContext } from "./tuningContext";
 import { useLigatures } from "../useLigatures";
 import { saveSong } from "./actions";
-import { groupByFn, groupByProp } from "../../../utils/fnUtils";
+import { useTuningContext } from "./tuningContext";
 
 type CellPosition = {
   barIndex: number;

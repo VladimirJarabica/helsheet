@@ -73,7 +73,7 @@ const MelodicSettings = () => {
     setHoveredNote(null);
     setHoveredBass(null);
     setSelectedMelodicButtons(null);
-  }, [activeColumn]);
+  }, [activeColumn, column, tuning]);
 
   const handleAddSelectedNote = (note: Note) => {
     setSelectedNotes((sn) =>
@@ -383,7 +383,10 @@ const MelodicSettings = () => {
                               (button) => button.row === row.row
                             );
                             return (
-                              <div className="border-b border-black w-8 h-6 flex justify-center items-center">
+                              <div
+                                key={row.row}
+                                className="border-b border-black w-8 h-6 flex justify-center items-center"
+                              >
                                 {rowButtons
                                   .map((button) => button.button)
                                   .join(" ")}

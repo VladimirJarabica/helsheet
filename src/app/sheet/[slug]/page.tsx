@@ -1,4 +1,3 @@
-import { Sheet, Tuning } from "@prisma/client";
 import { dbClient } from "../../../services/db";
 import { getSheetIdFromParam } from "../../../utils/sheet";
 import Editor from "../../components/editor/Editor";
