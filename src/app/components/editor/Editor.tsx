@@ -8,7 +8,7 @@ import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider } from "./tuningContext";
 
 const SongWrapper = () => {
-  const { song, activeColumn, addBar } = useSongContext();
+  const { song, activeColumn, addBar, save } = useSongContext();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +31,16 @@ const SongWrapper = () => {
 
   return (
     <div className="h-[100vh] flex flex-col">
+      <div>
+        <button
+          className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
+          onClick={() => {
+            save();
+          }}
+        >
+          Uložiť
+        </button>
+      </div>
       <div
         className="w-full flex justify-center pt-10 overflow-y-auto flex-1"
         ref={wrapperRef}
@@ -57,15 +67,17 @@ const SongWrapper = () => {
 };
 
 interface EditorProps {
+  id: number;
+  editSecret?: string;
   song: Song;
   tuning: Tuning;
   readonly: boolean;
 }
-const Editor = ({ song, tuning, readonly }: EditorProps) => {
+const Editor = ({ id, editSecret, song, tuning, readonly }: EditorProps) => {
   console.log("readonly", readonly);
   return (
     <TuningContextProvider tuning={tuning}>
-      <SongContextProvider initialSong={song}>
+      <SongContextProvider id={id} editSecret={editSecret} initialSong={song}>
         <SongWrapper />
       </SongContextProvider>
     </TuningContextProvider>

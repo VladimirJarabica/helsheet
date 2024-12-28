@@ -18,6 +18,7 @@ const DirectionCell = ({
       className={`border border-black h-5
          ${hovered ? "bg-[#e3d9bc]" : ""}
         ${active ? "bg-[#dbc991]" : ""}
+        ${direction === "push" ? "bg-[#dfd5b7]" : ""}
         `}
       onMouseOver={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}

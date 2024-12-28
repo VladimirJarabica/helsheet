@@ -45,7 +45,6 @@ CellItemProps<Item>) => {
           <React.Fragment key={index}>
             {item.type === "note" && <div>{item.button}</div>}
             {item.type === "bass" && <div>{item.note.note}</div>}
-            {item.type === "empty" && <div>-</div>}
           </React.Fragment>
         ))}
     </div>

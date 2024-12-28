@@ -41,6 +41,7 @@ const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
         .map((cell, i) => (
           <Cell
             key={i}
+            column={column}
             lastColumn={last}
             cell={cell}
             barIndex={barIndex}
@@ -51,6 +52,7 @@ const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
         ))}
       <Cell
         lastColumn={last}
+        column={column}
         cell={column.bass}
         barIndex={barIndex}
         columnIndex={columnIndex}

@@ -1,4 +1,5 @@
 import { Sheet } from "@prisma/client";
+import { CellRow, Direction, Tuning } from "../app/types";
 
 export const getSheetUrl = (
   sheet: Pick<Sheet, "id" | "name" | "editSecret">
@@ -11,4 +12,23 @@ export const getSheetIdFromParam = (slug: string) => {
   const id = slug.split("_")[0];
   const parsed = parseInt(id, 10);
   return Number.isNaN(parsed) ? null : parsed;
+};
+
+export const getNoteFromTuningByButton = ({
+  button,
+  row,
+  direction,
+  tuning,
+}: {
+  button: number;
+  row: CellRow;
+  direction: Direction;
+  tuning: Tuning;
+}) => {
+  const melodic = tuning.melodic.find((m) => m.row === row);
+  if (!melodic || direction === "empty") {
+    return null;
+  }
+
+  return melodic.buttons[button - 1][direction];
 };

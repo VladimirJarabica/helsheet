@@ -18,6 +18,8 @@ import {
 } from "../../types";
 import { useTuningContext } from "./tuningContext";
 import { useLigatures } from "../useLigatures";
+import { saveSong } from "./actions";
+import { groupByFn, groupByProp } from "../../../utils/fnUtils";
 
 type CellPosition = {
   barIndex: number;
@@ -61,8 +63,10 @@ type SongContext = {
   addBar: () => void;
   duplicateBar: (barIndex: number) => void;
   removeBar: (barIndex: number) => void;
-  setLength: (length: number, row: CellRow) => void;
+  setLength: (length: number, row: CellRow, button: number) => void;
   setText: (text: string, position: ColumnPosition) => void;
+  save: () => void;
+  clearColumn: () => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -91,9 +95,13 @@ const songContext = createContext<SongContext>({
   removeBar: () => {},
   setLength: () => {},
   setText: () => {},
+  save: () => {},
+  clearColumn: () => {},
 });
 
 interface SongContextProviderProps {
+  id: number;
+  editSecret?: string;
   children: React.ReactNode;
   initialSong: Song;
 }
@@ -104,6 +112,8 @@ const COLUMNS_FOR_TIME_SIGNATURES: Record<TimeSignature, number> = {
   "2/4": 4,
 };
 export const SongContextProvider = ({
+  id,
+  editSecret,
   children,
   initialSong,
 }: SongContextProviderProps) => {
@@ -117,6 +127,12 @@ export const SongContextProvider = ({
   const columnsInBar = COLUMNS_FOR_TIME_SIGNATURES[song.timeSignature];
 
   console.log("song", song);
+
+  const save = async () => {
+    if (editSecret) {
+      await saveSong({ id, editSecret, song });
+    }
+  };
 
   const addBar = () => {
     setSong((prev) => ({
@@ -262,6 +278,14 @@ export const SongContextProvider = ({
     setColumn(newColumn, activeColumn);
   };
 
+  const clearColumn = () => {
+    if (!activeColumn) return;
+
+    const oldColumn =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+    setColumn(getEmptyColumn(oldColumn), activeColumn);
+  };
+
   const setMelodicButtons = (
     buttons: { row: number; button: number }[],
     direction: DefinedDirection
@@ -281,22 +305,29 @@ export const SongContextProvider = ({
           return {
             ...cell,
             subCells: cell.subCells.map<SubCell<CellNote | EmptyCell>>(
-              (subCell, index) => ({
-                ...subCell,
-                items:
-                  index === activeColumn.subColumnIndex
-                    ? rowButton
-                        .map<CellNote>((button) => ({
-                          type: "note",
-                          button: button.button,
-                        }))
-                        .toSorted((a, b) =>
-                          a.type === "note" && b.type === "note"
-                            ? b.button - a.button
-                            : 0
-                        )
-                    : subCell.items,
-              })
+              (subCell, index) => {
+                const existingItems = groupByFn<CellNote | EmptyCell>((item) =>
+                  item.type === "note" ? item.button.toString() : "empty"
+                )(subCell.items);
+                console.log("existingItems", existingItems);
+                return {
+                  ...subCell,
+                  items:
+                    index === activeColumn.subColumnIndex
+                      ? rowButton
+                          .map<CellNote>((button) => ({
+                            ...existingItems[button.button.toString()],
+                            type: "note",
+                            button: button.button,
+                          }))
+                          .toSorted((a, b) =>
+                            a.type === "note" && b.type === "note"
+                              ? b.button - a.button
+                              : 0
+                          )
+                      : subCell.items,
+                };
+              }
             ),
           };
         }
@@ -436,11 +467,7 @@ export const SongContextProvider = ({
     setColumn(newColumn, activeColumn);
   };
 
-  const setLength = (
-    length: number,
-    row: number,
-    subColumnPosition: SubColumnPosition
-  ) => {
+  const setLength = (length: number, row: CellRow, button: number) => {
     if (!activeColumn) return;
 
     const oldColumn =
@@ -455,29 +482,34 @@ export const SongContextProvider = ({
                 index === activeColumn.subColumnIndex
                   ? {
                       ...subCell,
+                      items: subCell.items.map((item) =>
+                        item.type === "note" && item.button === button
+                          ? { ...item, length }
+                          : item
+                      ),
                       // TODO: allow length: 1 only if cell is split
-                      length: length > 1 ? length : undefined,
+                      // length: length > 1 ? length : undefined,
                     }
                   : subCell
               ),
             }
           : cell
       ),
-      bass:
-        row === "bass"
-          ? {
-              ...oldColumn.bass,
-              subCells: oldColumn.bass.subCells.map((subCell, index) =>
-                index === activeColumn.subColumnIndex
-                  ? {
-                      ...subCell,
-                      // TODO: allow length: 1 only if cell is split
-                      length: length > 1 ? length : undefined,
-                    }
-                  : subCell
-              ),
-            }
-          : oldColumn.bass,
+      // bass:
+      //   row === "bass"
+      //     ? {
+      //         ...oldColumn.bass,
+      //         subCells: oldColumn.bass.subCells.map((subCell, index) =>
+      //           index === activeColumn.subColumnIndex
+      //             ? {
+      //                 ...subCell,
+      //                 // TODO: allow length: 1 only if cell is split
+      //                 length: length > 1 ? length : undefined,
+      //               }
+      //             : subCell
+      //         ),
+      //       }
+      //     : oldColumn.bass,
     };
 
     console.log("newColumn", newColumn);
@@ -518,6 +550,8 @@ export const SongContextProvider = ({
           removeBar,
           setLength,
           setText,
+          save,
+          clearColumn,
         }}
       >
         {children}

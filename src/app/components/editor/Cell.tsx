@@ -1,7 +1,19 @@
 "use client";
-import { CellItem, Cell as CellType } from "./../../types";
+import { CellItem, Cell as CellType, Column } from "./../../types";
 import { useSongContext } from "./songContext";
 import SubCell from "./SubCell";
+
+const LIGATURE_POSITIONS_BASE: {
+  [ofNotes: number]: { [current: number]: number };
+} = {
+  1: {
+    1: 70, // If cell has one note, the ligature at note 1 is at x% of the cell height
+  },
+  2: {
+    1: 50, // If cell has two notes, the ligature at note 1 is at x% of the cell height
+    2: 90, // If cell has two notes, the ligature at note 2 is at x% of the cell height
+  },
+};
 
 interface ColumnCellProps<Item extends CellItem> {
   lastColumn: boolean;
@@ -10,11 +22,13 @@ interface ColumnCellProps<Item extends CellItem> {
   columnIndex: number;
   setHoveredSubColumnIndex: (index: number | null) => void;
   hoveredSubColumnIndex: number | null;
+  column: Column;
 }
 
 const Cell = <Item extends CellItem>({
   lastColumn,
   cell,
+  column,
   barIndex,
   columnIndex,
   setHoveredSubColumnIndex,
@@ -34,20 +48,26 @@ const Cell = <Item extends CellItem>({
     <div
       className={`flex border border-black h-11 border-b-0 cursor-pointer relative ${
         lastColumn ? "" : "border-r-0"
-      }`}
+      }
+      ${column.direction === "push" ? "bg-[#dfd5b7]" : ""}
+      `}
     >
       {cellLigatures?.ligatures &&
         cellLigatures.ligatures.map((ligature, i) => {
           const length = ligature.range.to - ligature.range.from;
+          const position =
+            LIGATURE_POSITIONS_BASE[ligature.position.ofNotes]?.[
+              ligature.position.current
+            ];
           return (
             <div
               key={i}
               className={`
               absolute
-              w-full
+              ${ligature.type === "middle" ? "w-full" : ""}
+              
               h-[1px]
               bg-black
-              top-3/4
   
               ${ligature.type === "start" ? "w-1/2 left-1/2" : ""}
               ${
@@ -63,6 +83,9 @@ const Cell = <Item extends CellItem>({
                   : ""
               }
               `}
+              style={{
+                top: position ? `${position}%` : "70%",
+              }}
             />
           );
         })}
