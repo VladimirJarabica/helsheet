@@ -7,13 +7,15 @@ const LIGATURE_POSITIONS_BASE: {
   [ofNotes: number]: { [current: number]: number };
 } = {
   1: {
-    1: 70, // If cell has one note, the ligature at note 1 is at x% of the cell height
+    1: 65, // If cell has one note, the ligature at note 1 is at x% of the cell height
   },
   2: {
-    1: 50, // If cell has two notes, the ligature at note 1 is at x% of the cell height
-    2: 90, // If cell has two notes, the ligature at note 2 is at x% of the cell height
+    1: 25, // If cell has two notes, the ligature at note 1 is at x% of the cell height
+    2: 75, // If cell has two notes, the ligature at note 2 is at x% of the cell height
   },
 };
+
+const CELL_SIZE = 44;
 
 interface ColumnCellProps<Item extends CellItem> {
   lastColumn: boolean;
@@ -52,38 +54,71 @@ const Cell = <Item extends CellItem>({
       {cellLigatures?.ligatures &&
         cellLigatures.ligatures.map((ligature, i) => {
           const length = ligature.range.to - ligature.range.from;
+          const cellWidth = hasMultipleSubcells ? CELL_SIZE / 2 : CELL_SIZE;
           const position =
             LIGATURE_POSITIONS_BASE[ligature.position.ofNotes]?.[
               ligature.position.current
             ];
+
+          const isStart = ligature.type === "start";
+          const isEnd = ligature.type === "end";
+          const isMiddle = ligature.type === "middle";
+
+          const svgFullLigatureWidth = CELL_SIZE * ligature.fullLigatureLength;
+          let svgLigatureOffset = CELL_SIZE * ligature.range.from;
+          const svgWidth = isStart || isEnd ? cellWidth / 2 : cellWidth;
+          if (isStart) {
+            svgLigatureOffset += svgWidth;
+          }
+
           return (
-            <div
+            <svg
               key={i}
-              className={`
-              absolute
-              ${ligature.type === "middle" ? "w-full" : ""}
-              
-              h-[1px]
-              bg-black
-  
-              ${ligature.type === "start" ? "w-1/2 left-1/2" : ""}
-              ${
-                ligature.type === "start" && length === 0.5
-                  ? "w-1/4 left-3/4"
-                  : ""
-              }
-              ${ligature.type === "end" ? "w-3/4" : ""}
-              ${ligature.type === "end" && length === 0.5 ? "w-1/4" : ""}
-              ${
-                hasMultipleSubcells && ligature.type === "end" && length === 1
-                  ? "w-3/4"
-                  : ""
-              }
-              `}
-              style={{
-                top: position ? `${position}%` : "70%",
-              }}
-            />
+              className={`absolute z-10
+                  ${isStart ? "right-0" : ""}
+                  ${isEnd ? "left-0" : ""}
+                  `}
+              width={svgWidth}
+              height={CELL_SIZE * 2}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d={`M ${-svgLigatureOffset},${
+                  (CELL_SIZE * position) / 100
+                } A ${svgFullLigatureWidth},100 0 0 0 ${
+                  svgFullLigatureWidth - svgLigatureOffset
+                },${(CELL_SIZE * position) / 100}`}
+                fill="none"
+                stroke="black"
+                stroke-width="1"
+              />
+            </svg>
+            // <div
+            //   className={`
+            // absolute
+            // ${ligature.type === "middle" ? "w-full" : ""}
+
+            // h-[1px]
+            // bg-black
+
+            // ${ligature.type === "start" ? "w-1/2 left-1/2" : ""}
+            // ${
+            //   ligature.type === "start" && length === 0.5
+            //     ? "w-1/4 left-3/4"
+            //     : ""
+            // }
+            // ${ligature.type === "end" ? "w-3/4" : ""}
+            // ${ligature.type === "end" && length === 0.5 ? "w-1/4" : ""}
+            // ${
+            //   hasMultipleSubcells && ligature.type === "end" && length === 1
+            //     ? "w-3/4"
+            //     : ""
+            // }
+            // `}
+            //   style={{
+            //     top: position ? `${position}%` : "70%",
+            //   }}
+            // />
           );
         })}
       {cell.subCells.map((subCell, i) => {

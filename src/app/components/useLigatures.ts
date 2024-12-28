@@ -87,8 +87,9 @@ export const useLigatures = ({
               const isMulti = subCell.items.length > 1;
               if (
                 "length" in subCellItem &&
-                subCellItem.length &&
-                (isMulti ? subCellItem.length > 0.5 : subCellItem.length > 1)
+                subCellItem.length
+                // &&
+                // (isMulti ? subCellItem.length > 0.5 : subCellItem.length > 1)
               ) {
                 setLigatures({
                   position: {
