@@ -32,14 +32,7 @@ const MelodicSettings = () => {
 
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
 
-  const [hoveredNote, setHoveredNote] = useState<Note | null>(
-    null
-    //   {
-    //   note: "c",
-    //   pitch: 2,
-
-    // }
-  );
+  const [hoveredNote, setHoveredNote] = useState<Note | null>(null);
 
   const [selectedMelodicButtons, setSelectedMelodicButtons] = useState<{
     buttons: { row: number; button: number }[];
@@ -53,7 +46,6 @@ const MelodicSettings = () => {
   const direction: Direction = column?.direction ?? "empty";
 
   useEffect(() => {
-    console.log("use effect", activeColumn, column);
     setSelectedNotes(
       activeColumn && column
         ? column?.melodic.flatMap((cell) =>
@@ -120,8 +112,6 @@ const MelodicSettings = () => {
           row: row.row,
         }));
     });
-    console.log("pullButtons", pullButtons);
-    console.log("pushButtons", pushButtons);
 
     const getSuggestion = <B extends TuningNoteButton>(
       notes: Note[],
@@ -139,11 +129,6 @@ const MelodicSettings = () => {
       );
 
       const restSuggestions = getSuggestion(restNotes, buttons, direction);
-      console.log("get suggestions", {
-        firstNote,
-        noteButtons,
-        restSuggestions,
-      });
 
       if (restSuggestions.length === 0) {
         return noteButtons.map((noteButton) => [noteButton]);
@@ -158,14 +143,6 @@ const MelodicSettings = () => {
       //   ...getSuggestion(restNotes, buttons, direction),
       // ]);
     };
-    // console.log(
-    //   "Pull suggestion",
-    //   getSuggestion(selectedNotes, pullButtons, "pull")
-    // );
-    console.log(
-      "Push suggestion",
-      getSuggestion(selectedNotes, pushButtons, "push")
-    );
 
     return {
       push: getSuggestion(selectedNotes, pushButtons, "push").filter(
@@ -210,7 +187,6 @@ const MelodicSettings = () => {
                   const subCells = column.melodic[row.row - 1].subCells;
                   const items = subCells[activeColumn.subColumnIndex].items;
 
-                  console.log("items", { column, row, items });
                   return (
                     <div key={row.row}>
                       <div>Rad {row.row}</div>
@@ -226,11 +202,6 @@ const MelodicSettings = () => {
                                 className="bg-transparent"
                                 value={length}
                                 onChange={(e) => {
-                                  console.log(
-                                    e.target.value,
-                                    typeof e.target.value,
-                                    parseFloat(e.target.value)
-                                  );
                                   setLength(
                                     parseFloat(e.target.value),
                                     row.row,
@@ -435,14 +406,12 @@ const MelodicSettings = () => {
                             item.type === "bass" ? item.note.note : null
                           )
                         );
-                        console.log("activeBasses", activeBasses);
                         return (
                           <div key={row.row} className="flex flex-col">
                             {row.buttons.map((button) => (
                               <MelodeonButton
                                 key={button.button}
                                 onClick={(direction) => {
-                                  console.log("clicked");
                                   // const note =
                                   //   direction === "pull" ? button.pull : button.push;
                                   setBassButton(button[direction], direction);
@@ -516,7 +485,6 @@ const MelodicSettings = () => {
                               <MelodeonButton
                                 key={row.row + button.button}
                                 onClick={(direction) => {
-                                  console.log("clicked");
                                   // setMelodicButton(row.row, button.button, direction);
                                   handleAddSelectedNote(button[direction]);
                                 }}

@@ -35,7 +35,6 @@ export const useLigatures = ({
           position.barIndex +
           Math.floor((position.columnIndex + i) / columnsInTuning);
 
-        console.log("indexes", { columnIndex, barIndex });
         if (!lig[barIndex]) {
           lig[barIndex] = {};
         }
@@ -130,8 +129,6 @@ export const useLigatures = ({
 
     return lig;
   }, [bars, columnsInTuning]);
-
-  console.log("ligatures", ligatures);
 
   return ligatures;
 };

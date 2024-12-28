@@ -26,11 +26,15 @@ CellItemProps<Item>) => {
   const items = subCell.items;
   return (
     <div
-      className={`flex flex-1 items-center flex-col justify-around ${
+      className={`flex flex-1 items-center flex-col justify-around leading-none ${
         !isFirst ? "border-l border-gray-700 border-dotted" : ""
       }
         ${isActive && false ? "bg-green-50" : ""}
-        ${items.length > 2 ? "text-xs leading-none" : ""}
+        ${items.length === 1 ? "text-3xl" : ""}
+        ${items.length === 2 ? "text-xl" : ""}
+        ${items.length === 3 ? "text-sm" : ""}
+        ${items.length === 4 ? "text-[11px]" : ""}
+        ${items.length > 4 ? "text-[8.5px]" : ""}
         ${hovered && false ? "bg-purple-100" : ""}
         ${hovered ? "bg-[#e3d9bc]" : ""}
         ${isActive ? "bg-[#dbc991]" : ""}

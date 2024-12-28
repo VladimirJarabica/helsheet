@@ -38,9 +38,6 @@ const Cell = <Item extends CellItem>({
 
   const cellLigatures =
     ligatures[barIndex]?.[columnIndex]?.[cell.row as number | "bass"];
-  if (cellLigatures) {
-    console.log("cellLigatures", cellLigatures, cell, barIndex, columnIndex);
-  }
 
   const hasMultipleSubcells = cell.subCells.length > 1;
 
@@ -75,7 +72,7 @@ const Cell = <Item extends CellItem>({
                   ? "w-1/4 left-3/4"
                   : ""
               }
-              ${ligature.type === "end" ? "w-1/2" : ""}
+              ${ligature.type === "end" ? "w-3/4" : ""}
               ${ligature.type === "end" && length === 0.5 ? "w-1/4" : ""}
               ${
                 hasMultipleSubcells && ligature.type === "end" && length === 1
@@ -103,7 +100,6 @@ const Cell = <Item extends CellItem>({
             isFirst={i === 0}
             isActive={!!isSubCellActive}
             onClick={() => {
-              console.log("on click");
               // setActiveCell(cellPosition);
               // setActiveSubCell(i);
               setActiveColumn({

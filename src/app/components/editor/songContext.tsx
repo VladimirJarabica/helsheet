@@ -125,8 +125,6 @@ export const SongContextProvider = ({
 
   const columnsInBar = COLUMNS_FOR_TIME_SIGNATURES[song.timeSignature];
 
-  console.log("song", song);
-
   const save = async () => {
     if (editSecret) {
       await saveSong({ id, editSecret, song });
@@ -308,7 +306,6 @@ export const SongContextProvider = ({
                 const existingItems = groupByFn<CellNote | EmptyCell>((item) =>
                   item.type === "note" ? item.button.toString() : "empty"
                 )(subCell.items);
-                console.log("existingItems", existingItems);
                 return {
                   ...subCell,
                   items:
@@ -511,8 +508,6 @@ export const SongContextProvider = ({
       //     : oldColumn.bass,
     };
 
-    console.log("newColumn", newColumn);
-
     setColumn(newColumn, activeColumn);
   };
 
@@ -520,9 +515,6 @@ export const SongContextProvider = ({
     columnsInTuning: columnsInBar,
     bars: song.bars,
   });
-
-  console.log("activeCell", activeCell);
-  console.log("ligatures", ligatures);
 
   return (
     <div>

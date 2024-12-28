@@ -20,7 +20,6 @@ const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
   const [hoveredSubColumnIndex, setHoveredSubColumnIndex] = useState<
     number | null
   >(null);
-  console.log("hoveredSubColumnIndex", hoveredSubColumnIndex);
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (ref.current) {
