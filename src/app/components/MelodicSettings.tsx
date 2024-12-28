@@ -37,6 +37,7 @@ const MelodicSettings = () => {
     //   {
     //   note: "c",
     //   pitch: 2,
+
     // }
   );
 
