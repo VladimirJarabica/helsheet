@@ -62,7 +62,12 @@ type SongContext = {
   addBar: () => void;
   duplicateBar: (barIndex: number) => void;
   removeBar: (barIndex: number) => void;
-  setLength: (length: number, row: CellRow, button: number) => void;
+  setLength: (
+    length: number,
+    position:
+      | { row: Exclude<CellRow, "bass">; button: number; bass?: never }
+      | { row: "bass"; bass: Bass; button?: never }
+  ) => void;
   setText: (text: string, position: ColumnPosition) => void;
   save: () => void;
   clearColumn: () => void;
@@ -463,23 +468,54 @@ export const SongContextProvider = ({
     setColumn(newColumn, activeColumn);
   };
 
-  const setLength = (length: number, row: CellRow, button: number) => {
+  const setLength = (
+    length: number,
+    position:
+      | { row: Exclude<CellRow, "bass">; button: number; bass?: never }
+      | { row: "bass"; bass: Bass; button?: never }
+  ) => {
     if (!activeColumn) return;
 
     const oldColumn =
       song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
     const newColumn: Column = {
       ...oldColumn,
-      melodic: oldColumn.melodic.map((cell) =>
-        cell.row === row
+      melodic:
+        position.row !== "bass"
+          ? oldColumn.melodic.map((cell) =>
+              cell.row === position.row
+                ? {
+                    ...cell,
+                    subCells: cell.subCells.map((subCell, index) =>
+                      index === activeColumn.subColumnIndex
+                        ? {
+                            ...subCell,
+                            items: subCell.items.map((item) =>
+                              item.type === "note" &&
+                              item.button === position.button
+                                ? { ...item, length }
+                                : item
+                            ),
+                            // TODO: allow length: 1 only if cell is split
+                            // length: length > 1 ? length : undefined,
+                          }
+                        : subCell
+                    ),
+                  }
+                : cell
+            )
+          : oldColumn.melodic,
+      bass:
+        position.row === "bass"
           ? {
-              ...cell,
-              subCells: cell.subCells.map((subCell, index) =>
+              ...oldColumn.bass,
+              subCells: oldColumn.bass.subCells.map((subCell, index) =>
                 index === activeColumn.subColumnIndex
                   ? {
                       ...subCell,
                       items: subCell.items.map((item) =>
-                        item.type === "note" && item.button === button
+                        item.type === "bass" &&
+                        item.note.note === position.bass.note
                           ? { ...item, length }
                           : item
                       ),
@@ -489,23 +525,7 @@ export const SongContextProvider = ({
                   : subCell
               ),
             }
-          : cell
-      ),
-      // bass:
-      //   row === "bass"
-      //     ? {
-      //         ...oldColumn.bass,
-      //         subCells: oldColumn.bass.subCells.map((subCell, index) =>
-      //           index === activeColumn.subColumnIndex
-      //             ? {
-      //                 ...subCell,
-      //                 // TODO: allow length: 1 only if cell is split
-      //                 length: length > 1 ? length : undefined,
-      //               }
-      //             : subCell
-      //         ),
-      //       }
-      //     : oldColumn.bass,
+          : oldColumn.bass,
     };
 
     setColumn(newColumn, activeColumn);

@@ -10,10 +10,11 @@ const LIGATURE_POSITIONS_BASE: {
     1: 80, // If cell has one note, the ligature at note 1 is at x% of the cell height
   },
   2: {
-    1: 25, // If cell has two notes, the ligature at note 1 is at x% of the cell height
-    2: 75, // If cell has two notes, the ligature at note 2 is at x% of the cell height
+    1: 45, // If cell has two notes, the ligature at note 1 is at x% of the cell height
+    2: 90, // If cell has two notes, the ligature at note 2 is at x% of the cell height
   },
-  3: { 1: 25, 2: 50, 3: 75 },
+  3: { 1: 30, 2: 65, 3: 95 },
+  4: { 1: 25, 2: 48, 3: 71, 4: 94 },
   // TODO: 4 and 5 notes
 };
 
@@ -43,8 +44,6 @@ const Cell = <Item extends CellItem>({
   const cellLigatures =
     ligatures[barIndex]?.[columnIndex]?.[cell.row as number | "bass"];
 
-  const hasMultipleSubcells = cell.subCells.length > 1;
-
   return (
     <div
       className={`flex border border-black h-11 border-b-0 cursor-pointer relative ${
@@ -70,7 +69,7 @@ const Cell = <Item extends CellItem>({
 
             const svgFullLigatureWidth =
               CELL_SIZE * ligature.renderLigatureLength;
-            let svgLigatureOffset = isStart
+            const svgLigatureOffset = isStart
               ? -(CELL_SIZE * ligature.startOffset)
               : CELL_SIZE * ligature.renderRange.from;
 

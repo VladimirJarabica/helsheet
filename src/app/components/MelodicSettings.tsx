@@ -202,11 +202,10 @@ const MelodicSettings = () => {
                                 className="bg-transparent"
                                 value={length}
                                 onChange={(e) => {
-                                  setLength(
-                                    parseFloat(e.target.value),
-                                    row.row,
-                                    item.button
-                                  );
+                                  setLength(parseFloat(e.target.value), {
+                                    row: row.row,
+                                    button: item.button,
+                                  });
                                 }}
                               >
                                 {new Array(16).fill(0).map((_, i) => {
@@ -225,6 +224,46 @@ const MelodicSettings = () => {
                     </div>
                   );
                 })}
+                <div>
+                  <div>Basy</div>
+                  {
+                    // const subCells = column.melodic[row.row - 1].subCells;
+                    column.bass.subCells[activeColumn.subColumnIndex].items.map(
+                      (item) => {
+                        if (item.type === "bass") {
+                          const length =
+                            // If split, allow minimum 0.5 length, 1 otherwise
+                            item.length ??
+                            (column.bass.subCells.length > 1 ? 0.5 : 1);
+                          return (
+                            <div key={item.note.note}>
+                              {item.note.note}
+                              <select
+                                className="bg-transparent"
+                                value={length}
+                                onChange={(e) => {
+                                  setLength(parseFloat(e.target.value), {
+                                    row: "bass",
+                                    bass: item.note,
+                                  });
+                                }}
+                              >
+                                {new Array(16).fill(0).map((_, i) => {
+                                  const val = (i + 1) / 2;
+                                  return (
+                                    <option key={val} value={val}>
+                                      {val}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </div>
+                          );
+                        }
+                      }
+                    )
+                  }
+                </div>
               </div>
             </>
           )}

@@ -1,6 +1,6 @@
 "use client";
 import { Tuning } from "@prisma/client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Song } from "../../types";
 import MelodicSettings from "../MelodicSettings";
 import Bar from "./Bar";
@@ -95,7 +95,7 @@ interface EditorProps {
   tuning: Tuning;
   readonly: boolean;
 }
-const Editor = ({ id, editSecret, song, tuning, readonly }: EditorProps) => {
+const Editor = ({ id, editSecret, song, tuning }: EditorProps) => {
   return (
     <TuningContextProvider tuning={tuning}>
       <SongContextProvider id={id} editSecret={editSecret} initialSong={song}>
