@@ -32,7 +32,18 @@ const DirectionCell = ({
       {/* {direction === "pull" && previousDirection !== direction && ( */}
       {direction !== "empty" && (
         <div
-          className="flex items-center h-full"
+          className={`flex items-center h-full
+            ${
+              direction === "pull" && followingDirection !== direction
+                ? "pr-1"
+                : ""
+            }
+            ${
+              direction === "push" && previousDirection !== direction
+                ? "pl-1"
+                : ""
+            }
+            `}
           style={{ lineHeight: DIRECTION_CELL_SIZE + "px", fontSize: "14px" }}
         >
           {/* ◄<div className="w-full" /> */}
