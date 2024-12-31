@@ -78,7 +78,6 @@ export const empty: Song = {
           text: null,
         },
       ],
-      repeat: null,
     },
   ],
 };

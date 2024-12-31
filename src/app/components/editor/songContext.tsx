@@ -2,6 +2,7 @@ import { uniqBy } from "ramda";
 import { createContext, useContext, useState } from "react";
 import { groupByFn } from "../../../utils/fnUtils";
 import {
+  Bar,
   Bass,
   Cell,
   CellBass,
@@ -71,6 +72,10 @@ type SongContext = {
   setText: (text: string, position: ColumnPosition) => void;
   save: () => void;
   clearColumn: () => void;
+  setRepeatOfBar: (
+    barIndex: number,
+    repeat: Exclude<Bar["repeat"], undefined>
+  ) => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -101,6 +106,7 @@ const songContext = createContext<SongContext>({
   setText: () => {},
   save: () => {},
   clearColumn: () => {},
+  setRepeatOfBar: () => {},
 });
 
 interface SongContextProviderProps {
@@ -154,7 +160,6 @@ export const SongContextProvider = ({
             direction: "empty",
             text: null,
           })),
-          repeat: null,
         },
       ],
     }));
@@ -531,6 +536,18 @@ export const SongContextProvider = ({
     setColumn(newColumn, activeColumn);
   };
 
+  const setRepeatOfBar = (
+    barIndex: number,
+    repeat: Exclude<Bar["repeat"], undefined>
+  ) => {
+    setSong((prev) => ({
+      ...prev,
+      bars: prev.bars.map((bar, index) =>
+        index === barIndex ? { ...bar, repeat } : bar
+      ),
+    }));
+  };
+
   const ligatures = useLigatures({
     columnsInTuning: columnsInBar,
     bars: song.bars,
@@ -563,6 +580,7 @@ export const SongContextProvider = ({
           setText,
           save,
           clearColumn,
+          setRepeatOfBar,
         }}
       >
         {children}

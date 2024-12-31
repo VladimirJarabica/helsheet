@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Bar as BarType } from "./../../types";
 import Column from "./Column";
 import { useSongContext } from "./songContext";
+import RepeatSign from "./RepeatSign";
 
 interface BarProps {
   bar: BarType;
@@ -10,7 +11,7 @@ interface BarProps {
   barIndex: number;
 }
 const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
-  const { duplicateBar, removeBar } = useSongContext();
+  const { duplicateBar, removeBar, setRepeatOfBar } = useSongContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -32,8 +33,21 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
     };
   });
 
+  const handleChangeRepeat = (
+    type: keyof Exclude<BarType["repeat"], undefined>
+  ) => {
+    setRepeatOfBar(barIndex, {
+      start: false,
+      end: false,
+      ...bar.repeat,
+      [type]: !bar.repeat?.[type],
+    });
+  };
+
   return (
     <div className="group flex relative">
+      {bar.repeat?.start && <RepeatSign type="start" />}
+      {bar.repeat?.end && <RepeatSign type="end" />}
       {bar.columns.map((column, i) => (
         <Column
           key={i}
@@ -48,7 +62,7 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
           }
         />
       ))}
-      <div className="absolute right-0 top-0 bg-transparent" ref={menuRef}>
+      <div className="absolute right-0 top-0 bg-transparent z-10" ref={menuRef}>
         {!isMenuOpen && (
           <button
             className="border border-black hidden group-hover:block px-2 text-xs rounded-md bg-[#e3d9bc] shadow"
@@ -75,6 +89,26 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
               className="px-2 hover:bg-[#dbc991]"
             >
               Vymazať takt
+            </button>
+            <button
+              onClick={() => {
+                handleChangeRepeat("start");
+              }}
+              className="px-2 hover:bg-[#dbc991]"
+            >
+              {bar.repeat?.start
+                ? "Zrušiť začiatok opakovania"
+                : "Začať opakovanie"}
+            </button>
+            <button
+              onClick={() => {
+                handleChangeRepeat("end");
+              }}
+              className="px-2 hover:bg-[#dbc991]"
+            >
+              {bar.repeat?.end
+                ? "Zrušiť koniec opakovania"
+                : "Ukončiť opakovanie"}
             </button>
           </div>
         )}

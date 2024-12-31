@@ -1,4 +1,5 @@
 "use client";
+import { CELL_SIZE } from "../../../utils/variables";
 import { CellItem, Cell as CellType, Column } from "./../../types";
 import { useSongContext } from "./songContext";
 import SubCell from "./SubCell";
@@ -17,8 +18,6 @@ const LIGATURE_POSITIONS_BASE: {
   4: { 1: 25, 2: 48, 3: 71, 4: 94 },
   // TODO: 4 and 5 notes
 };
-
-const CELL_SIZE = 44;
 
 interface ColumnCellProps<Item extends CellItem> {
   lastColumn: boolean;

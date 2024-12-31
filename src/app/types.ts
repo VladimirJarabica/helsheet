@@ -115,7 +115,10 @@ export type Column = {
 
 export type Bar = {
   columns: Column[];
-  repeat: "start" | "end" | null;
+  repeat?: {
+    start: boolean;
+    end: boolean;
+  };
 };
 
 export type TimeSignature = "3/4" | "4/4" | "2/4";
