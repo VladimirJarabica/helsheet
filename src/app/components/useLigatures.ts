@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import {
   Bar,
+  Cell,
+  CellItem,
   CellLigature,
-  CellLigaturePosition,
-  CellRow,
   Ligatures,
+  SubCell,
 } from "../types";
-import { SubColumnPosition } from "./editor/songContext";
 
 export const useLigatures = ({
   columnsInTuning,
@@ -17,18 +17,59 @@ export const useLigatures = ({
 }) => {
   const ligatures = useMemo(() => {
     const lig: Ligatures = {};
-    const setLigatures = ({
-      position,
-      row,
-      length,
-      cellLigaturePosition,
+    const setLigatures = <Item extends CellItem>({
+      barIndex,
+      columnIndex,
+      subCellIndex,
+      subCellItemIndex,
+      cell,
+      subCell,
+      subCellItem,
     }: {
-      position: SubColumnPosition;
-      row: CellRow;
-      length: number;
-      cellLigaturePosition: CellLigaturePosition;
+      barIndex: number;
+      columnIndex: number;
+      subCellIndex: number;
+      subCellItemIndex: number;
+      cell: Cell<Item>;
+      subCell: SubCell<Item>;
+      subCellItem: Item;
     }) => {
-      for (let i = 0; i < length; i++) {
+      if (!("length" in subCellItem) || !subCellItem.length) {
+        return;
+      }
+
+      const row = cell.row;
+      const isMulti = cell.subCells.length > 1;
+      const isFirstSubCell = subCellIndex === 0;
+      const position = {
+        barIndex,
+        columnIndex,
+        subColumnIndex: subCellIndex,
+      };
+      const cellLigaturePosition = {
+        current: subCellItemIndex + 1,
+        ofNotes: subCell.items.length,
+      };
+
+      const length = subCellItem.length;
+
+      const startOffset = isMulti ? (isFirstSubCell ? 0.25 : 0.75) : 0.5;
+
+      // Get length of the last column in the ligature. Either 1 or 0.5
+      const endColumnLength =
+        (subCellItem.length -
+          // If starting subcell is is second subcolumn, it takes only 0.5 of the length
+          (!isFirstSubCell ? -0.5 : 0)) %
+          1 || 1;
+
+      const endOffset =
+        subCellItem.length === 1 ? 0.25 : endColumnLength === 0.5 ? 0.75 : 0.5; // TODO ifEndColumnIsMulti ? 0.25 : 0.5;
+
+      const numberOfCells = Math.ceil((subCellIndex > 0 ? 0.5 : 0) + length);
+      let renderLigatureLength =
+        Math.ceil(numberOfCells) - startOffset - endOffset;
+      let lastRenderLigature = 0;
+      for (let i = 0; i < numberOfCells; i++) {
         const columnIndex = (position.columnIndex + i) % columnsInTuning;
 
         const barIndex =
@@ -55,24 +96,31 @@ export const useLigatures = ({
           type: "middle",
           fullLigatureLength: length,
           position: cellLigaturePosition,
-          range: {
-            // TODO: will need to update this once allow subcells ligatures
-            from: Math.max(0, rangeValue),
-            to: rangeValue + 1,
+          range: { from: Math.max(0, rangeValue), to: rangeValue + 1 },
+          renderLigatureLength,
+          startOffset,
+          renderRange: {
+            from: 0,
+            to: 0,
           },
         };
 
-        // const numberOfMiddleParts = length - 2;
-
         if (i === 0) {
           ligature.type = "start";
-          // ligature.range.from = 0;
-        } else if (i >= length - 1) {
+          ligature.renderRange.from = 0;
+          ligature.renderRange.to = 1 - startOffset;
+        } else if (i >= numberOfCells - 1) {
           ligature.type = "end";
           ligature.range.to = length;
+          ligature.renderRange.from = lastRenderLigature;
+          ligature.renderRange.to = lastRenderLigature + 1 - endOffset;
         } else {
           ligature.type = "middle";
+          ligature.renderRange.from = lastRenderLigature;
+          ligature.renderRange.to = lastRenderLigature + 1;
         }
+
+        lastRenderLigature = ligature.renderRange.to;
 
         lig[barIndex][columnIndex][row as number | "bass"]?.ligatures.push(
           ligature
@@ -84,52 +132,39 @@ export const useLigatures = ({
         column.melodic.forEach((cell) => {
           cell.subCells.forEach((subCell, subCellIndex) => {
             subCell.items.forEach((subCellItem, subCellItemIndex) => {
-              const isMulti = subCell.items.length > 1;
-              if (
-                "length" in subCellItem &&
-                subCellItem.length
-                // &&
-                // (isMulti ? subCellItem.length > 0.5 : subCellItem.length > 1)
-              ) {
-                setLigatures({
-                  position: {
-                    barIndex,
-                    columnIndex,
-                    subColumnIndex: subCellIndex,
-                  },
-                  row: cell.row as number,
-                  length: subCellItem.length,
-                  cellLigaturePosition: {
-                    current: subCellItemIndex + 1,
-                    ofNotes: subCell.items.length,
-                  },
-                });
-              }
+              setLigatures({
+                barIndex,
+                columnIndex,
+                subCellIndex,
+                subCellItemIndex,
+                cell,
+                subCell,
+                subCellItem,
+              });
             });
-            // if (subCell.length && subCell.length > 1) {
-            //   setLigatures(
-            //     { barIndex, columnIndex, subColumnIndex: subCellIndex },
-            //     cell.row as number,
-            //     subCell.length
-            //   );
-            // }
           });
         });
 
-        // column.bass.subCells.forEach((subCell, subCellIndex) => {
-        //   if (subCell.length && subCell.length > 1) {
-        //     setLigatures(
-        //       { barIndex, columnIndex, subColumnIndex: subCellIndex },
-        //       "bass",
-        //       subCell.length
-        //     );
-        //   }
-        // });
+        column.bass.subCells.forEach((subCell, subCellIndex) => {
+          subCell.items.forEach((subCellItem, subCellItemIndex) => {
+            setLigatures({
+              barIndex,
+              columnIndex,
+              subCellIndex,
+              subCellItemIndex,
+              cell: column.bass,
+              subCell,
+              subCellItem,
+            });
+          });
+        });
       });
     });
 
     return lig;
   }, [bars, columnsInTuning]);
+
+  console.log("ligatures", ligatures);
 
   return ligatures;
 };

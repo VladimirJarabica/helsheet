@@ -7,12 +7,14 @@ const LIGATURE_POSITIONS_BASE: {
   [ofNotes: number]: { [current: number]: number };
 } = {
   1: {
-    1: 65, // If cell has one note, the ligature at note 1 is at x% of the cell height
+    1: 80, // If cell has one note, the ligature at note 1 is at x% of the cell height
   },
   2: {
     1: 25, // If cell has two notes, the ligature at note 1 is at x% of the cell height
     2: 75, // If cell has two notes, the ligature at note 2 is at x% of the cell height
   },
+  3: { 1: 25, 2: 50, 3: 75 },
+  // TODO: 4 and 5 notes
 };
 
 const CELL_SIZE = 44;
@@ -51,38 +53,30 @@ const Cell = <Item extends CellItem>({
       ${column.direction === "push" ? "bg-[#dfd5b7]" : ""}
       `}
     >
-      {cellLigatures?.ligatures &&
-        cellLigatures.ligatures.map((ligature, i) => {
-          const length = ligature.range.to - ligature.range.from;
-          const cellWidth = hasMultipleSubcells ? CELL_SIZE / 2 : CELL_SIZE;
-          const position =
-            LIGATURE_POSITIONS_BASE[ligature.position.ofNotes]?.[
-              ligature.position.current
-            ];
+      {cellLigatures?.ligatures && (
+        <svg
+          className="absolute pointer-events-none z-[1]"
+          width={CELL_SIZE}
+          height={CELL_SIZE * 1.5}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {cellLigatures.ligatures.map((ligature, i) => {
+            const position =
+              LIGATURE_POSITIONS_BASE[ligature.position.ofNotes]?.[
+                ligature.position.current
+              ];
 
-          const isStart = ligature.type === "start";
-          const isEnd = ligature.type === "end";
-          const isMiddle = ligature.type === "middle";
+            const isStart = ligature.type === "start";
 
-          const svgFullLigatureWidth = CELL_SIZE * ligature.fullLigatureLength;
-          let svgLigatureOffset = CELL_SIZE * ligature.range.from;
-          const svgWidth = isStart || isEnd ? cellWidth / 2 : cellWidth;
-          if (isStart) {
-            svgLigatureOffset += svgWidth;
-          }
+            const svgFullLigatureWidth =
+              CELL_SIZE * ligature.renderLigatureLength;
+            let svgLigatureOffset = isStart
+              ? -(CELL_SIZE * ligature.startOffset)
+              : CELL_SIZE * ligature.renderRange.from;
 
-          return (
-            <svg
-              key={i}
-              className={`absolute z-10
-                  ${isStart ? "right-0" : ""}
-                  ${isEnd ? "left-0" : ""}
-                  `}
-              width={svgWidth}
-              height={CELL_SIZE * 2}
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            return (
               <path
+                key={i}
                 d={`M ${-svgLigatureOffset},${
                   (CELL_SIZE * position) / 100
                 } A ${svgFullLigatureWidth},100 0 0 0 ${
@@ -92,35 +86,10 @@ const Cell = <Item extends CellItem>({
                 stroke="black"
                 stroke-width="1"
               />
-            </svg>
-            // <div
-            //   className={`
-            // absolute
-            // ${ligature.type === "middle" ? "w-full" : ""}
-
-            // h-[1px]
-            // bg-black
-
-            // ${ligature.type === "start" ? "w-1/2 left-1/2" : ""}
-            // ${
-            //   ligature.type === "start" && length === 0.5
-            //     ? "w-1/4 left-3/4"
-            //     : ""
-            // }
-            // ${ligature.type === "end" ? "w-3/4" : ""}
-            // ${ligature.type === "end" && length === 0.5 ? "w-1/4" : ""}
-            // ${
-            //   hasMultipleSubcells && ligature.type === "end" && length === 1
-            //     ? "w-3/4"
-            //     : ""
-            // }
-            // `}
-            //   style={{
-            //     top: position ? `${position}%` : "70%",
-            //   }}
-            // />
-          );
-        })}
+            );
+          })}
+        </svg>
+      )}
       {cell.subCells.map((subCell, i) => {
         const isSubCellActive =
           activeColumn &&

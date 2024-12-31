@@ -131,18 +131,14 @@ export type CellLigaturePosition = {
   ofNotes: number;
 };
 export type CellLigature = {
-  type: "start" | "end" | "middle";
+  type: "start" | "end" | "middle" | "full";
   // Position based
   position: CellLigaturePosition;
   fullLigatureLength: number;
-  range: {
-    from: number;
-    to: number;
-  };
-  // TODO: need to specify range for creating nice ligature effect
-  // range: {
-  //   start: {}
-  // }
+  range: { from: number; to: number };
+  renderLigatureLength: number;
+  renderRange: { from: number; to: number };
+  startOffset: number;
 };
 export type Ligatures = {
   [barIndex: number]: {
