@@ -3,6 +3,8 @@ import { Direction } from "../../types";
 
 interface DirectionCellProps {
   direction: Direction;
+  previousDirection?: Direction;
+  followingDirection?: Direction;
   onHoverChange: (hovered: boolean) => void;
   hovered: boolean;
   active: boolean;
@@ -10,6 +12,8 @@ interface DirectionCellProps {
 
 const DirectionCell = ({
   direction,
+  previousDirection,
+  followingDirection,
   onHoverChange,
   hovered,
   active,
@@ -25,9 +29,24 @@ const DirectionCell = ({
       onMouseOver={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}
     >
-      {direction === "pull" && "<"}
-      {direction === "push" && ">"}
-      {direction === "empty" && "-"}
+      {/* {direction === "pull" && previousDirection !== direction && ( */}
+      {direction !== "empty" && (
+        <div
+          className="flex items-center h-full"
+          style={{ lineHeight: DIRECTION_CELL_SIZE + "px", fontSize: "14px" }}
+        >
+          {/* ◄<div className="w-full" /> */}
+          {direction === "pull" && previousDirection !== direction && (
+            <span className="-mr-1">◄</span>
+          )}
+          <div className="h-[1px] flex-1 bg-black" />
+          {direction === "push" && followingDirection !== direction && (
+            <span className="-ml-1">►</span>
+          )}
+        </div>
+      )}
+      {/* {direction === "push" && followingDirection !== direction && "►"} */}
+      {/* {direction === "empty" && "-"} */}
     </div>
   );
 };

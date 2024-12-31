@@ -7,10 +7,11 @@ import RepeatSign from "./RepeatSign";
 
 interface BarProps {
   bar: BarType;
-  lastBar: BarType;
+  previousBar?: BarType;
+  followingBar?: BarType;
   barIndex: number;
 }
-const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
+const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
   const { duplicateBar, removeBar, setRepeatOfBar } = useSongContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -53,12 +54,17 @@ const Bar = ({ bar, lastBar, barIndex }: BarProps) => {
           key={i}
           columnIndex={i}
           barIndex={barIndex}
-          last={i === bar.columns.length - 1}
+          lastColumnInBar={i === bar.columns.length - 1}
           column={column}
           previousColumn={
             i === 0
-              ? lastBar?.columns[bar.columns.length - 1]
+              ? previousBar?.columns[bar.columns.length - 1]
               : bar.columns[i - 1]
+          }
+          followingColumn={
+            i === bar.columns.length - 1
+              ? followingBar?.columns[0]
+              : bar.columns[i + 1]
           }
         />
       ))}

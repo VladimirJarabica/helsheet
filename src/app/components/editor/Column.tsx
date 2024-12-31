@@ -6,14 +6,22 @@ import { useSongContext } from "./songContext";
 import DirectionCell from "./DirectionCell";
 
 interface ColumnProps {
-  last: boolean;
+  lastColumnInBar: boolean;
   column: ColumnType;
   previousColumn?: ColumnType;
+  followingColumn?: ColumnType;
   barIndex: number;
   columnIndex: number;
 }
 
-const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
+const Column = ({
+  column,
+  lastColumnInBar,
+  previousColumn,
+  followingColumn,
+  barIndex,
+  columnIndex,
+}: ColumnProps) => {
   const { setText, activeColumn } = useSongContext();
   const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -41,7 +49,7 @@ const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
           <Cell
             key={i}
             column={column}
-            lastColumn={last}
+            lastColumnInBar={lastColumnInBar}
             cell={cell}
             barIndex={barIndex}
             columnIndex={columnIndex}
@@ -50,7 +58,7 @@ const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
           />
         ))}
       <Cell
-        lastColumn={last}
+        lastColumnInBar={lastColumnInBar}
         column={column}
         cell={column.bass}
         barIndex={barIndex}
@@ -60,6 +68,8 @@ const Column = ({ column, last, barIndex, columnIndex }: ColumnProps) => {
       />
       <DirectionCell
         direction={column.direction}
+        previousDirection={previousColumn?.direction}
+        followingDirection={followingColumn?.direction}
         onHoverChange={(hovered) =>
           setHoveredSubColumnIndex(hovered ? 0 : null)
         }

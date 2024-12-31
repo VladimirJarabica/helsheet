@@ -20,7 +20,7 @@ const LIGATURE_POSITIONS_BASE: {
 };
 
 interface ColumnCellProps<Item extends CellItem> {
-  lastColumn: boolean;
+  lastColumnInBar: boolean;
   cell: CellType<Item>;
   barIndex: number;
   columnIndex: number;
@@ -30,7 +30,7 @@ interface ColumnCellProps<Item extends CellItem> {
 }
 
 const Cell = <Item extends CellItem>({
-  lastColumn,
+  lastColumnInBar,
   cell,
   column,
   barIndex,
@@ -46,7 +46,7 @@ const Cell = <Item extends CellItem>({
   return (
     <div
       className={`flex border border-black h-11 border-b-0 cursor-pointer relative ${
-        lastColumn ? "" : "border-r-0"
+        lastColumnInBar ? "" : "border-r-0"
       }
       ${column.direction === "push" ? "bg-[#dfd5b7]" : ""}
       `}

@@ -60,7 +60,13 @@ const SongWrapper = () => {
           ref={barsWrapperRef}
         >
           {song.bars.map((bar, i) => (
-            <Bar key={i} bar={bar} barIndex={i} lastBar={song.bars[i - 1]} />
+            <Bar
+              key={i}
+              bar={bar}
+              barIndex={i}
+              previousBar={song.bars[i - 1]}
+              followingBar={song.bars[i + 1]}
+            />
           ))}
           <div className="">
             <button
