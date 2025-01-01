@@ -1,6 +1,6 @@
 "use client";
 import { CELL_SIZE } from "../../../utils/consts";
-import { CellItem, Cell as CellType, Column } from "./../../types";
+import { CellItem, Cell as CellType } from "./../../types";
 import { useSongContext } from "./songContext";
 import SubCell from "./SubCell";
 

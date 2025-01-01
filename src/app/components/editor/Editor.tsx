@@ -1,13 +1,13 @@
 "use client";
 import { Tuning } from "@prisma/client";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CELL_SIZE, DIRECTION_CELL_SIZE } from "../../../utils/consts";
+import { getColumnsInBar } from "../../../utils/sheet";
 import { Song } from "../../types";
 import MelodicSettings from "../MelodicSettings";
 import Bar from "./Bar";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
-import { getColumnsInBar } from "../../../utils/sheet";
-import { CELL_SIZE, DIRECTION_CELL_SIZE } from "../../../utils/consts";
 
 const SongWrapper = () => {
   const { song, activeColumn, addBar, save, setActiveColumn } =
