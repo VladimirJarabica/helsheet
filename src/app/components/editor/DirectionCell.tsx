@@ -1,4 +1,4 @@
-import { DIRECTION_CELL_SIZE } from "../../../utils/variables";
+import { DIRECTION_CELL_SIZE } from "../../../utils/consts";
 import { Direction } from "../../types";
 
 interface DirectionCellProps {
@@ -20,7 +20,7 @@ const DirectionCell = ({
 }: DirectionCellProps) => {
   return (
     <div
-      className={`border border-black
+      className={`border-t border-black
          ${hovered ? "bg-[#e3d9bc]" : ""}
         ${active ? "bg-[#dbc991]" : ""}
         ${direction === "push" ? "bg-[#dfd5b7]" : ""}

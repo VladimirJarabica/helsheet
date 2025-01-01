@@ -1,17 +1,25 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Bar as BarType } from "./../../types";
 import Column from "./Column";
 import { useSongContext } from "./songContext";
 import RepeatSign from "./RepeatSign";
+import LineHeading from "./LineHeading";
 
 interface BarProps {
   bar: BarType;
   previousBar?: BarType;
   followingBar?: BarType;
   barIndex: number;
+  onNewLine: boolean;
 }
-const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
+const Bar = ({
+  bar,
+  previousBar,
+  followingBar,
+  barIndex,
+  onNewLine,
+}: BarProps) => {
   const { duplicateBar, removeBar, setRepeatOfBar } = useSongContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -47,6 +55,7 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
 
   return (
     <div className="group flex relative">
+      {onNewLine && <LineHeading />}
       {bar.repeat?.start && <RepeatSign type="start" />}
       {bar.repeat?.end && <RepeatSign type="end" />}
       {bar.columns.map((column, i) => (

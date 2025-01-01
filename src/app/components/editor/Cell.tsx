@@ -1,5 +1,5 @@
 "use client";
-import { CELL_SIZE } from "../../../utils/variables";
+import { CELL_SIZE } from "../../../utils/consts";
 import { CellItem, Cell as CellType, Column } from "./../../types";
 import { useSongContext } from "./songContext";
 import SubCell from "./SubCell";
@@ -45,11 +45,12 @@ const Cell = <Item extends CellItem>({
 
   return (
     <div
-      className={`flex border border-black h-11 border-b-0 cursor-pointer relative ${
+      className={`flex border-b border-black cursor-pointer relative ${
         lastColumnInBar ? "" : "border-r-0"
       }
-      ${column.direction === "push" ? "bg-[#dfd5b7]" : ""}
+      ${column.direction === "push" ? "bg-[#dfd5b7] print:bg-transparent" : ""}
       `}
+      style={{ height: CELL_SIZE }}
     >
       {cellLigatures?.ligatures && (
         <svg

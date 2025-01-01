@@ -1,5 +1,6 @@
 import { Sheet } from "@prisma/client";
-import { CellRow, Direction, Tuning } from "../app/types";
+import { CellRow, Direction, TimeSignature, Tuning } from "../app/types";
+import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 
 export const getSheetUrl = (
   sheet: Pick<Sheet, "id" | "name" | "editSecret">
@@ -32,3 +33,6 @@ export const getNoteFromTuningByButton = ({
 
   return melodic.buttons[button - 1][direction];
 };
+
+export const getColumnsInBar = (timeSignature: TimeSignature) =>
+  COLUMNS_FOR_TIME_SIGNATURES[timeSignature];

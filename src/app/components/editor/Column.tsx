@@ -4,6 +4,7 @@ import { Column as ColumnType } from "./../../types";
 import Cell from "./Cell";
 import { useSongContext } from "./songContext";
 import DirectionCell from "./DirectionCell";
+import { CELL_SIZE } from "../../../utils/consts";
 
 interface ColumnProps {
   lastColumnInBar: boolean;
@@ -38,48 +39,54 @@ const Column = ({
   };
 
   return (
-    <div className="w-11">
-      {column.melodic
-        .toSorted((cellA, cellB) =>
-          typeof cellA.row === "number" && typeof cellB.row === "number"
-            ? cellB.row - cellA.row
-            : 0
-        )
-        .map((cell, i) => (
-          <Cell
-            key={i}
-            column={column}
-            lastColumnInBar={lastColumnInBar}
-            cell={cell}
-            barIndex={barIndex}
-            columnIndex={columnIndex}
-            setHoveredSubColumnIndex={setHoveredSubColumnIndex}
-            hoveredSubColumnIndex={hoveredSubColumnIndex}
-          />
-        ))}
-      <Cell
-        lastColumnInBar={lastColumnInBar}
-        column={column}
-        cell={column.bass}
-        barIndex={barIndex}
-        columnIndex={columnIndex}
-        setHoveredSubColumnIndex={setHoveredSubColumnIndex}
-        hoveredSubColumnIndex={hoveredSubColumnIndex}
-      />
-      <DirectionCell
-        direction={column.direction}
-        previousDirection={previousColumn?.direction}
-        followingDirection={followingColumn?.direction}
-        onHoverChange={(hovered) =>
-          setHoveredSubColumnIndex(hovered ? 0 : null)
-        }
-        hovered={hoveredSubColumnIndex === 0}
-        active={
-          activeColumn?.barIndex === barIndex &&
-          activeColumn?.columnIndex === columnIndex &&
-          activeColumn?.subColumnIndex === 0
-        }
-      />
+    <div style={{ width: CELL_SIZE }}>
+      <div
+        className={`border-t-2 border-b-2 border-black ${
+          lastColumnInBar ? "border-r-2" : "border-r"
+        }`}
+      >
+        {column.melodic
+          .toSorted((cellA, cellB) =>
+            typeof cellA.row === "number" && typeof cellB.row === "number"
+              ? cellB.row - cellA.row
+              : 0
+          )
+          .map((cell, i) => (
+            <Cell
+              key={i}
+              column={column}
+              lastColumnInBar={lastColumnInBar}
+              cell={cell}
+              barIndex={barIndex}
+              columnIndex={columnIndex}
+              setHoveredSubColumnIndex={setHoveredSubColumnIndex}
+              hoveredSubColumnIndex={hoveredSubColumnIndex}
+            />
+          ))}
+        <Cell
+          lastColumnInBar={lastColumnInBar}
+          column={column}
+          cell={column.bass}
+          barIndex={barIndex}
+          columnIndex={columnIndex}
+          setHoveredSubColumnIndex={setHoveredSubColumnIndex}
+          hoveredSubColumnIndex={hoveredSubColumnIndex}
+        />
+        <DirectionCell
+          direction={column.direction}
+          previousDirection={previousColumn?.direction}
+          followingDirection={followingColumn?.direction}
+          onHoverChange={(hovered) =>
+            setHoveredSubColumnIndex(hovered ? 0 : null)
+          }
+          hovered={hoveredSubColumnIndex === 0}
+          active={
+            activeColumn?.barIndex === barIndex &&
+            activeColumn?.columnIndex === columnIndex &&
+            activeColumn?.subColumnIndex === 0
+          }
+        />
+      </div>
       <textarea
         ref={ref}
         className="border-gray-500 bg-transparent border-b w-full text-sm outline-none mx-[1px] resize-none h-10 print:border-none"

@@ -1,4 +1,4 @@
-import { CELL_SIZE, DIRECTION_CELL_SIZE } from "../../../utils/variables";
+import { CELL_SIZE, DIRECTION_CELL_SIZE } from "../../../utils/consts";
 import { Bar } from "../../types";
 import { useTuningContext } from "./tuningContext";
 

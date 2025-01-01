@@ -1,6 +1,7 @@
 import { uniqBy } from "ramda";
 import { createContext, useContext, useState } from "react";
 import { groupByFn } from "../../../utils/fnUtils";
+import { getColumnsInBar } from "../../../utils/sheet";
 import {
   Bar,
   Bass,
@@ -15,7 +16,6 @@ import {
   Ligatures,
   Song,
   SubCell,
-  TimeSignature,
 } from "../../types";
 import { useLigatures } from "../useLigatures";
 import { saveSong } from "./actions";
@@ -116,11 +116,6 @@ interface SongContextProviderProps {
   initialSong: Song;
 }
 
-const COLUMNS_FOR_TIME_SIGNATURES: Record<TimeSignature, number> = {
-  "3/4": 3,
-  "4/4": 4,
-  "2/4": 4,
-};
 export const SongContextProvider = ({
   id,
   editSecret,
@@ -134,7 +129,7 @@ export const SongContextProvider = ({
   );
   const { tuning } = useTuningContext();
 
-  const columnsInBar = COLUMNS_FOR_TIME_SIGNATURES[song.timeSignature];
+  const columnsInBar = getColumnsInBar(song.timeSignature);
 
   const save = async () => {
     if (editSecret) {
