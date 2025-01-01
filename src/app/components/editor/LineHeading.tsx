@@ -16,8 +16,9 @@ const LineHeading = () => {
 
   return (
     <div className="border-2 border-black h-fit">
-      {tuning.melodic.toReversed().map(({ row }, i) => (
+      {tuning.melodic.toReversed().map(({ row }) => (
         <div
+          key={row}
           className="border-b border-black text-2xl flex justify-center items-center"
           style={{ width: CELL_SIZE, height: CELL_SIZE }}
         >

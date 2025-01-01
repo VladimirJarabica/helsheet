@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bar as BarType } from "./../../types";
 import Column from "./Column";
-import { useSongContext } from "./songContext";
-import RepeatSign from "./RepeatSign";
 import LineHeading from "./LineHeading";
+import RepeatSign from "./RepeatSign";
+import { useSongContext } from "./songContext";
 
 interface BarProps {
   bar: BarType;

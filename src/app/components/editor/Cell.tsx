@@ -26,13 +26,11 @@ interface ColumnCellProps<Item extends CellItem> {
   columnIndex: number;
   setHoveredSubColumnIndex: (index: number | null) => void;
   hoveredSubColumnIndex: number | null;
-  column: Column;
 }
 
 const Cell = <Item extends CellItem>({
   lastColumnInBar,
   cell,
-  column,
   barIndex,
   columnIndex,
   setHoveredSubColumnIndex,
@@ -48,7 +46,6 @@ const Cell = <Item extends CellItem>({
       className={`flex border-b border-black cursor-pointer relative ${
         lastColumnInBar ? "" : "border-r-0"
       }
-      ${column.direction === "push" ? "bg-[#dfd5b7] print:bg-transparent" : ""}
       `}
       style={{ height: CELL_SIZE }}
     >

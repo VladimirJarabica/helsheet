@@ -43,7 +43,9 @@ const Column = ({
       <div
         className={`border-t-2 border-b-2 border-black ${
           lastColumnInBar ? "border-r-2" : "border-r"
-        }`}
+        }
+         ${column.direction === "push" ? "bg-[#dfd5b7]" : ""}
+         `}
       >
         {column.melodic
           .toSorted((cellA, cellB) =>
@@ -54,7 +56,6 @@ const Column = ({
           .map((cell, i) => (
             <Cell
               key={i}
-              column={column}
               lastColumnInBar={lastColumnInBar}
               cell={cell}
               barIndex={barIndex}
@@ -65,7 +66,6 @@ const Column = ({
           ))}
         <Cell
           lastColumnInBar={lastColumnInBar}
-          column={column}
           cell={column.bass}
           barIndex={barIndex}
           columnIndex={columnIndex}

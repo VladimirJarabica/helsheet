@@ -29,7 +29,6 @@ const DirectionCell = ({
       onMouseOver={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}
     >
-      {/* {direction === "pull" && previousDirection !== direction && ( */}
       {direction !== "empty" && (
         <div
           className={`flex items-center h-full
@@ -46,7 +45,6 @@ const DirectionCell = ({
             `}
           style={{ lineHeight: DIRECTION_CELL_SIZE + "px", fontSize: "14px" }}
         >
-          {/* ◄<div className="w-full" /> */}
           {direction === "pull" && previousDirection !== direction && (
             <span className="-mr-1">◄</span>
           )}
@@ -56,8 +54,6 @@ const DirectionCell = ({
           )}
         </div>
       )}
-      {/* {direction === "push" && followingDirection !== direction && "►"} */}
-      {/* {direction === "empty" && "-"} */}
     </div>
   );
 };
