@@ -1,14 +1,14 @@
 "use server";
 
 import { dbClient } from "../../../services/db";
-import { Song } from "../../types";
+import { SongContent } from "../../types";
 
 export const saveSong = async ({
   id,
   editSecret,
   song,
 }: {
-  song: Song;
+  song: SongContent;
   id: number;
   editSecret: string;
 }) => {

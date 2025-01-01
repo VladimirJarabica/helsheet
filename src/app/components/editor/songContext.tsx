@@ -14,7 +14,7 @@ import {
   Direction,
   EmptyCell,
   Ligatures,
-  Song,
+  SongContent,
   SubCell,
 } from "../../types";
 import { useLigatures } from "../useLigatures";
@@ -37,7 +37,7 @@ export type SubColumnPosition = ColumnPosition & {
 };
 
 type SongContext = {
-  song: Song;
+  song: SongContent;
   ligatures: Ligatures;
   activeCell: CellPosition | null;
   activeColumn: SubColumnPosition | null;
@@ -113,7 +113,7 @@ interface SongContextProviderProps {
   id: number;
   editSecret?: string;
   children: React.ReactNode;
-  initialSong: Song;
+  initialSong: SongContent;
 }
 
 export const SongContextProvider = ({
@@ -122,7 +122,7 @@ export const SongContextProvider = ({
   children,
   initialSong,
 }: SongContextProviderProps) => {
-  const [song, setSong] = useState<Song>(initialSong);
+  const [song, setSong] = useState<SongContent>(initialSong);
   const [activeCell, setActiveCell] = useState<CellPosition | null>(null);
   const [activeColumn, setActiveColumn] = useState<SubColumnPosition | null>(
     null

@@ -1,6 +1,6 @@
-import { Song } from "../../app/types";
+import { SongContent } from "../../app/types";
 
-export const empty: Song = {
+export const empty: SongContent = {
   timeSignature: "4/4",
   bars: [
     {

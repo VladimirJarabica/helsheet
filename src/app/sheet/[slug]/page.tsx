@@ -1,7 +1,6 @@
 import { dbClient } from "../../../services/db";
 import { getSheetIdFromParam } from "../../../utils/sheet";
 import Editor from "../../components/editor/Editor";
-import { Song } from "../../types";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -21,7 +20,7 @@ const Sheet = async (props: {
     return <div>not found</div>;
   }
 
-  const song = await dbClient.sheet.findUnique({
+  const sheet = await dbClient.sheet.findUnique({
     select: {
       id: true,
       name: true,
@@ -47,19 +46,17 @@ const Sheet = async (props: {
   //   sourceUrl: null,
   // };
 
-  if (!song) {
+  if (!sheet) {
     return <div>not found</div>;
   }
 
-  console.log("song", song);
+  console.log("song", sheet);
 
   return (
     <Editor
-      id={song.id}
       editSecret={searchParams.editSecret as string | undefined}
-      song={song.content as Song}
-      readonly={searchParams.editSecret !== song.editSecret}
-      tuning={song.tuning}
+      sheet={sheet}
+      readonly={searchParams.editSecret !== sheet.editSecret}
     />
   );
 };

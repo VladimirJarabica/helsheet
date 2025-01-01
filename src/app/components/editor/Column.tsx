@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Column as ColumnType } from "./../../types";
 import Cell from "./Cell";
 import { useSongContext } from "./songContext";
@@ -24,19 +24,26 @@ const Column = ({
   columnIndex,
 }: ColumnProps) => {
   const { setText, activeColumn } = useSongContext();
-  const ref = useRef<HTMLTextAreaElement>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
 
   const [hoveredSubColumnIndex, setHoveredSubColumnIndex] = useState<
     number | null
   >(null);
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (ref.current) {
-      ref.current.style.height = "auto";
-      ref.current.style.height = e.target.scrollHeight + "px";
+    if (textRef.current) {
+      textRef.current.style.height = "auto";
+      textRef.current.style.height = Math.max(33, e.target.scrollHeight) + "px";
+      console.log("setting height", Math.max(33, e.target.scrollHeight) + "px");
     }
     setText(e.target.value, { barIndex, columnIndex });
   };
+
+  useEffect(() => {
+    if (textRef.current) {
+      // textRef.current.style.height = "32px";
+    }
+  }, []);
 
   return (
     <div style={{ width: CELL_SIZE }}>
@@ -88,8 +95,8 @@ const Column = ({
         />
       </div>
       <textarea
-        ref={ref}
-        className="border-gray-500 bg-transparent border-b w-full text-sm outline-none mx-[1px] resize-none h-10 print:border-none"
+        ref={textRef}
+        className="border-gray-500 mt-1 bg-transparent border-b w-full text-xs outline-none mx-[1px] resize-none print:border-none"
         value={column.text ?? ""}
         onChange={handleInput}
       />

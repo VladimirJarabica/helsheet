@@ -122,7 +122,7 @@ export type Bar = {
 };
 
 export type TimeSignature = "3/4" | "4/4" | "2/4";
-export type Song = {
+export type SongContent = {
   timeSignature: TimeSignature;
   bars: Bar[];
 };

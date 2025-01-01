@@ -2,12 +2,12 @@
 import { Tuning } from "@prisma/client";
 import { dbClient } from "../../services/db";
 import { nanoid } from "nanoid";
-import { Song } from "../types";
+import { SongContent } from "../types";
 
 export const createSheet = async (data: {
   name: string;
   author: string;
-  content: Song;
+  content: SongContent;
   tuning: Tuning;
   sourceText: string | null;
   sourceUrl: string | null;

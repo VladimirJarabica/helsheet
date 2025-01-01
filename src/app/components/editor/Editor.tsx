@@ -1,15 +1,23 @@
 "use client";
-import { Tuning } from "@prisma/client";
+import { Sheet } from "@prisma/client";
 import { useEffect, useRef, useState } from "react";
-import { CELL_SIZE, DIRECTION_CELL_SIZE } from "../../../utils/consts";
+import {
+  BAR_LINES_PER_PAGE,
+  CELL_SIZE,
+  DIRECTION_CELL_SIZE,
+} from "../../../utils/consts";
 import { getColumnsInBar } from "../../../utils/sheet";
-import { Song } from "../../types";
+import { SongContent } from "../../types";
 import MelodicSettings from "../MelodicSettings";
 import Bar from "./Bar";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
 
-const SongWrapper = () => {
+interface SongWrapperProps {
+  sheet: Pick<Sheet, "id" | "name" | "author">;
+}
+
+const SongWrapper = ({ sheet }: SongWrapperProps) => {
   const { song, activeColumn, addBar, save, setActiveColumn } =
     useSongContext();
 
@@ -81,30 +89,44 @@ const SongWrapper = () => {
       }}
       ref={wrapperRef}
     >
-      <div className="print:hidden">
-        <button
-          className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
-          onClick={() => {
-            save();
-          }}
-        >
-          Uložiť
-        </button>
+      <div className="w-[700px] mx-auto flex pt-5 justify-between">
+        <div className="text-2xl">
+          {sheet.name}{" "}
+          <span className="text-base">(zapísal {sheet.author})</span>
+        </div>
+        <div className="print:hidden">
+          <button
+            className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
+            onClick={() => {
+              save();
+            }}
+          >
+            Uložiť
+          </button>
+        </div>
       </div>
-      <div className="w-full flex justify-center pt-10 overflow-y-auto flex-1 px-4">
+      <div className="w-full flex justify-center pt-5 overflow-y-auto flex-1 px-4">
         <div
           className="flex flex-wrap w-[700px] max-w-full print:visible"
           ref={barsWrapperRef}
         >
           {song.bars.map((bar, i) => (
-            <Bar
+            <div
               key={i}
-              bar={bar}
-              barIndex={i}
-              previousBar={song.bars[i - 1]}
-              followingBar={song.bars[i + 1]}
-              onNewLine={i % barsPerLine === 0}
-            />
+              className={`${
+                (i + 1) % (barsPerLine * BAR_LINES_PER_PAGE) === 0
+                  ? "break-after-page"
+                  : ""
+              }`}
+            >
+              <Bar
+                bar={bar}
+                barIndex={i}
+                previousBar={song.bars[i - 1]}
+                followingBar={song.bars[i + 1]}
+                onNewLine={i % barsPerLine === 0}
+              />
+            </div>
           ))}
           <div className="print:hidden">
             <button
@@ -139,17 +161,19 @@ const SongWrapper = () => {
 };
 
 interface EditorProps {
-  id: number;
+  sheet: Pick<Sheet, "id" | "author" | "content" | "name" | "tuning">;
   editSecret?: string;
-  song: Song;
-  tuning: Tuning;
   readonly: boolean;
 }
-const Editor = ({ id, editSecret, song, tuning }: EditorProps) => {
+const Editor = ({ editSecret, sheet }: EditorProps) => {
   return (
-    <TuningContextProvider tuning={tuning}>
-      <SongContextProvider id={id} editSecret={editSecret} initialSong={song}>
-        <SongWrapper />
+    <TuningContextProvider tuning={sheet.tuning}>
+      <SongContextProvider
+        id={sheet.id}
+        editSecret={editSecret}
+        initialSong={sheet.content as SongContent}
+      >
+        <SongWrapper sheet={sheet} />
       </SongContextProvider>
     </TuningContextProvider>
   );
