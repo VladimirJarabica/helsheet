@@ -21,7 +21,7 @@ const SongWrapper = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const columnsInBar = getColumnsInBar(song.timeSignature);
 
-  const [barsPerLine, setBarsPerLine] = useState(6);
+  const [barsPerLine, setBarsPerLine] = useState(4);
   console.log("barsPerLine", barsPerLine);
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const SongWrapper = () => {
       }}
       ref={wrapperRef}
     >
-      <div>
+      <div className="print:hidden">
         <button
           className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
           onClick={() => {
@@ -93,7 +93,7 @@ const SongWrapper = () => {
       </div>
       <div className="w-full flex justify-center pt-10 overflow-y-auto flex-1 px-4">
         <div
-          className="flex flex-wrap w-[700px] max-w-full"
+          className="flex flex-wrap w-[700px] max-w-full print:visible"
           ref={barsWrapperRef}
         >
           {song.bars.map((bar, i) => (
@@ -106,7 +106,7 @@ const SongWrapper = () => {
               onNewLine={i % barsPerLine === 0}
             />
           ))}
-          <div className="">
+          <div className="print:hidden">
             <button
               className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-[#dfd5b7] text-black w-10 text-xs"
               onClick={() => {
@@ -125,7 +125,7 @@ const SongWrapper = () => {
         </div>
       </div>
       <div
-        className="max-h-[75%]"
+        className="max-h-[75%] print:hidden"
         onClick={(e) => {
           console.log("Setting on click", e);
           e.stopPropagation();

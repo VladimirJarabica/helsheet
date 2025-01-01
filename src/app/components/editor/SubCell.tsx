@@ -27,7 +27,7 @@ CellItemProps<Item>) => {
   return (
     <div
       className={`flex flex-1 items-center flex-col justify-around leading-none ${
-        !isFirst ? "border-l border-gray-700 border-dotted" : ""
+        !isFirst ? "border-l border-gray-700 border-dashed" : ""
       }
         ${isActive && false ? "bg-green-50" : ""}
         ${items.length === 1 ? "text-3xl" : ""}

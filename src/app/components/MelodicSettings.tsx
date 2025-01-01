@@ -228,8 +228,10 @@ const MelodicSettings = () => {
                   <div>Basy</div>
                   {
                     // const subCells = column.melodic[row.row - 1].subCells;
-                    column.bass.subCells[activeColumn.subColumnIndex].items.map(
-                      (item) => {
+                    hasBassPart &&
+                      column.bass.subCells[
+                        activeColumn.subColumnIndex
+                      ].items.map((item) => {
                         if (item.type === "bass") {
                           const length =
                             // If split, allow minimum 0.5 length, 1 otherwise
@@ -260,8 +262,7 @@ const MelodicSettings = () => {
                             </div>
                           );
                         }
-                      }
-                    )
+                      })
                   }
                 </div>
               </div>
