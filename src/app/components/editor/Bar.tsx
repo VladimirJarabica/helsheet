@@ -125,6 +125,9 @@ const Bar = ({
                 ? "Zrušiť koniec opakovania"
                 : "Ukončiť opakovanie"}
             </button>
+            <button onClick={() => {}} className="px-2 hover:bg-[#dbc991]">
+              Pridať do skupiny
+            </button>
           </div>
         )}
       </div>

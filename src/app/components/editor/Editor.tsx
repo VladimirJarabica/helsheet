@@ -12,6 +12,7 @@ import MelodicSettings from "../MelodicSettings";
 import Bar from "./Bar";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
+import BarGroups from "./BarGroupts";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name" | "author">;
@@ -156,6 +157,7 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
       >
         {activeColumn && <MelodicSettings />}
       </div>
+      <BarGroups />
     </div>
   );
 };
