@@ -9,7 +9,7 @@ const Sheet = async (props: {
   params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
 }) => {
-  const { slug, ...rest } = await props.params;
+  const { slug } = await props.params;
   const user = await currentUser();
   const sheetId = getSheetIdFromParam(slug);
 

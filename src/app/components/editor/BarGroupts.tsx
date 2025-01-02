@@ -1,8 +1,6 @@
-import { useSongContext } from "./songContext";
-
 const BarGroups = () => {
-  const { song } = useSongContext();
-  const barGroups = song.barGroups ?? [];
+  // const { song } = useSongContext();
+  // const barGroups = song.barGroups ?? [];
   return (
     <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 bg-[#dfd5b7] p-4 border border-black rounded">
       Skupiny

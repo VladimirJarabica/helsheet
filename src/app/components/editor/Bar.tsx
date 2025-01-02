@@ -20,7 +20,8 @@ const Bar = ({
   barIndex,
   onNewLine,
 }: BarProps) => {
-  const { duplicateBar, removeBar, setRepeatOfBar } = useSongContext();
+  const { duplicateBar, removeBar, setRepeatOfBar, editable } =
+    useSongContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -77,60 +78,65 @@ const Bar = ({
           }
         />
       ))}
-      <div className="absolute right-0 top-0 bg-transparent z-10" ref={menuRef}>
-        {!isMenuOpen && (
-          <button
-            className="border border-black hidden group-hover:block px-2 text-xs rounded-md bg-[#e3d9bc] shadow"
-            onClick={() => {
-              setIsMenuOpen(true);
-            }}
-          >
-            ...
-          </button>
-        )}
-        {isMenuOpen && (
-          <div className="border border-black bg-[#e3d9bc] m-2 flex flex-col">
+      {editable && (
+        <div
+          className="absolute right-0 top-0 bg-transparent z-10"
+          ref={menuRef}
+        >
+          {!isMenuOpen && (
             <button
-              onClick={() => duplicateBar(barIndex)}
-              className="px-2 hover:bg-[#dbc991]"
-            >
-              Duplikovať takt
-            </button>
-            <button
+              className="border border-black hidden group-hover:block px-2 text-xs rounded-md bg-[#e3d9bc] shadow"
               onClick={() => {
-                removeBar(barIndex);
-                setIsMenuOpen(false);
+                setIsMenuOpen(true);
               }}
-              className="px-2 hover:bg-[#dbc991]"
             >
-              Vymazať takt
+              ...
             </button>
-            <button
-              onClick={() => {
-                handleChangeRepeat("start");
-              }}
-              className="px-2 hover:bg-[#dbc991]"
-            >
-              {bar.repeat?.start
-                ? "Zrušiť začiatok opakovania"
-                : "Začať opakovanie"}
-            </button>
-            <button
-              onClick={() => {
-                handleChangeRepeat("end");
-              }}
-              className="px-2 hover:bg-[#dbc991]"
-            >
-              {bar.repeat?.end
-                ? "Zrušiť koniec opakovania"
-                : "Ukončiť opakovanie"}
-            </button>
-            <button onClick={() => {}} className="px-2 hover:bg-[#dbc991]">
-              Pridať do skupiny
-            </button>
-          </div>
-        )}
-      </div>
+          )}
+          {isMenuOpen && (
+            <div className="border border-black bg-[#e3d9bc] m-2 flex flex-col">
+              <button
+                onClick={() => duplicateBar(barIndex)}
+                className="px-2 hover:bg-[#dbc991]"
+              >
+                Duplikovať takt
+              </button>
+              <button
+                onClick={() => {
+                  removeBar(barIndex);
+                  setIsMenuOpen(false);
+                }}
+                className="px-2 hover:bg-[#dbc991]"
+              >
+                Vymazať takt
+              </button>
+              <button
+                onClick={() => {
+                  handleChangeRepeat("start");
+                }}
+                className="px-2 hover:bg-[#dbc991]"
+              >
+                {bar.repeat?.start
+                  ? "Zrušiť začiatok opakovania"
+                  : "Začať opakovanie"}
+              </button>
+              <button
+                onClick={() => {
+                  handleChangeRepeat("end");
+                }}
+                className="px-2 hover:bg-[#dbc991]"
+              >
+                {bar.repeat?.end
+                  ? "Zrušiť koniec opakovania"
+                  : "Ukončiť opakovanie"}
+              </button>
+              <button onClick={() => {}} className="px-2 hover:bg-[#dbc991]">
+                Pridať do skupiny
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

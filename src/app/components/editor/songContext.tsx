@@ -37,6 +37,7 @@ export type SubColumnPosition = ColumnPosition & {
 };
 
 type SongContext = {
+  editable: boolean;
   song: SongContent;
   ligatures: Ligatures;
   activeCell: CellPosition | null;
@@ -79,6 +80,7 @@ type SongContext = {
 };
 
 const songContext = createContext<SongContext>({
+  editable: false,
   song: {
     timeSignature: "4/4",
     bars: [],
@@ -552,6 +554,7 @@ export const SongContextProvider = ({
     <div>
       <songContext.Provider
         value={{
+          editable,
           song,
           ligatures,
           activeCell,

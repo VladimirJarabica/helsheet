@@ -12,14 +12,13 @@ import MelodicSettings from "../MelodicSettings";
 import Bar from "./Bar";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
-import BarGroups from "./BarGroupts";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name"> & { Author: Pick<User, "id" | "nickname"> };
 }
 
 const SongWrapper = ({ sheet }: SongWrapperProps) => {
-  const { song, activeColumn, addBar, save, setActiveColumn } =
+  const { song, activeColumn, addBar, save, setActiveColumn, editable } =
     useSongContext();
 
   const { tuning } = useTuningContext();
@@ -95,16 +94,18 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
           {sheet.name}{" "}
           <span className="text-base">(zapísal {sheet.Author.nickname})</span>
         </div>
-        <div className="print:hidden">
-          <button
-            className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
-            onClick={() => {
-              save();
-            }}
-          >
-            Uložiť
-          </button>
-        </div>
+        {editable && (
+          <div className="print:hidden">
+            <button
+              className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
+              onClick={() => {
+                save();
+              }}
+            >
+              Uložiť
+            </button>
+          </div>
+        )}
       </div>
       <div className="w-full flex justify-center pt-5 overflow-y-auto flex-1 px-4">
         <div
@@ -129,34 +130,38 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
               />
             </div>
           ))}
-          <div className="print:hidden">
-            <button
-              className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-[#dfd5b7] text-black w-10 text-xs"
-              onClick={() => {
-                addBar();
-              }}
-              style={{
-                height:
-                  (tuning.melodic.length + 1) * CELL_SIZE +
-                  DIRECTION_CELL_SIZE +
-                  3,
-              }}
-            >
-              Nový takt
-            </button>
-          </div>
+          {editable && (
+            <div className="print:hidden">
+              <button
+                className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-[#dfd5b7] text-black w-10 text-xs"
+                onClick={() => {
+                  addBar();
+                }}
+                style={{
+                  height:
+                    (tuning.melodic.length + 1) * CELL_SIZE +
+                    DIRECTION_CELL_SIZE +
+                    3,
+                }}
+              >
+                Nový takt
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      <div
-        className="max-h-[75%] print:hidden"
-        onClick={(e) => {
-          console.log("Setting on click", e);
-          e.stopPropagation();
-          e.preventDefault();
-        }}
-      >
-        {activeColumn && <MelodicSettings />}
-      </div>
+      {editable && (
+        <div
+          className="max-h-[75%] print:hidden"
+          onClick={(e) => {
+            console.log("Setting on click", e);
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+        >
+          {activeColumn && <MelodicSettings />}
+        </div>
+      )}
       {/* <BarGroups /> */}
     </div>
   );
