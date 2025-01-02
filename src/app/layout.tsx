@@ -30,7 +30,7 @@ export default function RootLayout({
     <ClerkProvider localization={skSK}>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#e0dac8]`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
         >
           <Header />
           {children}

@@ -97,7 +97,7 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
         {editable && (
           <div className="print:hidden">
             <button
-              className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-[#e0dac8]"
+              className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-hel-bgDefault"
               onClick={() => {
                 save();
               }}
@@ -133,7 +133,7 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
           {editable && (
             <div className="print:hidden">
               <button
-                className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-[#dfd5b7] text-black w-10 text-xs"
+                className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
                 onClick={() => {
                   addBar();
                 }}

@@ -21,9 +21,9 @@ const DirectionCell = ({
   return (
     <div
       className={`border-t border-black
-         ${hovered ? "bg-[#e3d9bc]" : ""}
-        ${active ? "bg-[#dbc991]" : ""}
-        ${direction === "push" ? "bg-[#dfd5b7]" : ""}
+         ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
+        ${active ? "bg-hel-bgActive text-hel-bgActive" : ""}
+        ${direction === "push" ? "bg-hel-bgEmphasis" : ""}
         `}
       style={{ height: DIRECTION_CELL_SIZE }}
       onMouseOver={() => onHoverChange(true)}
@@ -48,7 +48,11 @@ const DirectionCell = ({
           {direction === "pull" && previousDirection !== direction && (
             <span className="-mr-1">◄</span>
           )}
-          <div className="h-[1px] flex-1 bg-black" />
+          <div
+            className={`h-[1px] flex-1 ${
+              direction === "pull" ? "bg-hel-textColor" : "bg-hel-textEmphasis"
+            }`}
+          />
           {direction === "push" && followingDirection !== direction && (
             <span className="-ml-1">►</span>
           )}

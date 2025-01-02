@@ -51,7 +51,11 @@ const Column = ({
         className={`border-t-2 border-b-2 border-black ${
           lastColumnInBar ? "border-r-2" : "border-r"
         }
-         ${column.direction === "push" ? "bg-[#dfd5b7]" : ""}
+         ${
+           column.direction === "push"
+             ? "bg-hel-bgEmphasis text-hel-textEmphasis"
+             : ""
+         }
          `}
       >
         {column.melodic

@@ -36,8 +36,8 @@ CellItemProps<Item>) => {
         ${items.length === 4 ? "text-[11px]" : ""}
         ${items.length > 4 ? "text-[8.5px]" : ""}
         ${hovered && false ? "bg-purple-100" : ""}
-        ${hovered ? "bg-[#e3d9bc]" : ""}
-        ${isActive ? "bg-[#dbc991]" : ""}
+        ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
+        ${isActive ? "bg-hel-bgActive text-hel-textActive" : ""}
         `}
       onClick={() => onClick()}
       onMouseOver={() => onHoverChange(true)}
