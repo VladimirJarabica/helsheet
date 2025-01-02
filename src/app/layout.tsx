@@ -32,7 +32,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("skSK", skSK);
   return (
     <ClerkProvider localization={skSK}>
       <html lang="en">

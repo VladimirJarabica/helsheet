@@ -3,10 +3,12 @@ import { CellRow, Direction, TimeSignature, Tuning } from "../app/types";
 import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 
 export const getSheetUrl = (
-  sheet: Pick<Sheet, "id" | "name" | "editSecret">
+  sheet: Pick<Sheet, "id" | "name"> & { editSecret?: string }
 ) => {
   const name = sheet.name.toLowerCase().replace(/ /g, "-");
-  return `/sheet/${sheet.id}_${name}?editSecret=${sheet.editSecret}`;
+  return `/sheet/${sheet.id}_${name}?${
+    sheet.editSecret ? `editSecret=${sheet.editSecret}` : ""
+  }`;
 };
 
 export const getSheetIdFromParam = (slug: string) => {

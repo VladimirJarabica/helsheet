@@ -1,12 +1,17 @@
 "use client";
+import { User } from "@prisma/client";
 import { getSheetUrl } from "../../utils/sheet";
 import SheetSettings, { FormData } from "../components/SheetSettings";
 import { createSheet } from "./actions";
 
-const NewSheet = () => {
+interface NewSheetProps {
+  user: Pick<User, "id" | "nickname">;
+}
+
+const NewSheet = ({ user }: NewSheetProps) => {
   const onSubmit = async (data: FormData) => {
     console.log("data", data);
-    const newSheet = await createSheet({
+    const newSheet = await createSheet(user, {
       ...data,
       content: {
         timeSignature: data.timeSignature,
@@ -18,7 +23,7 @@ const NewSheet = () => {
 
   return (
     <div>
-      <SheetSettings onSubmit={onSubmit} />
+      <SheetSettings onSubmit={onSubmit} nickname={user?.nickname} />
     </div>
   );
 };

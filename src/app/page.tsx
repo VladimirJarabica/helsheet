@@ -6,7 +6,7 @@ import { getSheetUrl } from "../utils/sheet";
 
 export default async function Home() {
   const sheets = await dbClient.sheet.findMany({
-    select: { id: true, name: true },
+    select: { id: true, name: true, Author: { select: { nickname: true } } },
   });
   console.log("sheets", sheets);
 
@@ -15,7 +15,7 @@ export default async function Home() {
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         {sheets.map((sheet) => (
           <Link key={sheet.id} href={getSheetUrl(sheet)}>
-            {sheet.name}
+            {sheet.name} zapísal ({sheet.Author.nickname})
           </Link>
         ))}
         <Image

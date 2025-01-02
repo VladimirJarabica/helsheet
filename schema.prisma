@@ -14,14 +14,29 @@ enum Tuning {
   DG
 }
 
+model User {
+  id             String  @id
+  nickname       String?
+  authoredSheets Sheet[] @relation("author")
+  likedSheets    Sheet[] @relation("like")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
 model Sheet {
   id         Int     @id @default(autoincrement())
   name       String
   tuning     Tuning
   content    Json
   version    Int
-  author     String
-  editSecret String
   sourceText String?
   sourceUrl  String?
+
+  Author   User   @relation("author", fields: [authorId], references: [id])
+  authorId String
+  Likers   User[] @relation("like")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }

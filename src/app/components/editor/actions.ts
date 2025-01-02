@@ -1,19 +1,22 @@
 "use server";
 
+import { currentUser } from "@clerk/nextjs/server";
 import { dbClient } from "../../../services/db";
 import { SongContent } from "../../types";
 
 export const saveSong = async ({
   id,
-  editSecret,
   song,
 }: {
   song: SongContent;
   id: number;
-  editSecret: string;
 }) => {
+  const user = await currentUser();
+  if (!user) {
+    return;
+  }
   await dbClient.sheet.update({
-    where: { id, editSecret },
+    where: { id, Author: { id: user.id } },
     data: {
       content: song,
     },

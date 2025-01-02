@@ -1,5 +1,5 @@
 "use client";
-import { Sheet } from "@prisma/client";
+import { Sheet, User } from "@prisma/client";
 import { useEffect, useRef, useState } from "react";
 import {
   BAR_LINES_PER_PAGE,
@@ -15,7 +15,7 @@ import { TuningContextProvider, useTuningContext } from "./tuningContext";
 import BarGroups from "./BarGroupts";
 
 interface SongWrapperProps {
-  sheet: Pick<Sheet, "id" | "name" | "author">;
+  sheet: Pick<Sheet, "id" | "name"> & { Author: Pick<User, "id" | "nickname"> };
 }
 
 const SongWrapper = ({ sheet }: SongWrapperProps) => {
@@ -93,7 +93,7 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
       <div className="w-[700px] mx-auto flex pt-5 justify-between">
         <div className="text-2xl">
           {sheet.name}{" "}
-          <span className="text-base">(zapísal {sheet.author})</span>
+          <span className="text-base">(zapísal {sheet.Author.nickname})</span>
         </div>
         <div className="print:hidden">
           <button
@@ -157,22 +157,23 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
       >
         {activeColumn && <MelodicSettings />}
       </div>
-      <BarGroups />
+      {/* <BarGroups /> */}
     </div>
   );
 };
 
 interface EditorProps {
-  sheet: Pick<Sheet, "id" | "author" | "content" | "name" | "tuning">;
-  editSecret?: string;
-  readonly: boolean;
+  sheet: Pick<Sheet, "id" | "content" | "name" | "tuning"> & {
+    Author: Pick<User, "id" | "nickname">;
+  };
+  editable: boolean;
 }
-const Editor = ({ editSecret, sheet }: EditorProps) => {
+const Editor = ({ sheet, editable }: EditorProps) => {
   return (
     <TuningContextProvider tuning={sheet.tuning}>
       <SongContextProvider
         id={sheet.id}
-        editSecret={editSecret}
+        editable={editable}
         initialSong={sheet.content as SongContent}
       >
         <SongWrapper sheet={sheet} />

@@ -111,14 +111,14 @@ const songContext = createContext<SongContext>({
 
 interface SongContextProviderProps {
   id: number;
-  editSecret?: string;
+  editable: boolean;
   children: React.ReactNode;
   initialSong: SongContent;
 }
 
 export const SongContextProvider = ({
   id,
-  editSecret,
+  editable,
   children,
   initialSong,
 }: SongContextProviderProps) => {
@@ -132,8 +132,8 @@ export const SongContextProvider = ({
   const columnsInBar = getColumnsInBar(song.timeSignature);
 
   const save = async () => {
-    if (editSecret) {
-      await saveSong({ id, editSecret, song });
+    if (editable) {
+      await saveSong({ id, song });
     }
   };
 

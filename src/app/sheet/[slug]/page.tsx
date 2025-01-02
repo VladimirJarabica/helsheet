@@ -1,3 +1,4 @@
+import { currentUser } from "@clerk/nextjs/server";
 import { dbClient } from "../../../services/db";
 import { getSheetIdFromParam } from "../../../utils/sheet";
 import Editor from "../../components/editor/Editor";
@@ -9,14 +10,10 @@ const Sheet = async (props: {
   searchParams: Promise<SearchParams>;
 }) => {
   const { slug, ...rest } = await props.params;
-  const searchParams = await props.searchParams;
-  const id = getSheetIdFromParam(slug);
+  const user = await currentUser();
+  const sheetId = getSheetIdFromParam(slug);
 
-  console.log("id", id);
-  console.log("params", rest);
-  console.log("searchParams", searchParams);
-
-  if (!id) {
+  if (!sheetId) {
     return <div>not found</div>;
   }
 
@@ -27,38 +24,21 @@ const Sheet = async (props: {
       tuning: true,
       content: true,
       version: true,
-      author: true,
       sourceText: true,
       sourceUrl: true,
-      editSecret: true,
+      Author: { select: { id: true, nickname: true } },
     },
-    where: { id },
+    where: { id: sheetId },
   });
-  // const song: Sheet = {
-  //   id: 1,
-  //   name: "Empty",
-  //   tuning: Tuning.CF,
-  //   content: { bars: [], timeSignature: "4/4" },
-  //   version: 1,
-  //   editSecret: "fJR7qYRiZw",
-  //   author: "Vlado",
-  //   sourceText: null,
-  //   sourceUrl: null,
-  // };
 
   if (!sheet) {
     return <div>not found</div>;
   }
 
+  const isAuthor = sheet.Author.id === user?.id;
   console.log("song", sheet);
 
-  return (
-    <Editor
-      editSecret={searchParams.editSecret as string | undefined}
-      sheet={sheet}
-      readonly={searchParams.editSecret !== sheet.editSecret}
-    />
-  );
+  return <Editor editable={isAuthor} sheet={sheet} />;
 };
 
 export default Sheet;

@@ -1,11 +1,8 @@
 "use server";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 
-const Header = () => {
-  //   const user = await currentUser();
-  //   console.log("user", user);
+const Header = async () => {
   return (
     <header className="w-full shadow flex justify-center py-2">
       <div className="w-[700px] flex justify-between items-center">

@@ -13,11 +13,14 @@ export type FormData = {
 };
 
 interface SheetSettingsProps {
+  nickname?: string | null;
   onSubmit: (data: FormData) => Promise<void>;
 }
 
-const SheetSettings = ({ onSubmit }: SheetSettingsProps) => {
-  const { register, handleSubmit } = useForm<FormData>();
+const SheetSettings = ({ onSubmit, nickname }: SheetSettingsProps) => {
+  const { register, handleSubmit } = useForm<FormData>({
+    defaultValues: { author: nickname ?? "" },
+  });
 
   return (
     <div>
