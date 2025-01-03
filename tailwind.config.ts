@@ -18,6 +18,7 @@ const defaultTheme = {
   // Button text
   fgButton: "",
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testingTheme = {
   // Background of the app
   // bgDefault: "#e0dac8",
