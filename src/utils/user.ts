@@ -1,6 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
-import { dbClient } from "../services/db";
 import { unstable_cacheTag as cacheTag } from "next/cache";
+import { dbClient } from "../services/db";
 
 export const getUserCacheTag = (id: string) => `user-${id}`;
 

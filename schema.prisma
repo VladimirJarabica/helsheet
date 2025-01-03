@@ -24,6 +24,12 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+model Tag {
+  id     Int     @id @default(autoincrement())
+  name   String
+  sheets Sheet[]
+}
+
 model Sheet {
   id         Int     @id @default(autoincrement())
   name       String
@@ -36,6 +42,7 @@ model Sheet {
   Author   User   @relation("author", fields: [authorId], references: [id])
   authorId String
   Likers   User[] @relation("like")
+  Tags     Tag[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

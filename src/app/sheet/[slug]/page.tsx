@@ -27,6 +27,7 @@ const Sheet = async (props: {
       sourceText: true,
       sourceUrl: true,
       Author: { select: { id: true, nickname: true } },
+      Tags: { select: { id: true, name: true } },
     },
     where: { id: sheetId },
   });
@@ -41,7 +42,7 @@ const Sheet = async (props: {
   console.log("user", user);
 
   const isAuthor = sheet.Author.id === user?.id;
-  console.log("song", sheet, { isAuthor });
+  console.log("song", { sheet, isAuthor });
 
   return (
     <Editor

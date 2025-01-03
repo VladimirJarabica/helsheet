@@ -1,5 +1,6 @@
 "use client";
-import { Sheet, User } from "@prisma/client";
+import { Sheet, Tag, User } from "@prisma/client";
+import CreatableSelect from "react-select/creatable";
 import { useEffect, useRef, useState } from "react";
 import {
   BAR_LINES_PER_PAGE,
@@ -8,20 +9,27 @@ import {
 } from "../../../utils/consts";
 import { getColumnsInBar } from "../../../utils/sheet";
 import { SongContent } from "../../types";
-import MelodicSettings from "../MelodicSettings";
+import MelodicSettings from "./MelodicSettings";
 import Bar from "./Bar";
 import LikeSheetButton from "./LikeSheetButton";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
+import { useTags } from "../TagsContext";
+import { createTag, setTagToSheet } from "../../../utils/tags";
 
 interface SongWrapperProps {
-  sheet: Pick<Sheet, "id" | "name"> & { Author: Pick<User, "id" | "nickname"> };
+  sheet: Pick<Sheet, "id" | "name"> & {
+    Author: Pick<User, "id" | "nickname">;
+    Tags: Pick<Tag, "id" | "name">[];
+  };
   liked: boolean;
 }
 
 const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
   const { song, activeColumn, addBar, save, setActiveColumn, editable } =
     useSongContext();
+  const tags = useTags();
+  console.log("tags", tags);
 
   const { tuning } = useTuningContext();
 
@@ -96,9 +104,35 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           <div className="text-2xl">{sheet.name}</div>
           <span className="text-base">(zapísal {sheet.Author.nickname})</span>
         </div>
-        <LikeSheetButton sheetId={sheet.id} liked={liked} />
+        {!editable && <LikeSheetButton sheetId={sheet.id} liked={liked} />}
         {editable && (
-          <div className="print:hidden">
+          <div className="print:hidden flex">
+            <div>
+              {sheet.Tags.map((tag) => (
+                <span key={tag.id} className="mr-2">
+                  {tag.name}
+                </span>
+              ))}
+              <CreatableSelect<{ value: number; label: string }>
+                className="w-40 z-20"
+                options={tags.map((tag) => ({
+                  value: tag.id,
+                  label: tag.name,
+                }))}
+                onCreateOption={async (option) => {
+                  console.log("new tag", option);
+                  const newTag = await createTag(option);
+                  setTagToSheet(sheet.id, newTag.id);
+                }}
+                value={null}
+                onChange={(value) => {
+                  console.log("value", value);
+                  if (value) {
+                    setTagToSheet(sheet.id, value.value);
+                  }
+                }}
+              />
+            </div>
             <button
               className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-hel-bgDefault"
               onClick={() => {
@@ -173,6 +207,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
 interface EditorProps {
   sheet: Pick<Sheet, "id" | "content" | "name" | "tuning"> & {
     Author: Pick<User, "id" | "nickname">;
+    Tags: Pick<Tag, "id" | "name">[];
   };
   editable: boolean;
   liked: boolean;

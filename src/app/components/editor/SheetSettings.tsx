@@ -1,7 +1,7 @@
 "use client";
 import { Tuning } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import { TimeSignature } from "../types";
+import { TimeSignature } from "../../types";
 
 export type FormData = {
   name: string;

@@ -6,7 +6,7 @@ import {
   CellLigature,
   Ligatures,
   SubCell,
-} from "../types";
+} from "../../types";
 
 export const useLigatures = ({
   columnsInTuning,

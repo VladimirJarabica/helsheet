@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Note, ScaleSignature } from "../types";
+import { Note, ScaleSignature } from "../../types";
 
 const Notes: (Note & {
   position: number;

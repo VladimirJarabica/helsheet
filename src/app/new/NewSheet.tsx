@@ -1,7 +1,7 @@
 "use client";
 import { User } from "@prisma/client";
 import { getSheetUrl } from "../../utils/sheet";
-import SheetSettings, { FormData } from "../components/SheetSettings";
+import SheetSettings, { FormData } from "../components/editor/SheetSettings";
 import { createSheet } from "./actions";
 
 interface NewSheetProps {

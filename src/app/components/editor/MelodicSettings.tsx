@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSongContext } from "./editor/songContext";
-import { useTuningContext } from "./editor/tuningContext";
+import { useSongContext } from "./songContext";
+import { useTuningContext } from "./tuningContext";
 import {
   Bass,
   DefinedDirection,
   Direction,
   Note,
   TuningNoteButton,
-} from "../types";
-import MelodeonButton, { MelodeonButtonWrapper } from "./MelodeonButton";
+} from "../../types";
+import MelodeonButton, { MelodeonButtonWrapper } from "../MelodeonButton";
 import MusicSheetSelector from "./MusicSheetSelector";
-import { getNoteFromTuningByButton } from "../../utils/sheet";
-import { notEmpty } from "../../utils/fnUtils";
+import { getNoteFromTuningByButton } from "../../../utils/sheet";
+import { notEmpty } from "../../../utils/fnUtils";
 
 const MelodicSettings = () => {
   const { tuning } = useTuningContext();

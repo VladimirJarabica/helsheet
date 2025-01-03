@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Header from "./components/Header";
 import "./globals.css";
+import Filter from "./components/Filter";
+import { TagsContextProvider } from "./components/TagsContext";
+import { getTags } from "../utils/tags";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,24 +24,30 @@ export const metadata: Metadata = {
   description: "Zápis piesní pre Heligonkárov",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const tags = await getTags();
   return (
     <ClerkProvider localization={skSK}>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
-        >
-          <Header />
+      <TagsContextProvider tags={tags}>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
+          >
+            <Header />
 
-          <main className="flex justify-center">
-            <div className="w-[700px] max-w-full mx-4">{children}</div>
-          </main>
-        </body>
-      </html>
+            <main className="flex justify-center">
+              <div className="w-[700px] max-w-full mx-4">
+                <Filter />
+                {children}
+              </div>
+            </main>
+          </body>
+        </html>
+      </TagsContextProvider>
     </ClerkProvider>
   );
 }

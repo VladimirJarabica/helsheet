@@ -17,7 +17,7 @@ import {
   SongContent,
   SubCell,
 } from "../../types";
-import { useLigatures } from "../useLigatures";
+import { useLigatures } from "./useLigatures";
 import { saveSong } from "./actions";
 import { useTuningContext } from "./tuningContext";
 

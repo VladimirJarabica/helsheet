@@ -1,11 +1,10 @@
 "use server";
-import Image from "next/image";
-import { dbClient } from "../services/db";
-import Link from "next/link";
-import { getSheetUrl } from "../utils/sheet";
-import LikeSheetButton from "./components/editor/LikeSheetButton";
 import { currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
+import { dbClient } from "../services/db";
+import { getSheetUrl } from "../utils/sheet";
 import { getOrCreateUser } from "../utils/user";
+import LikeSheetButton from "./components/editor/LikeSheetButton";
 
 export default async function Home() {
   const sheets = await dbClient.sheet.findMany({
