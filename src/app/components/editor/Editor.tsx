@@ -87,7 +87,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
 
   return (
     <div
-      className="max-h-[100vh] flex flex-col"
+      className="max-h-[100vh] flex flex-col items-center"
       onClick={(e) => {
         console.log("Wrapper on click", e.target);
         if (
@@ -99,7 +99,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       }}
       ref={wrapperRef}
     >
-      <div className="flex pt-5 justify-between">
+      <div className="flex w-[700px] pt-5 justify-between">
         <div className="flex items-end gap-2">
           <div className="text-2xl">{sheet.name}</div>
           <span className="text-base">(zapísal {sheet.Author.nickname})</span>

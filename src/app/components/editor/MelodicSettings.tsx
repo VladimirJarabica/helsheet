@@ -172,7 +172,7 @@ const MelodicSettings = () => {
     : [];
 
   return (
-    <div className="p-5 flex flex-col items-center relative shadow shadow-gray-700 z-20">
+    <div className=" w-screen p-5 flex flex-col items-center relative shadow shadow-gray-700 z-20">
       <div className="flex gap-4 absolute bottom-full translate-y-2 bg-hel-bgDefault border-gray-700 shadow rounded shadow-gray-700 border-b-0 px-3 py-2">
         <div onClick={() => setTab("notes")}>Noty</div>
         <div onClick={() => setTab("length")}>Dĺžka nôt</div>

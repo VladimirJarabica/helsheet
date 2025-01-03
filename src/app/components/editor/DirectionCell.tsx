@@ -22,7 +22,7 @@ const DirectionCell = ({
     <div
       className={`border-t border-black
          ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
-        ${active ? "bg-hel-bgActive text-hel-bgActive" : ""}
+        ${active ? "bg-hel-bgActive text-hel-textActive" : ""}
         ${direction === "push" ? "bg-hel-bgEmphasis" : ""}
         `}
       style={{ height: DIRECTION_CELL_SIZE }}
@@ -48,11 +48,7 @@ const DirectionCell = ({
           {direction === "pull" && previousDirection !== direction && (
             <span className="-mr-1">◄</span>
           )}
-          <div
-            className={`h-[1px] flex-1 ${
-              direction === "pull" ? "bg-hel-textColor" : "bg-hel-textEmphasis"
-            }`}
-          />
+          <div className={`h-[1px] flex-1 bg-black`} />
           {direction === "push" && followingDirection !== direction && (
             <span className="-ml-1">►</span>
           )}

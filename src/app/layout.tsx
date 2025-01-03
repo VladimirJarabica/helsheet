@@ -40,7 +40,7 @@ export default async function RootLayout({
             <Header />
 
             <main className="flex justify-center">
-              <div className="w-[700px] max-w-full mx-4">
+              <div className="max-w-full mx-4">
                 <Filter />
                 {children}
               </div>
