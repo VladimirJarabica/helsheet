@@ -33,7 +33,10 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
         >
           <Header />
-          {children}
+
+          <main className="flex justify-center">
+            <div className="w-[700px] max-w-full mx-4">{children}</div>
+          </main>
         </body>
       </html>
     </ClerkProvider>

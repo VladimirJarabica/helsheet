@@ -14,7 +14,7 @@ const Header = async () => {
             href="/new"
             className={`rounded-full border border-solid border-transparent
                 transition-colors flex items-center justify-center bg-foreground text-background gap-2
-                hover:bg-[#ccc] text-sm sm:text-base h-7 px-4 sm:px-5
+                hover:bg-[#ccc] h-7 px-3 text-sm
             `}
           >
             Nový zápis

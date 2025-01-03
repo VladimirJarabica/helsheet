@@ -1,15 +1,20 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { dbClient } from "../services/db";
+import { unstable_cacheTag as cacheTag } from "next/cache";
 
-export const getOrCreateUser = async (id?: string) => {
-  const userId = id ?? (await currentUser())?.id;
+export const getUserCacheTag = (id: string) => `user-${id}`;
 
-  if (!userId) {
-    return null;
-  }
+export const getOrCreateUser = async (id: string) => {
+  "use cache";
+  cacheTag(getUserCacheTag(id));
 
   const user = await dbClient.user.findUnique({
-    where: { id: userId },
+    where: { id },
+    select: {
+      id: true,
+      nickname: true,
+      likedSheets: { select: { id: true, name: true } },
+    },
   });
 
   if (user) {
@@ -18,7 +23,12 @@ export const getOrCreateUser = async (id?: string) => {
 
   return dbClient.user.create({
     data: {
-      id: userId,
+      id: id,
+    },
+    select: {
+      id: true,
+      nickname: true,
+      likedSheets: { select: { id: true, name: true } },
     },
   });
 };

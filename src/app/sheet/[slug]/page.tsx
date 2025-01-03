@@ -2,6 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { dbClient } from "../../../services/db";
 import { getSheetIdFromParam } from "../../../utils/sheet";
 import Editor from "../../components/editor/Editor";
+import { getOrCreateUser } from "../../../utils/user";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -10,7 +11,6 @@ const Sheet = async (props: {
   searchParams: Promise<SearchParams>;
 }) => {
   const { slug } = await props.params;
-  const user = await currentUser();
   const sheetId = getSheetIdFromParam(slug);
 
   if (!sheetId) {
@@ -35,10 +35,23 @@ const Sheet = async (props: {
     return <div>not found</div>;
   }
 
-  const isAuthor = sheet.Author.id === user?.id;
-  console.log("song", sheet);
+  const authUser = await currentUser();
 
-  return <Editor editable={isAuthor} sheet={sheet} />;
+  const user = authUser ? await getOrCreateUser(authUser.id) : null;
+  console.log("user", user);
+
+  const isAuthor = sheet.Author.id === user?.id;
+  console.log("song", sheet, { isAuthor });
+
+  return (
+    <Editor
+      editable={isAuthor}
+      sheet={sheet}
+      liked={
+        !!user?.likedSheets.some((likedSheet) => likedSheet.id === sheet.id)
+      }
+    />
+  );
 };
 
 export default Sheet;

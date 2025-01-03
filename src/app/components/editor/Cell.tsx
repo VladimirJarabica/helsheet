@@ -80,7 +80,7 @@ const Cell = <Item extends CellItem>({
                 },${(CELL_SIZE * position) / 100}`}
                 fill="none"
                 stroke="black"
-                stroke-width="1"
+                strokeWidth="1"
               />
             );
           })}

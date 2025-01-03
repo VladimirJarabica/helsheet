@@ -10,14 +10,16 @@ import { getColumnsInBar } from "../../../utils/sheet";
 import { SongContent } from "../../types";
 import MelodicSettings from "../MelodicSettings";
 import Bar from "./Bar";
+import LikeSheetButton from "./LikeSheetButton";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name"> & { Author: Pick<User, "id" | "nickname"> };
+  liked: boolean;
 }
 
-const SongWrapper = ({ sheet }: SongWrapperProps) => {
+const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
   const { song, activeColumn, addBar, save, setActiveColumn, editable } =
     useSongContext();
 
@@ -89,11 +91,12 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
       }}
       ref={wrapperRef}
     >
-      <div className="w-[700px] mx-auto flex pt-5 justify-between">
-        <div className="text-2xl">
-          {sheet.name}{" "}
+      <div className="flex pt-5 justify-between">
+        <div className="flex items-end gap-2">
+          <div className="text-2xl">{sheet.name}</div>
           <span className="text-base">(zapísal {sheet.Author.nickname})</span>
         </div>
+        <LikeSheetButton sheetId={sheet.id} liked={liked} />
         {editable && (
           <div className="print:hidden">
             <button
@@ -107,7 +110,7 @@ const SongWrapper = ({ sheet }: SongWrapperProps) => {
           </div>
         )}
       </div>
-      <div className="w-full flex justify-center pt-5 overflow-y-auto flex-1 px-4">
+      <div className="flex justify-center pt-5 overflow-y-auto flex-1">
         <div
           className="flex flex-wrap w-[700px] max-w-full print:visible"
           ref={barsWrapperRef}
@@ -172,8 +175,9 @@ interface EditorProps {
     Author: Pick<User, "id" | "nickname">;
   };
   editable: boolean;
+  liked: boolean;
 }
-const Editor = ({ sheet, editable }: EditorProps) => {
+const Editor = ({ sheet, editable, liked }: EditorProps) => {
   return (
     <TuningContextProvider tuning={sheet.tuning}>
       <SongContextProvider
@@ -181,7 +185,7 @@ const Editor = ({ sheet, editable }: EditorProps) => {
         editable={editable}
         initialSong={sheet.content as SongContent}
       >
-        <SongWrapper sheet={sheet} />
+        <SongWrapper sheet={sheet} liked={liked} />
       </SongContextProvider>
     </TuningContextProvider>
   );
