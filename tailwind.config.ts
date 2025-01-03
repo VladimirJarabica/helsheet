@@ -7,10 +7,10 @@ const defaultTheme = {
   bgEmphasis: "#dfd5b7",
   // Hover of column
   bgHover: "#e3d9bc",
-  textHover: "#fff",
+  textHover: "#000",
   // Active column
   bgActive: "#dbc991",
-  textActive: "#fff",
+  textActive: "#000",
   // Text color
   textColor: "#000",
   // Button background
@@ -53,7 +53,7 @@ export default {
         foreground: "var(--foreground)",
         hel: {
           ...defaultTheme,
-          ...testingTheme,
+          // ...testingTheme,
         },
       },
     },
