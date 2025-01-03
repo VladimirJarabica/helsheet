@@ -1,21 +1,30 @@
 "use server";
 import {
-  unstable_cacheTag as cacheTag,
+  unstable_cache as cache,
   revalidatePath,
   revalidateTag,
 } from "next/cache";
 import { dbClient } from "../services/db";
 import { getSheetUrl } from "./sheet";
 
+// export function getCachedProgramID(slug: string): Promise<string | null> {
+//   const cachedQuery = cache(queryProgramID, ['program-id'], {
+//     tags: [`program-slug:${slug}`],
+//     revalidate: 60 * 60 * 24,
+//   });
+
+//   return cachedQuery(slug);
+// }
+
 // export const getTagsCacheTag = () => "tags";
-export const getTags = async () => {
-  "use cache";
-  cacheTag("tags");
+export const getTags = cache(async () => dbClient.tag.findMany(), ["tags"]);
+// "use cache";
+// cacheTag("tags");
 
-  const tags = await dbClient.tag.findMany();
+// const tags = await dbClient.tag.findMany();
 
-  return tags;
-};
+//   return cachedTags;
+// };
 
 export const createTag = async (name: string) => {
   const newTag = await dbClient.tag.create({

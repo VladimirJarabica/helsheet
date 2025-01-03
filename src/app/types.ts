@@ -106,10 +106,15 @@ export type DefinedDirection = "pull" | "push";
 
 export type Direction = DefinedDirection | "empty";
 
+export type DirectionSubCell = {
+  direction: Direction;
+};
+
 export type Column = {
   melodic: Cell<CellNote | EmptyCell>[];
   bass: Cell<CellBass | EmptyCell>;
   direction: Direction;
+  directions?: DirectionSubCell[];
   text: string | null;
 };
 
