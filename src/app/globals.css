@@ -19,9 +19,9 @@
   /* Text color */
   --textColor: #000;
   /* Button background */
-  /* --bgButton: ""; */
+  --bgButton: #444;
   /* Button text */
-  --fgButton: "";
+  --fgButton: #e5e5e5;
 
   @media print {
     --bgDefault: #fff;

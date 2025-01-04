@@ -37,9 +37,7 @@ export default async function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
           >
             <Header />
-            <main className="flex justify-center">
-              <div className="max-w-full mx-4">{children}</div>
-            </main>
+            <main className="flex justify-center">{children}</main>
           </body>
         </html>
       </TagsContextProvider>

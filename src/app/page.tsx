@@ -6,17 +6,23 @@ import { getSheetUrl } from "../utils/sheet";
 import { getOrCreateUser } from "../utils/user";
 import LikeSheetButton from "./components/editor/LikeSheetButton";
 import Filter from "./components/Filter";
+import TagPill from "./components/TagPill";
 
 export default async function Home() {
   const sheets = await dbClient.sheet.findMany({
-    select: { id: true, name: true, Author: { select: { nickname: true } } },
+    select: {
+      id: true,
+      name: true,
+      Author: { select: { nickname: true } },
+      Tags: { select: { id: true, name: true } },
+    },
   });
 
   const authUser = await currentUser();
   const user = authUser ? await getOrCreateUser(authUser.id) : null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col max-w-[700px] w-11/12">
       <Filter />
 
       {sheets.map((sheet) => (
@@ -25,7 +31,14 @@ export default async function Home() {
           href={getSheetUrl(sheet)}
           className="shadow-md hover:shadow transition-shadow rounded-sm p-5 mt-4 border border-zinc-200 flex items-center justify-between"
         >
-          {sheet.name}
+          <div>
+            <span className="font-bold">{sheet.name}</span>
+            <div className="flex gap-1">
+              {sheet.Tags.map((tag) => (
+                <TagPill key={tag.id} tag={tag} />
+              ))}
+            </div>
+          </div>
           <div className="flex items-center">
             <span className="text-sm text-gray-500">
               zapísal ({sheet.Author.nickname})

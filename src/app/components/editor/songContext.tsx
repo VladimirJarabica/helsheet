@@ -74,7 +74,7 @@ type SongContext = {
       | { row: "bass"; bass: Bass; button?: never }
   ) => void;
   setText: (text: string, position: ColumnPosition) => void;
-  save: () => void;
+  save: () => Promise<void>;
   clearColumn: () => void;
   setRepeatOfBar: (
     barIndex: number,
@@ -109,7 +109,7 @@ const songContext = createContext<SongContext>({
   removeBar: () => {},
   setLength: () => {},
   setText: () => {},
-  save: () => {},
+  save: () => Promise.resolve(),
   clearColumn: () => {},
   setRepeatOfBar: () => {},
 });

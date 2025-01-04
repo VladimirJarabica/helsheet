@@ -1,6 +1,7 @@
 "use server";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import Button from "./Button";
 
 const Header = async () => {
   return (
@@ -10,15 +11,7 @@ const Header = async () => {
           <Link href="/">Domov</Link>
         </div>
         <div className="flex items-center gap-4">
-          <Link
-            href="/new"
-            className={`rounded-full border border-solid border-transparent
-                transition-colors flex items-center justify-center bg-foreground text-background gap-2
-                hover:bg-[#ccc] h-7 px-3 text-sm
-            `}
-          >
-            Nový zápis
-          </Link>
+          <Button href="/new">Nový zápis</Button>
           <SignedOut>
             <SignInButton>Prihlásiť sa</SignInButton>
           </SignedOut>

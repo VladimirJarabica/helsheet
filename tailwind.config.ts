@@ -41,6 +41,8 @@ export default {
           textHover: "var(--textHover)",
           bgActive: "var(--bgActive)",
           textActive: "var(--textActive)",
+          bgButton: "var(--bgButton)",
+          fgButton: "var(--fgButton)",
           // ...testingTheme,
         },
       },

@@ -11,12 +11,14 @@ import {
 import { getColumnsInBar } from "../../../utils/sheet";
 import { createTag, setTagToSheet } from "../../../utils/tags";
 import { SongContent } from "../../types";
+import TagPill from "../TagPill";
 import { useTags } from "../TagsContext";
 import Bar from "./Bar";
 import LikeSheetButton from "./LikeSheetButton";
 import MelodicSettings from "./MelodicSettings";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
+import Button from "../Button";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name"> & {
@@ -100,50 +102,45 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       }}
       ref={wrapperRef}
     >
-      <div className="flex max-w-[700px] w-11/12 pt-5 justify-between">
+      <div className="flex max-w-[700px] w-11/12 pt-5 flex-col gap-4 justify-between">
         <div className="flex items-end gap-2">
           <div className="text-2xl font-bold">{sheet.name}</div>
           <span className="text-base print:hidden">
             (zapísal {sheet.Author.nickname})
           </span>
+          <Button
+            onClick={async () => {
+              await save();
+            }}
+          >
+            Uložiť
+          </Button>
         </div>
         {!editable && <LikeSheetButton sheetId={sheet.id} liked={liked} />}
         {editable && (
-          <div className="print:hidden flex">
-            <div>
-              {sheet.Tags.map((tag) => (
-                <span key={tag.id} className="mr-2">
-                  {tag.name}
-                </span>
-              ))}
-              <CreatableSelect<{ value: number; label: string }>
-                className="w-40 z-20"
-                options={tags.map((tag) => ({
-                  value: tag.id,
-                  label: tag.name,
-                }))}
-                onCreateOption={async (option) => {
-                  console.log("new tag", option);
-                  const newTag = await createTag(option);
-                  setTagToSheet(sheet.id, newTag.id);
-                }}
-                value={null}
-                onChange={(value) => {
-                  console.log("value", value);
-                  if (value) {
-                    setTagToSheet(sheet.id, value.value);
-                  }
-                }}
-              />
-            </div>
-            <button
-              className="border border-black p-1 ml-4 rounded-md bg-[#0a0809] text-hel-bgDefault"
-              onClick={() => {
-                save();
+          <div className="print:hidden flex gap-1 items-center">
+            {sheet.Tags.map((tag) => (
+              <TagPill key={tag.id} tag={tag} />
+            ))}
+            <CreatableSelect<{ value: number; label: string }>
+              className="w-40 z-20"
+              options={tags.map((tag) => ({
+                value: tag.id,
+                label: tag.name,
+              }))}
+              onCreateOption={async (option) => {
+                console.log("new tag", option);
+                const newTag = await createTag(option);
+                setTagToSheet(sheet.id, newTag.id);
               }}
-            >
-              Uložiť
-            </button>
+              value={null}
+              onChange={(value) => {
+                console.log("value", value);
+                if (value) {
+                  setTagToSheet(sheet.id, value.value);
+                }
+              }}
+            />
           </div>
         )}
       </div>
