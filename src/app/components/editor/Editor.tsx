@@ -103,19 +103,21 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       ref={wrapperRef}
     >
       <div className="flex max-w-[700px] w-11/12 pt-5 flex-col gap-4 justify-between">
-        <div className="flex items-end gap-2">
+        <div className="flex items-end gap-2 justify-between">
           <div className="text-2xl font-bold">{sheet.name}</div>
-          <span className="text-base print:hidden">
-            (zapísal {sheet.Author.nickname})
-          </span>
-          <div className="print:hidden">
-            <Button
-              onClick={async () => {
-                await save();
-              }}
-            >
-              Uložiť
-            </Button>
+          <div className="flex gap-2 items-center">
+            <span className="text-base print:hidden">
+              (zapísal {sheet.Author.nickname})
+            </span>
+            <div className="print:hidden">
+              <Button
+                onClick={async () => {
+                  await save();
+                }}
+              >
+                Uložiť
+              </Button>
+            </div>
           </div>
         </div>
         {!editable && (
@@ -150,53 +152,57 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           </div>
         )}
       </div>
-      <div
-        className={`
+      <div className={``}>
+        <div
+          className={`
           flex flex-1 pt-5 w-11/12 flex-wrap max-w-full justify-center
           sm:justify-start
           print:pt-5 print:w-full
-          ${activeColumn ? "min-h-0 overflow-auto" : ""}
+          ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
           `}
-        ref={barsWrapperRef}
-        style={{ paddingLeft: LINE_HEADING_WIDTH }}
-      >
-        {song.bars.map((bar, i) => (
-          <div
-            key={i}
-            className={`${
-              (i + 1) % (4 * BAR_LINES_PER_PAGE) === 0 ? "break-after-page" : ""
-            }`}
-          >
-            <Bar
-              bar={bar}
-              barIndex={i}
-              previousBar={song.bars[i - 1]}
-              followingBar={song.bars[i + 1]}
-            />
-          </div>
-        ))}
-        {editable && (
-          <div className="print:hidden">
-            <button
-              className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
-              onClick={() => {
-                addBar();
-              }}
-              style={{
-                height:
-                  (tuning.melodic.length + 1) * CELL_SIZE +
-                  DIRECTION_CELL_SIZE +
-                  3,
-              }}
+          ref={barsWrapperRef}
+          style={{ paddingLeft: LINE_HEADING_WIDTH }}
+        >
+          {song.bars.map((bar, i) => (
+            <div
+              key={i}
+              className={`${
+                (i + 1) % (4 * BAR_LINES_PER_PAGE) === 0
+                  ? "break-after-page"
+                  : ""
+              }`}
             >
-              Nový takt
-            </button>
-          </div>
-        )}
+              <Bar
+                bar={bar}
+                barIndex={i}
+                previousBar={song.bars[i - 1]}
+                followingBar={song.bars[i + 1]}
+              />
+            </div>
+          ))}
+          {editable && (
+            <div className="print:hidden">
+              <button
+                className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
+                onClick={() => {
+                  addBar();
+                }}
+                style={{
+                  height:
+                    (tuning.melodic.length + 1) * CELL_SIZE +
+                    DIRECTION_CELL_SIZE +
+                    3,
+                }}
+              >
+                Nový takt
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       {editable && (
         <div
-          className="print:hidden min-h-0"
+          className="print:hidden min-h-0 h-[50vh] overflow-auto fixed bottom-0 z-10 bg-hel-bgDefault"
           onClick={(e) => {
             console.log("Setting on click", e);
             e.stopPropagation();
