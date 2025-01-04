@@ -20,7 +20,7 @@ export const empty: SongContent = {
             subCells: [{ items: [{ type: "empty" }] }],
             row: "bass",
           },
-          direction: "pull",
+          directions: [{ direction: "pull" }],
           text: null,
         },
         {
@@ -38,7 +38,7 @@ export const empty: SongContent = {
             subCells: [{ items: [{ type: "empty" }] }],
             row: "bass",
           },
-          direction: "empty",
+          directions: [{ direction: "empty" }],
           text: null,
         },
         {
@@ -56,7 +56,7 @@ export const empty: SongContent = {
             subCells: [{ items: [{ type: "empty" }] }],
             row: "bass",
           },
-          direction: "empty",
+          directions: [{ direction: "empty" }],
           text: null,
         },
         {
@@ -74,7 +74,7 @@ export const empty: SongContent = {
             subCells: [{ items: [{ type: "bass", note: { note: "F" } }] }],
             row: "bass",
           },
-          direction: "empty",
+          directions: [{ direction: "empty" }],
           text: null,
         },
       ],

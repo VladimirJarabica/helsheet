@@ -2,6 +2,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Column as ColumnType } from "./../../types";
 import Cell from "./Cell";
+import * as R from "ramda";
 import { useSongContext } from "./songContext";
 import DirectionCell from "./DirectionCell";
 import { CELL_SIZE } from "../../../utils/consts";
@@ -23,7 +24,7 @@ const Column = ({
   barIndex,
   columnIndex,
 }: ColumnProps) => {
-  const { setText, activeColumn } = useSongContext();
+  const { setText, activeColumn, setActiveColumn } = useSongContext();
   const textRef = useRef<HTMLTextAreaElement>(null);
 
   const [hoveredSubColumnIndex, setHoveredSubColumnIndex] = useState<
@@ -51,11 +52,6 @@ const Column = ({
         className={`border-t-2 border-b-2 border-black ${
           lastColumnInBar ? "border-r-2" : "border-r"
         }
-         ${
-           column.direction === "push"
-             ? "bg-hel-bgEmphasis text-hel-textEmphasis"
-             : ""
-         }
          `}
       >
         {column.melodic
@@ -83,20 +79,42 @@ const Column = ({
           setHoveredSubColumnIndex={setHoveredSubColumnIndex}
           hoveredSubColumnIndex={hoveredSubColumnIndex}
         />
-        <DirectionCell
-          direction={column.direction}
-          previousDirection={previousColumn?.direction}
-          followingDirection={followingColumn?.direction}
-          onHoverChange={(hovered) =>
-            setHoveredSubColumnIndex(hovered ? 0 : null)
-          }
-          hovered={hoveredSubColumnIndex === 0}
-          active={
-            activeColumn?.barIndex === barIndex &&
-            activeColumn?.columnIndex === columnIndex &&
-            activeColumn?.subColumnIndex === 0
-          }
-        />
+        <div className="flex">
+          {column.directions.map((direction, i) => (
+            <DirectionCell
+              key={i}
+              direction={direction.direction}
+              isFirst={i === 0}
+              previousDirection={
+                i > 0
+                  ? column.directions[i].direction
+                  : R.last(previousColumn?.directions ?? [])?.direction
+              }
+              followingDirection={
+                i < column.directions.length - 1
+                  ? column.directions[i + 1].direction
+                  : followingColumn?.directions[0]?.direction
+              }
+              onHoverChange={(hovered) =>
+                setHoveredSubColumnIndex(hovered ? 0 : null)
+              }
+              hovered={hoveredSubColumnIndex === i}
+              onClick={() => {
+                setActiveColumn({
+                  barIndex,
+                  columnIndex: columnIndex,
+                  subColumnIndex: i,
+                });
+              }}
+              active={
+                !!activeColumn &&
+                activeColumn.barIndex === barIndex &&
+                activeColumn.columnIndex === columnIndex &&
+                activeColumn.subColumnIndex === i
+              }
+            />
+          ))}
+        </div>
       </div>
       <textarea
         ref={textRef}

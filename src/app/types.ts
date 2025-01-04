@@ -113,8 +113,7 @@ export type DirectionSubCell = {
 export type Column = {
   melodic: Cell<CellNote | EmptyCell>[];
   bass: Cell<CellBass | EmptyCell>;
-  direction: Direction;
-  directions?: DirectionSubCell[];
+  directions: DirectionSubCell[];
   text: string | null;
 };
 

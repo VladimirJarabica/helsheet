@@ -1,7 +1,11 @@
 import { uniqBy } from "ramda";
 import { createContext, useContext, useState } from "react";
 import { groupByFn } from "../../../utils/fnUtils";
-import { getColumnsInBar } from "../../../utils/sheet";
+import {
+  getColumnsInBar,
+  isBassPartSplit,
+  isMelodicPartSplit,
+} from "../../../utils/sheet";
 import {
   Bar,
   Bass,
@@ -17,9 +21,9 @@ import {
   SongContent,
   SubCell,
 } from "../../types";
-import { useLigatures } from "./useLigatures";
 import { saveSong } from "./actions";
 import { useTuningContext } from "./tuningContext";
+import { useLigatures } from "./useLigatures";
 
 type CellPosition = {
   barIndex: number;
@@ -45,13 +49,12 @@ type SongContext = {
   columnsInBar: number;
   setActiveCell: (position: CellPosition | null) => void;
   setActiveColumn: (position: SubColumnPosition | null) => void;
-
   setMelodicButton: (
     row: number,
     button: number,
     direction: DefinedDirection
   ) => void;
-  setBassButton: (note: Bass, direction: DefinedDirection) => void;
+  setBassButton: (note: Bass, direction: DefinedDirection | null) => void;
   setDirection: (newDirection: Direction) => void;
   splitMelodicPart: () => void;
   splitBassPart: () => void;
@@ -154,7 +157,7 @@ export const SongContextProvider = ({
               row: "bass",
               subCells: [{ items: [{ type: "empty" }] }],
             },
-            direction: "empty",
+            directions: [{ direction: "empty" }],
             text: null,
           })),
         },
@@ -219,18 +222,29 @@ export const SongContextProvider = ({
         items: [{ type: "empty" }],
       })),
     },
-    direction: "empty",
+    directions: [{ direction: "empty" }],
+    // direction: "empty",
   });
 
   const setDirection = (newDirection: Direction) => {
     if (!activeColumn) return;
     const oldColumn =
       song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
-    if (oldColumn.direction === newDirection) return;
+    const oldDirection =
+      song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex]
+        .directions?.[activeColumn.subColumnIndex]?.direction;
+    if (oldDirection === newDirection) return;
 
     const newColumn: Column = {
-      ...getEmptyColumn(oldColumn),
-      direction: newDirection,
+      ...(oldDirection === "empty" || newDirection === "empty"
+        ? oldColumn
+        : getEmptyColumn(oldColumn)),
+      directions: oldColumn.directions.map((direction, index) =>
+        index === activeColumn.subColumnIndex
+          ? { direction: newDirection }
+          : direction
+      ),
+      // direction: newDirection,
     };
 
     setColumn(newColumn, activeColumn);
@@ -245,8 +259,15 @@ export const SongContextProvider = ({
 
     const oldColumn =
       song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
+
+    const activeColumnDirection =
+      oldColumn.directions[activeColumn.subColumnIndex]?.direction ??
+      oldColumn.directions[0]?.direction;
+
     const oldColumnToChange =
-      oldColumn.direction !== direction ? getEmptyColumn(oldColumn) : oldColumn;
+      activeColumnDirection !== direction
+        ? getEmptyColumn(oldColumn)
+        : oldColumn;
 
     const newColumn: Column = {
       ...oldColumnToChange,
@@ -254,29 +275,40 @@ export const SongContextProvider = ({
         (cell) => ({
           ...cell,
           subCells: cell.subCells.map<SubCell<CellNote | EmptyCell>>(
-            (subCell, index) => ({
-              ...subCell,
-              items:
-                cell.row === row && index === activeColumn.subColumnIndex
-                  ? uniqBy<CellNote | EmptyCell, number | string>(
-                      (i) => ("button" in i ? i.button : i.type),
-                      [
-                        ...subCell.items.filter(
-                          (subCellItem) => subCellItem.type !== "empty"
-                        ),
-                        { type: "note", button },
-                      ]
-                    ).toSorted((a, b) =>
-                      a.type === "note" && b.type === "note"
-                        ? b.button - a.button
-                        : 0
-                    )
-                  : subCell.items,
-            })
+            (subCell, index) => {
+              if (cell.row === row && index === activeColumn.subColumnIndex) {
+                const isRemoving = subCell.items.some(
+                  (item) => item.type === "note" && item.button === button
+                );
+                return {
+                  ...subCell,
+                  items: isRemoving
+                    ? subCell.items.filter(
+                        (item) => item.type !== "note" || item.button !== button
+                      )
+                    : uniqBy<CellNote | EmptyCell, number | string>(
+                        (i) => ("button" in i ? i.button : i.type),
+                        [
+                          ...subCell.items.filter(
+                            (subCellItem) => subCellItem.type !== "empty"
+                          ),
+                          { type: "note", button },
+                        ]
+                      ).toSorted((a, b) =>
+                        a.type === "note" && b.type === "note"
+                          ? b.button - a.button
+                          : 0
+                      ),
+                };
+              }
+              return subCell;
+            }
           ),
         })
       ),
-      direction,
+      directions: oldColumn.directions.map((dir, index) =>
+        index === activeColumn.subColumnIndex ? { direction } : dir
+      ),
     };
 
     setColumn(newColumn, activeColumn);
@@ -292,14 +324,17 @@ export const SongContextProvider = ({
 
   const setMelodicButtons = (
     buttons: { row: number; button: number }[],
-    direction: DefinedDirection
+    direction?: DefinedDirection
   ) => {
     if (!activeColumn) return;
 
     const oldColumn =
       song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
     const oldColumnToChange =
-      oldColumn.direction !== direction ? getEmptyColumn(oldColumn) : oldColumn;
+      direction &&
+      oldColumn.directions[activeColumn.subColumnIndex].direction !== direction
+        ? getEmptyColumn(oldColumn)
+        : oldColumn;
 
     const newColumn: Column = {
       ...oldColumnToChange,
@@ -335,19 +370,26 @@ export const SongContextProvider = ({
           };
         }
       ),
-      direction,
+      directions: direction
+        ? oldColumn.directions.map((dir, index) =>
+            index === activeColumn.subColumnIndex ? { direction } : dir
+          )
+        : oldColumn.directions,
     };
 
     setColumn(newColumn, activeColumn);
   };
 
-  const setBassButton = (note: Bass, direction: DefinedDirection) => {
+  const setBassButton = (note: Bass, direction: DefinedDirection | null) => {
     if (!activeColumn) return;
 
     const oldColumn =
       song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex];
     const oldColumnToChange =
-      oldColumn.direction !== direction ? getEmptyColumn(oldColumn) : oldColumn;
+      direction &&
+      oldColumn.directions[activeColumn.subColumnIndex].direction !== direction
+        ? getEmptyColumn(oldColumn)
+        : oldColumn;
 
     const newColumn: Column = {
       ...oldColumnToChange,
@@ -386,7 +428,12 @@ export const SongContextProvider = ({
           };
         }),
       },
-      direction,
+      directions: direction
+        ? oldColumn.directions.map((dir, index) =>
+            index === activeColumn.subColumnIndex ? { direction } : dir
+          )
+        : oldColumn.directions,
+      // direction,
     };
 
     setColumn(newColumn, activeColumn);
@@ -412,6 +459,10 @@ export const SongContextProvider = ({
         ...cell,
         subCells: [...cell.subCells, { items: [{ type: "empty" }] }],
       })),
+      // Only if both, bass and melodic part are split, also direction can be split
+      directions: isBassPartSplit(oldColumn)
+        ? [oldColumn.directions[0], { direction: "empty" }]
+        : oldColumn.directions,
     };
 
     setColumn(newColumn, activeColumn);
@@ -430,6 +481,7 @@ export const SongContextProvider = ({
           (_, index) => index === activeColumn.subColumnIndex
         ),
       })),
+      directions: [oldColumn.directions[0]],
     };
 
     setColumn(newColumn, activeColumn);
@@ -446,6 +498,10 @@ export const SongContextProvider = ({
         ...oldColumn.bass,
         subCells: [...oldColumn.bass.subCells, { items: [{ type: "empty" }] }],
       },
+      // Only if both, bass and melodic part are split, also direction can be split
+      directions: isMelodicPartSplit(oldColumn)
+        ? [oldColumn.directions[0], { direction: "empty" }]
+        : oldColumn.directions,
     };
 
     setColumn(newColumn, activeColumn);
@@ -465,6 +521,7 @@ export const SongContextProvider = ({
           (_, index) => index === activeColumn.subColumnIndex
         ),
       },
+      directions: [oldColumn.directions[0]],
     };
 
     setColumn(newColumn, activeColumn);

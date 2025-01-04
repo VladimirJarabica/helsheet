@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSongContext } from "./songContext";
-import { useTuningContext } from "./tuningContext";
+import { notEmpty } from "../../../utils/fnUtils";
+import {
+  isBassPartSplit as getIsBassPartSplit,
+  isMelodicPartSplit as getIsMelodicPartSplit,
+  getNoteFromTuningByButton,
+} from "../../../utils/sheet";
 import {
   Bass,
   DefinedDirection,
@@ -10,8 +14,8 @@ import {
 } from "../../types";
 import MelodeonButton, { MelodeonButtonWrapper } from "../MelodeonButton";
 import MusicSheetSelector from "./MusicSheetSelector";
-import { getNoteFromTuningByButton } from "../../../utils/sheet";
-import { notEmpty } from "../../../utils/fnUtils";
+import { useSongContext } from "./songContext";
+import { useTuningContext } from "./tuningContext";
 
 const MelodicSettings = () => {
   const { tuning } = useTuningContext();
@@ -27,6 +31,7 @@ const MelodicSettings = () => {
     setMelodicButtons,
     setLength,
     clearColumn,
+    setMelodicButton,
   } = useSongContext();
   const [tab, setTab] = useState<"notes" | "length" | "fingers">("notes");
 
@@ -43,11 +48,28 @@ const MelodicSettings = () => {
   const column = activeColumn
     ? song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex]
     : null;
-  const direction: Direction = column?.direction ?? "empty";
+  const direction: Direction =
+    activeColumn && column
+      ? column.directions[activeColumn.subColumnIndex]?.direction ??
+        column.directions[0]?.direction ??
+        "empty"
+      : "empty";
+
+  const hasMelodicPart = !!(
+    column &&
+    activeColumn &&
+    column.melodic.some((cell) => !!cell.subCells[activeColumn.subColumnIndex])
+  );
+
+  const hasBassPart = !!(
+    column &&
+    activeColumn &&
+    column.bass.subCells[activeColumn.subColumnIndex]
+  );
 
   useEffect(() => {
     setSelectedNotes(
-      activeColumn && column
+      hasMelodicPart
         ? column?.melodic.flatMap((cell) =>
             cell.subCells[activeColumn.subColumnIndex].items
               .filter((item) => item.type === "note")
@@ -55,7 +77,7 @@ const MelodicSettings = () => {
                 getNoteFromTuningByButton({
                   button: item.button,
                   row: cell.row,
-                  direction: column.direction,
+                  direction,
                   tuning,
                 })
               )
@@ -66,7 +88,7 @@ const MelodicSettings = () => {
     setHoveredNote(null);
     setHoveredBass(null);
     setSelectedMelodicButtons(null);
-  }, [activeColumn, column, tuning]);
+  }, [hasMelodicPart, column, direction, tuning, activeColumn?.subColumnIndex]);
 
   const handleAddSelectedNote = (note: Note) => {
     setSelectedNotes((sn) =>
@@ -74,10 +96,6 @@ const MelodicSettings = () => {
         ? sn.filter((n) => n.note !== note.note || n.pitch !== note.pitch)
         : [...sn, note]
     );
-
-    // if (newDirection) {
-    //   setSelectedDirection(newDirection);
-    // }
   };
 
   const suggestedButtons = useMemo(() => {
@@ -158,14 +176,10 @@ const MelodicSettings = () => {
     return null;
   }
 
-  const hasBassPart = !!column.bass.subCells[activeColumn.subColumnIndex];
-  const hasMelodicPart = column.melodic.some(
-    (cell) => !!cell.subCells[activeColumn.subColumnIndex]
-  );
+  const isMelodicPartSplit = getIsMelodicPartSplit(column);
+  const isBasPartSplit = getIsBassPartSplit(column);
 
-  const isMelodicPartSplit =
-    hasMelodicPart && column.melodic.some((cell) => cell.subCells.length > 1);
-  const isBasPartSplit = hasBassPart && column.bass.subCells.length > 1;
+  const canSetDirection = hasMelodicPart && hasBassPart;
 
   const bassItems = hasBassPart
     ? column.bass.subCells[activeColumn.subColumnIndex].items
@@ -427,13 +441,15 @@ const MelodicSettings = () => {
               </div>
             </div>
             <div className="flex gap-4 flex-wrap">
-              <div>
-                Výber nôt zo stupnice:
-                <MusicSheetSelector
-                  setHoveredNote={setHoveredNote}
-                  onSelectNote={handleAddSelectedNote}
-                />
-              </div>
+              {hasMelodicPart && (
+                <div>
+                  Výber nôt zo stupnice:
+                  <MusicSheetSelector
+                    setHoveredNote={setHoveredNote}
+                    onSelectNote={handleAddSelectedNote}
+                  />
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 {hasBassPart && (
                   <div className="flex items-center flex-row">
@@ -448,10 +464,19 @@ const MelodicSettings = () => {
                           {row.buttons.map((button) => (
                             <MelodeonButton
                               key={button.button}
-                              onClick={(direction) => {
+                              onClick={(bassDirection) => {
+                                console.log("set bass button", {
+                                  button,
+                                  bassDirection,
+                                });
                                 // const note =
-                                //   direction === "pull" ? button.pull : button.push;
-                                setBassButton(button[direction], direction);
+                                //   bassDirection === "pull" ? button.pull : button.push;
+                                setBassButton(
+                                  button[bassDirection],
+                                  direction === "empty"
+                                    ? bassDirection
+                                    : direction
+                                );
                                 // handleAddSelectedBass(button[direction], direction);
                               }}
                               // disabled={!!hoveredNote && button.pull.note != hoveredNote}
@@ -474,34 +499,38 @@ const MelodicSettings = () => {
                     })}
                   </div>
                 )}
-                <div className="flex gap-2 mx-4">
-                  <MelodeonButtonWrapper
-                    selected={
-                      selectedMelodicButtons
-                        ? selectedMelodicButtons.direction === "pull"
-                        : direction === "pull"
-                    }
-                    onClick={() => setDirection("pull")}
-                  >
-                    {"<--"}
-                  </MelodeonButtonWrapper>
-                  <MelodeonButtonWrapper
-                    selected={!selectedMelodicButtons && direction === "empty"}
-                    onClick={() => setDirection("empty")}
-                  >
-                    {"-"}
-                  </MelodeonButtonWrapper>
-                  <MelodeonButtonWrapper
-                    selected={
-                      selectedMelodicButtons
-                        ? selectedMelodicButtons.direction === "push"
-                        : direction === "push"
-                    }
-                    onClick={() => setDirection("push")}
-                  >
-                    {"-->"}
-                  </MelodeonButtonWrapper>
-                </div>
+                {canSetDirection && (
+                  <div className="flex gap-2 mx-4">
+                    <MelodeonButtonWrapper
+                      selected={
+                        selectedMelodicButtons
+                          ? selectedMelodicButtons.direction === "pull"
+                          : direction === "pull"
+                      }
+                      onClick={() => setDirection("pull")}
+                    >
+                      {"<--"}
+                    </MelodeonButtonWrapper>
+                    <MelodeonButtonWrapper
+                      selected={
+                        !selectedMelodicButtons && direction === "empty"
+                      }
+                      onClick={() => setDirection("empty")}
+                    >
+                      {"-"}
+                    </MelodeonButtonWrapper>
+                    <MelodeonButtonWrapper
+                      selected={
+                        selectedMelodicButtons
+                          ? selectedMelodicButtons.direction === "push"
+                          : direction === "push"
+                      }
+                      onClick={() => setDirection("push")}
+                    >
+                      {"-->"}
+                    </MelodeonButtonWrapper>
+                  </div>
+                )}
                 {hasMelodicPart && (
                   <div className="flex items-center flex-row-reverse">
                     {tuning.melodic.map((row) => {
@@ -519,11 +548,13 @@ const MelodicSettings = () => {
                           {row.buttons.map((button) => (
                             <MelodeonButton
                               key={row.row + button.button}
-                              onClick={(direction) => {
-                                // setMelodicButton(row.row, button.button, direction);
-                                handleAddSelectedNote(button[direction]);
+                              onClick={(buttonDirection) => {
+                                setMelodicButton(
+                                  row.row,
+                                  button.button,
+                                  buttonDirection
+                                );
                               }}
-                              // disabled={!!hoveredNote && button.pull.note != hoveredNote}
                               button={button}
                               hoveredNote={hoveredNote}
                               setHoveredNote={setHoveredNote}

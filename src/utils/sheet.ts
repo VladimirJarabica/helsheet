@@ -1,5 +1,11 @@
 import { Sheet } from "@prisma/client";
-import { CellRow, Direction, TimeSignature, Tuning } from "../app/types";
+import {
+  CellRow,
+  Column,
+  Direction,
+  TimeSignature,
+  Tuning,
+} from "../app/types";
 import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 
 export const getSheetUrl = (
@@ -38,3 +44,10 @@ export const getNoteFromTuningByButton = ({
 
 export const getColumnsInBar = (timeSignature: TimeSignature) =>
   COLUMNS_FOR_TIME_SIGNATURES[timeSignature];
+
+export const hasMelodicPart = (column: Column, subColumnIndex: number) =>
+  column.melodic.some((cell) => !!cell.subCells[subColumnIndex]);
+export const isMelodicPartSplit = (column: Column) =>
+  column.melodic.some((cell) => cell.subCells.length > 1);
+export const isBassPartSplit = (column: Column) =>
+  column.bass.subCells.length > 1;

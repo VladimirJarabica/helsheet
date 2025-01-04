@@ -68,7 +68,7 @@ export const CFTuning: Tuning = {
       buttons: [
         {
           button: 1,
-          pull: { note: "d", pitch: 2 },
+          pull: { note: "cis", pitch: 2 },
           push: { note: "dis", pitch: 2 },
         },
         {
