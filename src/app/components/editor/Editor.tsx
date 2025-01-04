@@ -1,21 +1,22 @@
 "use client";
 import { Sheet, Tag, User } from "@prisma/client";
-import CreatableSelect from "react-select/creatable";
 import { useEffect, useRef, useState } from "react";
+import CreatableSelect from "react-select/creatable";
 import {
   BAR_LINES_PER_PAGE,
   CELL_SIZE,
   DIRECTION_CELL_SIZE,
+  LINE_HEADING_WIDTH,
 } from "../../../utils/consts";
 import { getColumnsInBar } from "../../../utils/sheet";
+import { createTag, setTagToSheet } from "../../../utils/tags";
 import { SongContent } from "../../types";
-import MelodicSettings from "./MelodicSettings";
+import { useTags } from "../TagsContext";
 import Bar from "./Bar";
 import LikeSheetButton from "./LikeSheetButton";
+import MelodicSettings from "./MelodicSettings";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
-import { useTags } from "../TagsContext";
-import { createTag, setTagToSheet } from "../../../utils/tags";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name"> & {
@@ -99,7 +100,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       }}
       ref={wrapperRef}
     >
-      <div className="flex w-[700px] pt-5 justify-between">
+      <div className="flex max-w-[700px] w-11/12 pt-5 justify-between">
         <div className="flex items-end gap-2">
           <div className="text-2xl font-bold">{sheet.name}</div>
           <span className="text-base print:hidden">
@@ -148,8 +149,9 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       </div>
       <div className="flex justify-center pt-5 overflow-y-auto flex-1">
         <div
-          className="flex flex-wrap w-[700px] max-w-full"
+          className="flex flex-wrap max-w-full justify-center sm:justify-start"
           ref={barsWrapperRef}
+          style={{ paddingLeft: LINE_HEADING_WIDTH }}
         >
           {song.bars.map((bar, i) => (
             <div
@@ -165,7 +167,6 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
                 barIndex={i}
                 previousBar={song.bars[i - 1]}
                 followingBar={song.bars[i + 1]}
-                onNewLine={i % barsPerLine === 0}
               />
             </div>
           ))}

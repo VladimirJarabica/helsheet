@@ -5,6 +5,28 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Background of the app */
+  --bgDefault: #e0dac8;
+  /* Background of the "push" columns */
+  --bgEmphasis: #dfd5b7;
+  /* Hover of column */
+  --bgHover: #e3d9bc;
+  --textHover: #000;
+  /* Active column */
+  --bgActive: #dbc991;
+  --textActive: #000;
+  /* Text color */
+  --textColor: #000;
+  /* Button background */
+  /* --bgButton: ""; */
+  /* Button text */
+  --fgButton: "";
+
+  @media print {
+    --bgDefault: #fff;
+    --bgEmphasis: #eee;
+  }
 }
 
 /* @media (prefers-color-scheme: light) {

@@ -1,11 +1,11 @@
 "use client";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import * as R from "ramda";
+import { ChangeEvent, useLayoutEffect, useRef, useState } from "react";
+import { CELL_SIZE } from "../../../utils/consts";
 import { Column as ColumnType } from "./../../types";
 import Cell from "./Cell";
-import * as R from "ramda";
-import { useSongContext } from "./songContext";
 import DirectionCell from "./DirectionCell";
-import { CELL_SIZE } from "../../../utils/consts";
+import { useSongContext } from "./songContext";
 
 interface ColumnProps {
   lastColumnInBar: boolean;
@@ -31,20 +31,22 @@ const Column = ({
     number | null
   >(null);
 
-  const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const resizeTextArea = () => {
     if (textRef.current) {
       textRef.current.style.height = "auto";
-      textRef.current.style.height = Math.max(33, e.target.scrollHeight) + "px";
-      console.log("setting height", Math.max(33, e.target.scrollHeight) + "px");
+      textRef.current.style.height =
+        Math.max(17, textRef.current.scrollHeight) + "px";
     }
-    setText(e.target.value, { barIndex, columnIndex });
   };
 
-  useEffect(() => {
-    if (textRef.current) {
-      // textRef.current.style.height = "32px";
-    }
+  useLayoutEffect(() => {
+    resizeTextArea();
   }, []);
+
+  const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    resizeTextArea();
+    setText(e.target.value, { barIndex, columnIndex });
+  };
 
   return (
     <div style={{ width: CELL_SIZE }}>
@@ -120,6 +122,7 @@ const Column = ({
       </div>
       <textarea
         ref={textRef}
+        rows={1}
         className="border-gray-500 mt-1 bg-transparent border-b w-full text-xs outline-none mx-[1px] resize-none print:border-none"
         value={column.text ?? ""}
         onChange={handleInput}

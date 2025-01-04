@@ -1,23 +1,5 @@
 import type { Config } from "tailwindcss";
 
-const defaultTheme = {
-  // Background of the app
-  bgDefault: "#e0dac8",
-  // Background of the "push" columns
-  bgEmphasis: "#dfd5b7",
-  // Hover of column
-  bgHover: "#e3d9bc",
-  textHover: "#000",
-  // Active column
-  bgActive: "#dbc991",
-  textActive: "#000",
-  // Text color
-  textColor: "#000",
-  // Button background
-  bgButton: "",
-  // Button text
-  fgButton: "",
-};
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testingTheme = {
   // Background of the app
@@ -53,7 +35,12 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         hel: {
-          ...defaultTheme,
+          bgDefault: "var(--bgDefault)",
+          bgEmphasis: "var(--bgEmphasis)",
+          bgHover: "var(--bgHover)",
+          textHover: "var(--textHover)",
+          bgActive: "var(--bgActive)",
+          textActive: "var(--textActive)",
           // ...testingTheme,
         },
       },

@@ -2,6 +2,8 @@ import { TimeSignature } from "../app/types";
 
 export const CELL_SIZE = 40;
 
+export const LINE_HEADING_WIDTH = CELL_SIZE + 4; // Double 2x border
+
 export const DIRECTION_CELL_SIZE = 20;
 
 export const COLUMNS_FOR_TIME_SIGNATURES: Record<TimeSignature, number> = {

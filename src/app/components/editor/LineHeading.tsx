@@ -15,7 +15,7 @@ const LineHeading = () => {
   const { tuning } = useTuningContext();
 
   return (
-    <div className="border-2 border-black h-fit">
+    <div className="border-2 border-black w-fit h-fit">
       {tuning.melodic.toReversed().map(({ row }) => (
         <div
           key={row}
