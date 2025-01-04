@@ -117,59 +117,63 @@ const MusicSheetSelector = ({
 }: MusicSheetSelectorProps) => {
   const [scale, setScale] = useState<Scale>(Scales[4]);
   return (
-    <div className="relative my-20 w-[430px]">
-      <div className="flex flex-col w-32">
-        <label>Stupnica</label>
-        <select
-          className="bg-transparent"
-          value={scale.signature}
-          onChange={(e) => {
-            const newScale = Scales.find(
-              (scale) => scale.signature === e.target.value
-            );
-            if (newScale) {
-              setScale(newScale);
-            }
-          }}
-        >
-          {Scales.map((scale) => (
-            <option key={scale.signature} value={scale.signature}>
-              {`${scale.name}${scale.signature ? ` (${scale.signature})` : ""}`}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <div className="w-full h-[9px] border border-black" />
-        <div className="w-full h-[9px] border border-t-0 border-black" />
-        <div className="w-full h-[9px] border border-t-0 border-black" />
-        <div className="w-full h-[9px] border border-t-0 border-black" />
-      </div>
-      {Notes.filter((note) => scale.notes.includes(note.note)).map(
-        (note, index) => (
-          <div
-            key={scale.signature + note.note + note.pitch}
-            className="absolute"
-            style={{ bottom: 4.5 * note.position, left: 5 + index * 19 }}
-            onMouseEnter={() => setHoveredNote(note)}
-            onMouseLeave={() => setHoveredNote(null)}
+    <div className="max-w-[100vw] overflow-auto">
+      <div className="relative my-20 w-[430px]">
+        <div className="flex flex-col w-32">
+          <label>Stupnica</label>
+          <select
+            className="bg-transparent"
+            value={scale.signature}
+            onChange={(e) => {
+              const newScale = Scales.find(
+                (scale) => scale.signature === e.target.value
+              );
+              if (newScale) {
+                setScale(newScale);
+              }
+            }}
           >
-            <NoteSymbol
-              note={note}
-              textPosition={note.position < 1 ? "bottom" : "top"}
-              onClick={() => onSelectNote(note)}
-            />
-            {(note.position < -2 || note.position > 7) && (
-              <div
-                className="w-[24px] h-[1px] bg-gray-500 absolute left-[-5px]"
-                style={{
-                  bottom: note.position % 2 === 0 ? 9 : 4.5,
-                }}
+            {Scales.map((scale) => (
+              <option key={scale.signature} value={scale.signature}>
+                {`${scale.name}${
+                  scale.signature ? ` (${scale.signature})` : ""
+                }`}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <div className="w-full h-[9px] border border-black" />
+          <div className="w-full h-[9px] border border-t-0 border-black" />
+          <div className="w-full h-[9px] border border-t-0 border-black" />
+          <div className="w-full h-[9px] border border-t-0 border-black" />
+        </div>
+        {Notes.filter((note) => scale.notes.includes(note.note)).map(
+          (note, index) => (
+            <div
+              key={scale.signature + note.note + note.pitch}
+              className="absolute"
+              style={{ bottom: 4.5 * note.position, left: 5 + index * 19 }}
+              onMouseEnter={() => setHoveredNote(note)}
+              onMouseLeave={() => setHoveredNote(null)}
+            >
+              <NoteSymbol
+                note={note}
+                textPosition={note.position < 1 ? "bottom" : "top"}
+                onClick={() => onSelectNote(note)}
               />
-            )}
-          </div>
-        )
-      )}
+              {(note.position < -2 || note.position > 7) && (
+                <div
+                  className="w-[24px] h-[1px] bg-gray-500 absolute left-[-5px]"
+                  style={{
+                    bottom: note.position % 2 === 0 ? 9 : 4.5,
+                  }}
+                />
+              )}
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 };

@@ -1,12 +1,12 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { Metadata } from "next";
 import { dbClient } from "../../../services/db";
 import {
   getSheetIdFromParam,
   getSheetNameFromSlug,
 } from "../../../utils/sheet";
-import Editor from "../../components/editor/Editor";
 import { getOrCreateUser } from "../../../utils/user";
-import { Metadata, ResolvingMetadata } from "next";
+import Editor from "../../components/editor/Editor";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 

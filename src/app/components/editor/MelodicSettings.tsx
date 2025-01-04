@@ -16,6 +16,7 @@ import MelodeonButton, { MelodeonButtonWrapper } from "../MelodeonButton";
 import MusicSheetSelector from "./MusicSheetSelector";
 import { useSongContext } from "./songContext";
 import { useTuningContext } from "./tuningContext";
+import Button from "../Button";
 
 const MelodicSettings = () => {
   const { tuning } = useTuningContext();
@@ -192,7 +193,7 @@ const MelodicSettings = () => {
         <div onClick={() => setTab("length")}>Dĺžka nôt</div>
         <div onClick={() => setTab("fingers")}>Prstoklad</div>
       </div>
-      <div className="flex flex-col items-start h-[530px]">
+      <div className="flex flex-col items-center min-h-0 overscroll-auto justify-center">
         {tab === "length" && (
           <>
             <div className="flex w-full flex-col">
@@ -283,7 +284,7 @@ const MelodicSettings = () => {
         )}
         {tab === "notes" && (
           <>
-            <div className="flex gap-10 w-full mb-4 h-[100px]">
+            <div className="flex gap-10 w-full mb-4 flex-col sm:flex-row sm:h-[100px] ">
               <div className="flex flex-col items-start">
                 <div className="flex h-8">
                   <div>Vybrané noty:</div>
@@ -310,19 +311,16 @@ const MelodicSettings = () => {
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-1 mt-4">
-                  <button
-                    className="border border-black p-1 h-8 text-sm rounded-md bg-[#0a0809] text-hel-bgDefault"
+                <div className="flex gap-1 mt-4 flex-col sm:flex-row">
+                  <Button
                     onClick={() => {
                       setSelectedNotes([]);
                       clearColumn();
-                      // setSelectedDirection("empty");
                     }}
                   >
                     Vymazať
-                  </button>
-                  <button
-                    className="border border-black p-1 h-8 text-sm rounded-md bg-[#0a0809] text-hel-bgDefault"
+                  </Button>
+                  <Button
                     onClick={() =>
                       isMelodicPartSplit
                         ? joinMelodicPart()
@@ -332,9 +330,8 @@ const MelodicSettings = () => {
                     {isMelodicPartSplit
                       ? "Zlúčiť melodickú časť"
                       : "Rozdeliť melodickú časť"}
-                  </button>
-                  <button
-                    className="border border-black p-1 h-8 text-sm rounded-md bg-[#0a0809] text-hel-bgDefault"
+                  </Button>
+                  <Button
                     onClick={() =>
                       isBasPartSplit ? joinBassPart() : splitBassPart()
                     }
@@ -342,7 +339,7 @@ const MelodicSettings = () => {
                     {isBasPartSplit
                       ? "Zlúčiť basovú časť"
                       : "Rozdeliť basovú časť"}
-                  </button>
+                  </Button>
                 </div>
               </div>
               <div className="flex">
@@ -440,7 +437,7 @@ const MelodicSettings = () => {
                 )}
               </div>
             </div>
-            <div className="flex gap-4 flex-wrap">
+            <div className="flex gap-4 flex-wrap justify-center">
               {hasMelodicPart && (
                 <div>
                   Výber nôt zo stupnice:
@@ -500,7 +497,7 @@ const MelodicSettings = () => {
                   </div>
                 )}
                 {canSetDirection && (
-                  <div className="flex gap-2 mx-4">
+                  <div className="flex flex-col sm:flex-row gap-2 mx-4">
                     <MelodeonButtonWrapper
                       selected={
                         selectedMelodicButtons

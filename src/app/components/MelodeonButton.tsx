@@ -104,7 +104,7 @@ const MelodeonButton = <
   selected,
 }: MelodeonButtonProps<ButtonType>) => {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center flex-col sm:flex-row">
       <MelodeonButtonWrapper selected={selected} noPadding>
         <div className="w-14 h-full flex justify-center">
           {direction !== "pull" && (
@@ -156,7 +156,7 @@ const MelodeonButton = <
           )}
         </div>
       </MelodeonButtonWrapper>
-      {!buttonNumberHidden && button.button}
+      {!buttonNumberHidden && <div className="text-xs">{button.button}</div>}
     </div>
   );
 };

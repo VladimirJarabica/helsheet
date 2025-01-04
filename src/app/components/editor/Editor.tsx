@@ -151,7 +151,12 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
         )}
       </div>
       <div
-        className="flex pt-5 w-11/12 flex-wrap max-w-full justify-center sm:justify-start print:pt-5 print:w-full"
+        className={`
+          flex flex-1 pt-5 w-11/12 flex-wrap max-w-full justify-center
+          sm:justify-start
+          print:pt-5 print:w-full
+          ${activeColumn ? "min-h-0 overflow-auto" : ""}
+          `}
         ref={barsWrapperRef}
         style={{ paddingLeft: LINE_HEADING_WIDTH }}
       >
@@ -191,7 +196,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       </div>
       {editable && (
         <div
-          className="max-h-[75%] print:hidden"
+          className="print:hidden min-h-0"
           onClick={(e) => {
             console.log("Setting on click", e);
             e.stopPropagation();
