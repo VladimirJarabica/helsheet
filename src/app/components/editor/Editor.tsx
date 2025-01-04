@@ -202,9 +202,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       </div>
       {editable && (
         <div
-          className="print:hidden min-h-0 h-[50vh] overflow-auto fixed bottom-0 z-10 bg-hel-bgDefault"
           onClick={(e) => {
-            console.log("Setting on click", e);
             e.stopPropagation();
             e.preventDefault();
           }}
