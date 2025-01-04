@@ -144,48 +144,46 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           </div>
         )}
       </div>
-      <div className="flex justify-center pt-5 overflow-y-auto flex-1">
-        <div
-          className="flex flex-wrap max-w-full justify-center sm:justify-start"
-          ref={barsWrapperRef}
-          style={{ paddingLeft: LINE_HEADING_WIDTH }}
-        >
-          {song.bars.map((bar, i) => (
-            <div
-              key={i}
-              className={`${
-                (i + 1) % (barsPerLine * BAR_LINES_PER_PAGE) === 0
-                  ? "break-after-page"
-                  : ""
-              }`}
+      <div
+        className="flex pt-5  max-w-[700px] w-11/12 flex-wrap max-w-full justify-center sm:justify-start"
+        ref={barsWrapperRef}
+        style={{ paddingLeft: LINE_HEADING_WIDTH }}
+      >
+        {song.bars.map((bar, i) => (
+          <div
+            key={i}
+            className={`${
+              (i + 1) % (barsPerLine * BAR_LINES_PER_PAGE) === 0
+                ? "break-after-page"
+                : ""
+            }`}
+          >
+            <Bar
+              bar={bar}
+              barIndex={i}
+              previousBar={song.bars[i - 1]}
+              followingBar={song.bars[i + 1]}
+            />
+          </div>
+        ))}
+        {editable && (
+          <div className="print:hidden">
+            <button
+              className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
+              onClick={() => {
+                addBar();
+              }}
+              style={{
+                height:
+                  (tuning.melodic.length + 1) * CELL_SIZE +
+                  DIRECTION_CELL_SIZE +
+                  3,
+              }}
             >
-              <Bar
-                bar={bar}
-                barIndex={i}
-                previousBar={song.bars[i - 1]}
-                followingBar={song.bars[i + 1]}
-              />
-            </div>
-          ))}
-          {editable && (
-            <div className="print:hidden">
-              <button
-                className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
-                onClick={() => {
-                  addBar();
-                }}
-                style={{
-                  height:
-                    (tuning.melodic.length + 1) * CELL_SIZE +
-                    DIRECTION_CELL_SIZE +
-                    3,
-                }}
-              >
-                Nový takt
-              </button>
-            </div>
-          )}
-        </div>
+              Nový takt
+            </button>
+          </div>
+        )}
       </div>
       {editable && (
         <div
