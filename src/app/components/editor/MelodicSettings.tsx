@@ -287,7 +287,7 @@ const MelodicSettings = () => {
               )}
               {tab === "notes" && (
                 <>
-                  <div className="flex gap-10 w-full mb-4 flex-col sm:flex-row sm:h-[100px] ">
+                  <div className="flex gap-10 w-full mb-4 flex-col sm:flex-row">
                     <div className="flex flex-col items-start">
                       <div className="flex h-8">
                         <div>Vybrané noty:</div>
@@ -413,24 +413,31 @@ const MelodicSettings = () => {
                                 return (
                                   <div
                                     key={row.row}
-                                    className="border-b border-black w-8 h-6 flex justify-center items-center"
+                                    className={`border-b border-black w-8 h-8 flex justify-center items-center text-center
+                                      ${
+                                        rowButtons.length > 2
+                                          ? "text-xs"
+                                          : "text-sm"
+                                      }
+                                      `}
                                   >
-                                    {rowButtons
-                                      .map((button) => button.button)
-                                      .join(" ")}
+                                    {
+                                      rowButtons.map((button) => (
+                                        <>{button.button} </>
+                                      ))
+                                      // .join(<>&nbsp;</>)
+                                    }
                                   </div>
                                 );
                               })}
-                              <div className="border-b border-black w-8 h-6 flex justify-center items-center">
+                              <div className="border-b border-black w-8 h-8 flex justify-center items-center">
                                 {isOppositeDirection
                                   ? ""
-                                  : bassItems
-                                      .map((bassItem) =>
-                                        "note" in bassItem
-                                          ? bassItem.note.note
-                                          : null
-                                      )
-                                      .join(" ")}
+                                  : bassItems.map((bassItem) =>
+                                      "note" in bassItem ? (
+                                        <>{bassItem.note.note} </>
+                                      ) : null
+                                    )}
                               </div>
                               <div
                                 className={`w-8 h-6 flex justify-center items-center ${

@@ -152,10 +152,10 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           </div>
         )}
       </div>
-      <div className={``}>
+      <div className={`px-2 sm:px-4`}>
         <div
           className={`
-          flex flex-1 pt-5 w-11/12 flex-wrap max-w-full justify-center
+          flex flex-1 pt-5 flex-wrap max-w-full justify-center
           sm:justify-start
           print:pt-5 print:w-full
           ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
@@ -166,11 +166,11 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           {song.bars.map((bar, i) => (
             <div
               key={i}
-              className={`${
+              className={
                 (i + 1) % (4 * BAR_LINES_PER_PAGE) === 0
                   ? "break-after-page"
-                  : ""
-              }`}
+                  : undefined
+              }
             >
               <Bar
                 bar={bar}
