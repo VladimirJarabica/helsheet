@@ -101,8 +101,10 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
     >
       <div className="flex w-[700px] pt-5 justify-between">
         <div className="flex items-end gap-2">
-          <div className="text-2xl">{sheet.name}</div>
-          <span className="text-base">(zapísal {sheet.Author.nickname})</span>
+          <div className="text-2xl font-bold">{sheet.name}</div>
+          <span className="text-base print:hidden">
+            (zapísal {sheet.Author.nickname})
+          </span>
         </div>
         {!editable && <LikeSheetButton sheetId={sheet.id} liked={liked} />}
         {editable && (
@@ -146,7 +148,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       </div>
       <div className="flex justify-center pt-5 overflow-y-auto flex-1">
         <div
-          className="flex flex-wrap w-[700px] max-w-full print:visible"
+          className="flex flex-wrap w-[700px] max-w-full"
           ref={barsWrapperRef}
         >
           {song.bars.map((bar, i) => (

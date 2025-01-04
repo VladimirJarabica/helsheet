@@ -1,6 +1,6 @@
 "use client";
 import { CELL_SIZE } from "../../../utils/consts";
-import { CellItem, Cell as CellType } from "./../../types";
+import { CellItem, Cell as CellType, DirectionSubCell } from "./../../types";
 import { useSongContext } from "./songContext";
 import SubCell from "./SubCell";
 
@@ -26,6 +26,7 @@ interface ColumnCellProps<Item extends CellItem> {
   columnIndex: number;
   setHoveredSubColumnIndex: (index: number | null) => void;
   hoveredSubColumnIndex: number | null;
+  directions: DirectionSubCell[];
 }
 
 const Cell = <Item extends CellItem>({
@@ -35,6 +36,7 @@ const Cell = <Item extends CellItem>({
   columnIndex,
   setHoveredSubColumnIndex,
   hoveredSubColumnIndex,
+  directions,
 }: ColumnCellProps<Item>) => {
   const { setActiveColumn, activeColumn, ligatures } = useSongContext();
 
@@ -97,6 +99,7 @@ const Cell = <Item extends CellItem>({
           <SubCell
             key={i}
             subCell={subCell}
+            direction={directions[i]?.direction ?? directions[0]?.direction}
             isFirst={i === 0}
             isActive={!!isSubCellActive}
             onClick={() => {

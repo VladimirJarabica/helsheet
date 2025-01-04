@@ -80,7 +80,7 @@ const Bar = ({
       ))}
       {editable && (
         <div
-          className="absolute right-0 top-0 bg-transparent z-10"
+          className="absolute right-0 top-0 bg-transparent z-10 print:hidden"
           ref={menuRef}
         >
           {!isMenuOpen && (

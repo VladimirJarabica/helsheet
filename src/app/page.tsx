@@ -5,6 +5,7 @@ import { dbClient } from "../services/db";
 import { getSheetUrl } from "../utils/sheet";
 import { getOrCreateUser } from "../utils/user";
 import LikeSheetButton from "./components/editor/LikeSheetButton";
+import Filter from "./components/Filter";
 
 export default async function Home() {
   const sheets = await dbClient.sheet.findMany({
@@ -14,10 +15,10 @@ export default async function Home() {
   const authUser = await currentUser();
   const user = authUser ? await getOrCreateUser(authUser.id) : null;
 
-  console.log("user", user);
-
   return (
     <div className="flex flex-col">
+      <Filter />
+
       {sheets.map((sheet) => (
         <Link
           key={sheet.id}

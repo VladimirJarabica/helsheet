@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Header = async () => {
   return (
-    <header className="w-full shadow flex justify-center py-2">
+    <header className="w-full shadow flex justify-center py-2 print:hidden">
       <div className="w-[700px] flex justify-between items-center">
         <div>
           <Link href="/">Domov</Link>

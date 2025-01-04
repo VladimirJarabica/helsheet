@@ -2,11 +2,10 @@ import { skSK } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Header from "./components/Header";
-import "./globals.css";
-import Filter from "./components/Filter";
-import { TagsContextProvider } from "./components/TagsContext";
 import { getTags } from "../utils/tags";
+import Header from "./components/Header";
+import { TagsContextProvider } from "./components/TagsContext";
+import "./globals.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,12 +37,8 @@ export default async function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
           >
             <Header />
-
             <main className="flex justify-center">
-              <div className="max-w-full mx-4">
-                <Filter />
-                {children}
-              </div>
+              <div className="max-w-full mx-4">{children}</div>
             </main>
           </body>
         </html>

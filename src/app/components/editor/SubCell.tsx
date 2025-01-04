@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { CellItem, SubCell as SubCellType } from "./../../types";
+import { CellItem, Direction, SubCell as SubCellType } from "./../../types";
 
 interface CellItemProps<Item extends CellItem> {
   subCell: SubCellType<Item>;
@@ -9,6 +9,7 @@ interface CellItemProps<Item extends CellItem> {
   onClick: () => void;
   onHoverChange: (hovered: boolean) => void;
   hovered: boolean;
+  direction: Direction;
   // onChange: (newSubCell: SubCellType) => void;
   // row: CellRow;
 }
@@ -20,15 +21,15 @@ const SubCell = <Item extends CellItem>({
   onClick,
   onHoverChange,
   hovered,
+  direction,
 }: // onChange,
 // row,
 CellItemProps<Item>) => {
   const items = subCell.items;
   return (
     <div
-      className={`flex flex-1 items-center flex-col justify-around leading-none ${
-        !isFirst ? "border-l border-gray-700 border-dashed" : ""
-      }
+      className={`flex flex-1 items-center flex-col justify-around leading-none
+        ${!isFirst ? "border-l border-gray-700 border-dashed" : ""}
         ${isActive && false ? "bg-green-50" : ""}
         ${items.length === 1 ? "text-3xl" : ""}
         ${items.length === 2 ? "text-xl" : ""}
@@ -38,6 +39,7 @@ CellItemProps<Item>) => {
         ${hovered && false ? "bg-purple-100" : ""}
         ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
         ${isActive ? "bg-hel-bgActive text-hel-textActive" : ""}
+        ${direction === "push" ? "bg-hel-bgEmphasis" : ""}
         `}
       onClick={() => onClick()}
       onMouseOver={() => onHoverChange(true)}

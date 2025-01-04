@@ -69,6 +69,7 @@ const Column = ({
               columnIndex={columnIndex}
               setHoveredSubColumnIndex={setHoveredSubColumnIndex}
               hoveredSubColumnIndex={hoveredSubColumnIndex}
+              directions={column.directions}
             />
           ))}
         <Cell
@@ -78,6 +79,7 @@ const Column = ({
           columnIndex={columnIndex}
           setHoveredSubColumnIndex={setHoveredSubColumnIndex}
           hoveredSubColumnIndex={hoveredSubColumnIndex}
+          directions={column.directions}
         />
         <div className="flex">
           {column.directions.map((direction, i) => (
