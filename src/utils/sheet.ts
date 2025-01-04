@@ -11,10 +11,14 @@ import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 export const getSheetUrl = (
   sheet: Pick<Sheet, "id" | "name"> & { editSecret?: string }
 ) => {
-  const name = sheet.name.toLowerCase().replace(/ /g, "-");
+  const name = sheet.name.replace(/ /g, "-");
   return `/sheet/${sheet.id}_${name}?${
     sheet.editSecret ? `editSecret=${sheet.editSecret}` : ""
   }`;
+};
+
+export const getSheetNameFromSlug = (slug: string) => {
+  return decodeURIComponent(slug).split("_")[1]?.replace(/-/g, " ");
 };
 
 export const getSheetIdFromParam = (slug: string) => {

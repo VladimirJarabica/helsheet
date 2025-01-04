@@ -90,7 +90,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
 
   return (
     <div
-      className="max-h-[100vh] flex flex-col items-center"
+      className="max-h-[100vh] w-screen flex flex-col items-center"
       onClick={(e) => {
         console.log("Wrapper on click", e.target);
         if (
@@ -108,15 +108,21 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           <span className="text-base print:hidden">
             (zapísal {sheet.Author.nickname})
           </span>
-          <Button
-            onClick={async () => {
-              await save();
-            }}
-          >
-            Uložiť
-          </Button>
+          <div className="print:hidden">
+            <Button
+              onClick={async () => {
+                await save();
+              }}
+            >
+              Uložiť
+            </Button>
+          </div>
         </div>
-        {!editable && <LikeSheetButton sheetId={sheet.id} liked={liked} />}
+        {!editable && (
+          <div className="print:hidden">
+            <LikeSheetButton sheetId={sheet.id} liked={liked} />
+          </div>
+        )}
         {editable && (
           <div className="print:hidden flex gap-1 items-center">
             {sheet.Tags.map((tag) => (
@@ -145,7 +151,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
         )}
       </div>
       <div
-        className="flex pt-5  max-w-[700px] w-11/12 flex-wrap max-w-full justify-center sm:justify-start"
+        className="flex pt-5 w-11/12 flex-wrap max-w-full justify-center sm:justify-start print:pt-5 print:w-full"
         ref={barsWrapperRef}
         style={{ paddingLeft: LINE_HEADING_WIDTH }}
       >
@@ -153,9 +159,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           <div
             key={i}
             className={`${
-              (i + 1) % (barsPerLine * BAR_LINES_PER_PAGE) === 0
-                ? "break-after-page"
-                : ""
+              (i + 1) % (4 * BAR_LINES_PER_PAGE) === 0 ? "break-after-page" : ""
             }`}
           >
             <Bar

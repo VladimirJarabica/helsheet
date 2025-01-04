@@ -1,15 +1,29 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { dbClient } from "../../../services/db";
-import { getSheetIdFromParam } from "../../../utils/sheet";
+import {
+  getSheetIdFromParam,
+  getSheetNameFromSlug,
+} from "../../../utils/sheet";
 import Editor from "../../components/editor/Editor";
 import { getOrCreateUser } from "../../../utils/user";
+import { Metadata, ResolvingMetadata } from "next";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
-const Sheet = async (props: {
+interface PageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
-}) => {
+}
+
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const { slug } = await props.params;
+
+  const title = getSheetNameFromSlug(slug);
+
+  return title ? { title } : {};
+}
+
+const Sheet = async (props: PageProps) => {
   const { slug } = await props.params;
   const sheetId = getSheetIdFromParam(slug);
 
