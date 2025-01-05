@@ -31,7 +31,7 @@ CellItemProps<Item>) => {
       className={`flex flex-1 items-center flex-col justify-around leading-none
         ${!isFirst ? "border-l border-gray-700 border-dashed" : ""}
         ${isActive && false ? "bg-green-50" : ""}
-        ${items.length === 1 ? "text-3xl" : ""}
+        ${items.length === 1 ? "text-2xl" : ""}
         ${items.length === 2 ? "text-xl" : ""}
         ${items.length === 3 ? "text-sm" : ""}
         ${items.length === 4 ? "text-[11px]" : ""}

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { LINE_HEADING_WIDTH } from "../../../utils/consts";
+import { LINE_HEADING_WIDTH_WITH_BORDER } from "../../../utils/consts";
 import { Bar as BarType } from "./../../types";
 import Column from "./Column";
 import LineHeading from "./LineHeading";
@@ -56,7 +56,10 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
 
   return (
     <div className="flex relative">
-      <div className="z-0 w-0 absolute" style={{ left: -LINE_HEADING_WIDTH }}>
+      <div
+        className="z-0 w-0 absolute"
+        style={{ left: -LINE_HEADING_WIDTH_WITH_BORDER }}
+      >
         <LineHeading />
       </div>
       <div className="group flex relative z-10 bg-hel-bgDefault">

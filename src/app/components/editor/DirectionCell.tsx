@@ -53,12 +53,12 @@ const DirectionCell = ({
                 : ""
             }
             `}
-          style={{ lineHeight: DIRECTION_CELL_SIZE + "px", fontSize: "14px" }}
+          style={{ lineHeight: DIRECTION_CELL_SIZE + "px", fontSize: "10px" }}
         >
           {direction === "pull" && previousDirection !== direction && (
             <span className="-mr-1">◄</span>
           )}
-          <div className={`h-[2px] flex-1 bg-black`} />
+          <div className={`h-[1px] flex-1 bg-black`} />
           {direction === "push" && followingDirection !== direction && (
             <span className="-ml-1">►</span>
           )}

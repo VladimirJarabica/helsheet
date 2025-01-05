@@ -6,11 +6,12 @@ import {
   BAR_LINES_PER_PAGE,
   CELL_SIZE,
   DIRECTION_CELL_SIZE,
-  LINE_HEADING_WIDTH,
+  LINE_HEADING_WIDTH_WITH_BORDER,
 } from "../../../utils/consts";
 import { getColumnsInBar } from "../../../utils/sheet";
 import { createTag, setTagToSheet } from "../../../utils/tags";
 import { SongContent } from "../../types";
+import Button from "../Button";
 import TagPill from "../TagPill";
 import { useTags } from "../TagsContext";
 import Bar from "./Bar";
@@ -18,7 +19,6 @@ import LikeSheetButton from "./LikeSheetButton";
 import MelodicSettings from "./MelodicSettings";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
-import Button from "../Button";
 import Verses from "./Verses";
 
 interface SongWrapperProps {
@@ -103,7 +103,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       }}
       ref={wrapperRef}
     >
-      <div className="flex max-w-[700px] w-11/12 pt-5 flex-col gap-4 justify-between">
+      <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-0 flex-col gap-4 justify-between">
         <div className="flex items-end gap-2 justify-between">
           <div className="text-2xl font-bold">{sheet.name}</div>
           <div className="flex gap-2 items-center">
@@ -162,14 +162,14 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
           `}
           ref={barsWrapperRef}
-          style={{ paddingLeft: LINE_HEADING_WIDTH }}
+          style={{ paddingLeft: LINE_HEADING_WIDTH_WITH_BORDER }}
         >
           {song.bars.map((bar, i) => (
             <div
               key={i}
               className={
                 (i + 1) % (4 * BAR_LINES_PER_PAGE) === 0
-                  ? "break-after-page"
+                  ? "--print:break-after-page"
                   : undefined
               }
             >

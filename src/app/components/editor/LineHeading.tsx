@@ -1,4 +1,8 @@
-import { CELL_SIZE, DIRECTION_CELL_SIZE } from "../../../utils/consts";
+import {
+  CELL_SIZE,
+  DIRECTION_CELL_SIZE,
+  LINE_HEADING_WIDTH,
+} from "../../../utils/consts";
 import { useTuningContext } from "./tuningContext";
 
 const TO_ROMAN_NUMBER = {
@@ -20,25 +24,25 @@ const LineHeading = () => {
         <div
           key={row}
           className="border-b border-black text-2xl flex justify-center items-center"
-          style={{ width: CELL_SIZE, height: CELL_SIZE }}
+          style={{ width: LINE_HEADING_WIDTH, height: CELL_SIZE }}
         >
           {TO_ROMAN_NUMBER[row as keyof typeof TO_ROMAN_NUMBER]}.
         </div>
       ))}
       <div
         className="border-b border-black text-2xl flex justify-center items-center"
-        style={{ width: CELL_SIZE, height: CELL_SIZE }}
+        style={{ width: LINE_HEADING_WIDTH, height: CELL_SIZE }}
       >
         B
       </div>
       <div
         style={{
-          width: CELL_SIZE,
+          width: LINE_HEADING_WIDTH,
           height: DIRECTION_CELL_SIZE,
         }}
-        className="text-md flex justify-center items-center border-t border-black"
+        className="text-sm flex justify-center items-center border-t border-black"
       >
-        smer
+        M
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ const Verse = ({ index, verse }: VerseProps) => {
 
   return (
     <textarea
-      className="bg-transparent"
+      className="bg-transparent print:resize-none"
       ref={ref}
       rows={1}
       value={verse}
@@ -43,7 +43,7 @@ const Verses = () => {
           <Verse index={i} verse={verse.text} />
         </div>
       ))}
-      <div className="w-1/2 flex flex-col">
+      <div className="w-1/2 flex flex-col print:hidden">
         <textarea
           placeholder="ďalšia sloha"
           className="bg-transparent w-full"
