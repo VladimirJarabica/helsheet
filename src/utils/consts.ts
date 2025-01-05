@@ -1,6 +1,6 @@
 import { TimeSignature } from "../app/types";
 
-export const CELL_SIZE = 32;
+export const CELL_SIZE = 36;
 
 export const LINE_HEADING_WIDTH = CELL_SIZE * 0.75;
 

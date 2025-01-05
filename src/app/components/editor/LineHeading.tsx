@@ -40,7 +40,7 @@ const LineHeading = () => {
           width: LINE_HEADING_WIDTH,
           height: DIRECTION_CELL_SIZE,
         }}
-        className="text-sm flex justify-center items-center border-t border-black"
+        className="text-xs flex justify-center items-center border-t border-black"
       >
         M
       </div>

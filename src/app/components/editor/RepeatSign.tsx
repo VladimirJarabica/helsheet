@@ -17,7 +17,7 @@ const RepeatSign = ({ type }: RepeatSignProps) => {
   return (
     <div
       className={`absolute w-[10px] overflow-hidden pointer-events-none
-      ${type === "start" ? "left-1" : "right-1"}
+      ${type === "start" ? "left-[1px]" : "right-[1px]"}
       -top-[10px]
     `}
       style={{ height }}
@@ -30,7 +30,7 @@ const RepeatSign = ({ type }: RepeatSignProps) => {
       >
         <div
           className={`flex flex-col justify-center gap-3 absolute  ${
-            type === "start" ? "left-1" : "right-1"
+            type === "start" ? "left-[2px]" : "right-[2px]"
           }`}
           style={{
             height: (tuning.melodic.length + 1) * CELL_SIZE,

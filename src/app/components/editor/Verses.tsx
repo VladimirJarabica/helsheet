@@ -6,7 +6,7 @@ interface VerseProps {
   index: number;
   verse: string;
 }
-const Verse = ({ index, verse }: VerseProps) => {
+const Verse = ({ verse }: VerseProps) => {
   const ref = useRef<HTMLTextAreaElement>(null);
 
   const resizeTextArea = () => {

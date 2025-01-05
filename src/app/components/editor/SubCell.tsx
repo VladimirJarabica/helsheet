@@ -32,10 +32,10 @@ CellItemProps<Item>) => {
         ${!isFirst ? "border-l border-gray-700 border-dashed" : ""}
         ${isActive && false ? "bg-green-50" : ""}
         ${items.length === 1 ? "text-2xl" : ""}
-        ${items.length === 2 ? "text-xl" : ""}
-        ${items.length === 3 ? "text-sm" : ""}
-        ${items.length === 4 ? "text-[11px]" : ""}
-        ${items.length > 4 ? "text-[8.5px]" : ""}
+        ${items.length === 2 ? "text-lg" : ""}
+        ${items.length === 3 ? "text-xs" : ""}
+        ${items.length === 4 ? "text-[9px]" : ""}
+        ${items.length > 4 ? "text-[7px]" : ""}
         ${hovered && false ? "bg-purple-100" : ""}
         ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
         ${isActive ? "bg-hel-bgActive text-hel-textActive" : ""}
