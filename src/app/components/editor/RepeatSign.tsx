@@ -17,8 +17,9 @@ const RepeatSign = ({ type, topOffset }: RepeatSignProps) => {
     RADIUS_SIZE * 2;
   return (
     <div
+      // Right 3 px because 1 + 2px border
       className={`absolute w-[10px] overflow-hidden pointer-events-none
-      ${type === "start" ? "left-[1px]" : "right-[1px]"}
+      ${type === "start" ? "left-[1px]" : "right-[3px]"}
     `}
       style={{ height, top: -10 + topOffset }}
     >
