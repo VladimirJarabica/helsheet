@@ -103,7 +103,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       }}
       ref={wrapperRef}
     >
-      <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-0 flex-col gap-4 justify-between">
+      <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-2 flex-col gap-4 justify-between">
         <div className="flex items-end gap-2 justify-between">
           <div className="text-2xl font-bold">{sheet.name}</div>
           <div className="flex gap-2 items-center">
