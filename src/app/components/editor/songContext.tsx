@@ -80,6 +80,8 @@ type SongContext = {
     barIndex: number,
     repeat: Exclude<Bar["repeat"], undefined>
   ) => void;
+  removeLastColumnFromBar: (barIndex: number) => void;
+  addColumnToBar: (barIndex: number) => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -112,6 +114,8 @@ const songContext = createContext<SongContext>({
   save: () => Promise.resolve(),
   clearColumn: () => {},
   setRepeatOfBar: () => {},
+  removeLastColumnFromBar: () => {},
+  addColumnToBar: () => {},
 });
 
 interface SongContextProviderProps {
@@ -142,24 +146,38 @@ export const SongContextProvider = ({
     }
   };
 
+  const getNewEmptyColumn = (): Column => ({
+    melodic: tuning.melodic.map<Cell<CellNote | EmptyCell>>((row) => ({
+      row: row.row,
+      subCells: [{ items: [{ type: "empty" }] }],
+    })),
+    bass: {
+      row: "bass",
+      subCells: [{ items: [{ type: "empty" }] }],
+    },
+    directions: [{ direction: "empty" }],
+    text: null,
+  });
+
   const addBar = () => {
     setSong((prev) => ({
       ...prev,
       bars: [
         ...prev.bars,
         {
-          columns: new Array(columnsInBar).fill(null).map(() => ({
-            melodic: tuning.melodic.map<Cell<CellNote | EmptyCell>>((row) => ({
-              row: row.row,
-              subCells: [{ items: [{ type: "empty" }] }],
-            })),
-            bass: {
-              row: "bass",
-              subCells: [{ items: [{ type: "empty" }] }],
-            },
-            directions: [{ direction: "empty" }],
-            text: null,
-          })),
+          columns: new Array(columnsInBar).fill(getNewEmptyColumn()),
+          // .map(() => ({
+          //   melodic: tuning.melodic.map<Cell<CellNote | EmptyCell>>((row) => ({
+          //     row: row.row,
+          //     subCells: [{ items: [{ type: "empty" }] }],
+          //   })),
+          //   bass: {
+          //     row: "bass",
+          //     subCells: [{ items: [{ type: "empty" }] }],
+          //   },
+          //   directions: [{ direction: "empty" }],
+          //   text: null,
+          // })),
         },
       ],
     }));
@@ -602,6 +620,34 @@ export const SongContextProvider = ({
     }));
   };
 
+  const removeLastColumnFromBar = (barIndex: number) => {
+    setSong((prev) => ({
+      ...prev,
+      bars: prev.bars.map((bar, index) =>
+        index === barIndex && bar.columns.length > 1
+          ? {
+              ...bar,
+              columns: bar.columns.slice(0, bar.columns.length - 1),
+            }
+          : bar
+      ),
+    }));
+  };
+
+  const addColumnToBar = (barIndex: number) => {
+    setSong((prev) => ({
+      ...prev,
+      bars: prev.bars.map((bar, index) =>
+        index === barIndex
+          ? {
+              ...bar,
+              columns: [...bar.columns, getNewEmptyColumn()],
+            }
+          : bar
+      ),
+    }));
+  };
+
   const ligatures = useLigatures({
     columnsInTuning: columnsInBar,
     bars: song.bars,
@@ -636,6 +682,8 @@ export const SongContextProvider = ({
           save,
           clearColumn,
           setRepeatOfBar,
+          addColumnToBar,
+          removeLastColumnFromBar,
         }}
       >
         {children}

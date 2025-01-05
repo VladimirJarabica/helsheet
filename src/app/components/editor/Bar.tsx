@@ -14,8 +14,14 @@ interface BarProps {
   barIndex: number;
 }
 const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
-  const { duplicateBar, removeBar, setRepeatOfBar, editable } =
-    useSongContext();
+  const {
+    duplicateBar,
+    removeBar,
+    setRepeatOfBar,
+    editable,
+    addColumnToBar,
+    removeLastColumnFromBar,
+  } = useSongContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -131,6 +137,24 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
                 <button onClick={() => {}} className="px-2 hover:bg-[#dbc991]">
                   Pridať do skupiny
                 </button>
+                <button
+                  onClick={() => {
+                    addColumnToBar(barIndex);
+                  }}
+                  className="px-2 hover:bg-[#dbc991]"
+                >
+                  Pridať stĺpec
+                </button>
+                {bar.columns.length > 1 && (
+                  <button
+                    onClick={() => {
+                      removeLastColumnFromBar(barIndex);
+                    }}
+                    className="px-2 hover:bg-[#dbc991]"
+                  >
+                    Odstrániť stĺpec
+                  </button>
+                )}
               </div>
             )}
           </div>
