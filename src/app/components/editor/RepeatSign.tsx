@@ -4,11 +4,12 @@ import { useTuningContext } from "./tuningContext";
 
 interface RepeatSignProps {
   type: keyof Exclude<Bar["repeat"], undefined>;
+  topOffset: number;
 }
 
 const RADIUS_SIZE = 10;
 
-const RepeatSign = ({ type }: RepeatSignProps) => {
+const RepeatSign = ({ type, topOffset }: RepeatSignProps) => {
   const { tuning } = useTuningContext();
   const height =
     (tuning.melodic.length + 1) * CELL_SIZE +
@@ -18,9 +19,8 @@ const RepeatSign = ({ type }: RepeatSignProps) => {
     <div
       className={`absolute w-[10px] overflow-hidden pointer-events-none
       ${type === "start" ? "left-[1px]" : "right-[1px]"}
-      -top-[10px]
     `}
-      style={{ height }}
+      style={{ height, top: -10 + topOffset }}
     >
       <div
         className={`absolute ${

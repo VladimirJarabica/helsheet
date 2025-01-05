@@ -156,7 +156,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       <div className={`px-2 sm:px-4`}>
         <div
           className={`
-          flex flex-1 pt-5 flex-wrap max-w-full justify-center
+          flex flex-1 pt-5 flex-wrap max-w-full justify-center items-end
           sm:justify-start
           print:pt-5 print:w-full
           ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
@@ -212,7 +212,6 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           {activeColumn && <MelodicSettings />}
         </div>
       )}
-      {/* <BarGroups /> */}
     </div>
   );
 };

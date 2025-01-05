@@ -123,13 +123,14 @@ export type Bar = {
     start: boolean;
     end: boolean;
   };
+  variant?: number;
 };
 
 export type TimeSignature = "3/4" | "4/4" | "2/4";
 
-export type BarGroup = {
+export type Variant = {
+  id: number;
   name: string;
-  barIndexes: number[];
 };
 
 export type Verse = {
@@ -139,7 +140,7 @@ export type Verse = {
 export type SongContent = {
   timeSignature: TimeSignature;
   bars: Bar[];
-  barGroups?: BarGroup[];
+  variants?: Variant[];
   verses?: Verse[];
 };
 

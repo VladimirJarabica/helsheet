@@ -84,6 +84,8 @@ type SongContext = {
   addColumnToBar: (barIndex: number) => void;
   addVerse: (text: string) => void;
   removeVerse: (index: number) => void;
+  addVariant: (variant: string) => void;
+  setBarVariant: (barIndex: number, variant?: number) => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -120,6 +122,8 @@ const songContext = createContext<SongContext>({
   addColumnToBar: () => {},
   addVerse: () => {},
   removeVerse: () => {},
+  addVariant: () => {},
+  setBarVariant: () => {},
 });
 
 interface SongContextProviderProps {
@@ -666,10 +670,34 @@ export const SongContextProvider = ({
     }));
   };
 
+  const addVariant = (variant: string) => {
+    console.log("add variant", variant);
+    setSong((prev) => {
+      const lastId = prev.variants?.[prev.variants.length - 1]?.id ?? 0;
+
+      console.log("add variant", { id: lastId + 1, name: variant });
+      return {
+        ...prev,
+        variants: [...(prev.variants ?? []), { id: lastId + 1, name: variant }],
+      };
+    });
+  };
+
+  const setBarVariant = (barIndex: number, variant?: number) => {
+    setSong((prev) => ({
+      ...prev,
+      bars: prev.bars.map((bar, index) =>
+        index === barIndex ? { ...bar, variant } : bar
+      ),
+    }));
+  };
+
   const ligatures = useLigatures({
     columnsInTuning: columnsInBar,
     bars: song.bars,
   });
+
+  console.log("song", song);
 
   return (
     <div>
@@ -704,6 +732,8 @@ export const SongContextProvider = ({
           removeLastColumnFromBar,
           addVerse,
           removeVerse,
+          addVariant,
+          setBarVariant,
         }}
       >
         {children}
