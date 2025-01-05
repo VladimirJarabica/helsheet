@@ -132,10 +132,15 @@ export type BarGroup = {
   barIndexes: number[];
 };
 
+export type Verse = {
+  text: string;
+};
+
 export type SongContent = {
   timeSignature: TimeSignature;
   bars: Bar[];
   barGroups?: BarGroup[];
+  verses?: Verse[];
 };
 
 export type CellLigaturePosition = {

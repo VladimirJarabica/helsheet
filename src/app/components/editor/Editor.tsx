@@ -19,6 +19,7 @@ import MelodicSettings from "./MelodicSettings";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
 import Button from "../Button";
+import Verses from "./Verses";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name"> & {
@@ -200,6 +201,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
           )}
         </div>
       </div>
+      <Verses />
       {editable && (
         <div
           onClick={(e) => {

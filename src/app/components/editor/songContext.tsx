@@ -82,6 +82,8 @@ type SongContext = {
   ) => void;
   removeLastColumnFromBar: (barIndex: number) => void;
   addColumnToBar: (barIndex: number) => void;
+  addVerse: (text: string) => void;
+  removeVerse: (index: number) => void;
 };
 
 const songContext = createContext<SongContext>({
@@ -116,6 +118,8 @@ const songContext = createContext<SongContext>({
   setRepeatOfBar: () => {},
   removeLastColumnFromBar: () => {},
   addColumnToBar: () => {},
+  addVerse: () => {},
+  removeVerse: () => {},
 });
 
 interface SongContextProviderProps {
@@ -648,6 +652,20 @@ export const SongContextProvider = ({
     }));
   };
 
+  const addVerse = (text: string) => {
+    setSong((prev) => ({
+      ...prev,
+      verses: [...(prev.verses ?? []), { text }],
+    }));
+  };
+
+  const removeVerse = (index: number) => {
+    setSong((prev) => ({
+      ...prev,
+      verses: prev.verses?.filter((_, i) => i !== index),
+    }));
+  };
+
   const ligatures = useLigatures({
     columnsInTuning: columnsInBar,
     bars: song.bars,
@@ -684,6 +702,8 @@ export const SongContextProvider = ({
           setRepeatOfBar,
           addColumnToBar,
           removeLastColumnFromBar,
+          addVerse,
+          removeVerse,
         }}
       >
         {children}
