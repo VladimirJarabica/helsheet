@@ -24,10 +24,10 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
     duplicateBar,
     removeBar,
     setRepeatOfBar,
-    editable,
     addColumnToBar,
     removeLastColumnFromBar,
     setBarVariant,
+    isEditing,
   } = useSongContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSelectingVariant, setIsSelectingVariant] = useState(false);
@@ -111,7 +111,7 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
           />
         ))}
       </div>
-      {editable && (
+      {isEditing && (
         <div
           className="absolute right-0 top-0 bg-transparent z-20 print:hidden w-fit"
           ref={menuRef}
