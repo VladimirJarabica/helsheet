@@ -40,8 +40,16 @@ export type SubColumnPosition = ColumnPosition & {
   subColumnIndex: number;
 };
 
-type SongContext = {
+interface SongContextProviderProps {
+  id: number;
   editable: boolean;
+  children: React.ReactNode;
+  initialSong: SongContent;
+}
+
+type SongContext = {
+  isEditing: boolean;
+  setEditing: (editing: boolean) => void;
   song: SongContent;
   ligatures: Ligatures;
   activeCell: CellPosition | null;
@@ -89,7 +97,7 @@ type SongContext = {
 };
 
 const songContext = createContext<SongContext>({
-  editable: false,
+  isEditing: false,
   song: {
     timeSignature: "4/4",
     bars: [],
@@ -98,6 +106,7 @@ const songContext = createContext<SongContext>({
   activeCell: null,
   activeColumn: null,
   columnsInBar: 4,
+  setEditing: () => {},
   setActiveCell: () => {},
   setActiveColumn: () => {},
   //   setMelodicSubCells: () => {},
@@ -126,13 +135,6 @@ const songContext = createContext<SongContext>({
   setBarVariant: () => {},
 });
 
-interface SongContextProviderProps {
-  id: number;
-  editable: boolean;
-  children: React.ReactNode;
-  initialSong: SongContent;
-}
-
 export const SongContextProvider = ({
   id,
   editable,
@@ -145,11 +147,16 @@ export const SongContextProvider = ({
     null
   );
   const { tuning } = useTuningContext();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const setEditing = (editing: boolean) => {
+    setIsEditing(editable && editing);
+  };
 
   const columnsInBar = getColumnsInBar(song.timeSignature);
 
   const save = async () => {
-    if (editable) {
+    if (editable && isEditing) {
       await saveSong({ id, song });
     }
   };
@@ -703,7 +710,8 @@ export const SongContextProvider = ({
     <div>
       <songContext.Provider
         value={{
-          editable,
+          isEditing,
+          setEditing,
           song,
           ligatures,
           activeCell,

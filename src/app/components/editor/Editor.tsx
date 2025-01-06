@@ -10,7 +10,11 @@ import {
   VARIANT_CELL_HEIGHT,
 } from "../../../utils/consts";
 import { getColumnsInBar } from "../../../utils/sheet";
-import { createTag, setTagToSheet } from "../../../utils/tags";
+import {
+  createTag,
+  removeTagFromSheet,
+  setTagToSheet,
+} from "../../../utils/tags";
 import { SongContent } from "../../types";
 import Button from "../Button";
 import TagPill from "../TagPill";
@@ -28,11 +32,19 @@ interface SongWrapperProps {
     Tags: Pick<Tag, "id" | "name">[];
   };
   liked: boolean;
+  editable: boolean;
 }
 
-const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
-  const { song, activeColumn, addBar, save, setActiveColumn, editable } =
-    useSongContext();
+const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
+  const {
+    song,
+    activeColumn,
+    addBar,
+    save,
+    setActiveColumn,
+    isEditing,
+    setEditing,
+  } = useSongContext();
   const tags = useTags();
   console.log("tags", tags);
 
@@ -106,53 +118,88 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
     >
       <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-2 flex-col gap-4 justify-between">
         <div className="flex items-end gap-2 justify-between">
-          <div className="text-2xl font-bold">{sheet.name}</div>
+          <div className="text-2xl font-bold flex gap-2 items-center">
+            {sheet.name}
+            {!isEditing && (
+              <div className="print:hidden">
+                <LikeSheetButton sheetId={sheet.id} liked={liked} />
+              </div>
+            )}
+          </div>
           <div className="flex gap-2 items-center">
-            <span className="text-base print:hidden">
-              (zapísal {sheet.Author.nickname})
-            </span>
-            <div className="print:hidden">
-              <Button
-                onClick={async () => {
-                  await save();
-                }}
-              >
-                Uložiť
-              </Button>
+            {!isEditing && (
+              <span className="text-base print:hidden">
+                (zapísal {sheet.Author.nickname})
+              </span>
+            )}
+            <div className="print:hidden flex gap-2">
+              {isEditing && (
+                <>
+                  <Button
+                    onClick={async () => {
+                      await save();
+                    }}
+                  >
+                    Uložiť
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditing(false);
+                    }}
+                  >
+                    Ukončiť
+                  </Button>
+                </>
+              )}
+              {!isEditing && editable && (
+                <Button
+                  onClick={() => {
+                    setEditing(true);
+                  }}
+                >
+                  Upraviť
+                </Button>
+              )}
             </div>
           </div>
         </div>
-        {!editable && (
-          <div className="print:hidden">
-            <LikeSheetButton sheetId={sheet.id} liked={liked} />
-          </div>
-        )}
-        {editable && (
-          <div className="print:hidden flex gap-1 items-center">
-            {sheet.Tags.map((tag) => (
-              <TagPill key={tag.id} tag={tag} />
-            ))}
+
+        <div className="print:hidden flex gap-1 items-center">
+          {sheet.Tags.map((tag) => (
+            <TagPill
+              key={tag.id}
+              tag={tag}
+              onRemove={
+                isEditing
+                  ? () => {
+                      removeTagFromSheet(sheet.id, tag.id);
+                    }
+                  : undefined
+              }
+            />
+          ))}
+          {isEditing && (
             <CreatableSelect<{ value: number; label: string }>
               className="w-40 z-20"
-              options={tags.map((tag) => ({
-                value: tag.id,
-                label: tag.name,
-              }))}
+              options={tags
+                .filter((tag) => !sheet.Tags.some((t) => t.id === tag.id))
+                .map((tag) => ({
+                  value: tag.id,
+                  label: tag.name,
+                }))}
               onCreateOption={async (option) => {
-                console.log("new tag", option);
                 const newTag = await createTag(option);
                 setTagToSheet(sheet.id, newTag.id);
               }}
               value={null}
               onChange={(value) => {
-                console.log("value", value);
                 if (value) {
                   setTagToSheet(sheet.id, value.value);
                 }
               }}
             />
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <div className={`px-2 sm:px-4`}>
         <div
@@ -182,7 +229,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
               />
             </div>
           ))}
-          {editable && (
+          {isEditing && (
             <div
               className="print:hidden"
               style={{ marginTop: VARIANT_CELL_HEIGHT }}
@@ -206,7 +253,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
         </div>
       </div>
       <Verses />
-      {editable && (
+      {isEditing && (
         <div
           onClick={(e) => {
             e.stopPropagation();
@@ -236,7 +283,7 @@ const Editor = ({ sheet, editable, liked }: EditorProps) => {
         editable={editable}
         initialSong={sheet.content as SongContent}
       >
-        <SongWrapper sheet={sheet} liked={liked} />
+        <SongWrapper sheet={sheet} liked={liked} editable={editable} />
       </SongContextProvider>
     </TuningContextProvider>
   );

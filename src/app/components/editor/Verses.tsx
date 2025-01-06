@@ -5,8 +5,9 @@ import { useSongContext } from "./songContext";
 interface VerseProps {
   index: number;
   verse: string;
+  isEditing: boolean;
 }
-const Verse = ({ verse }: VerseProps) => {
+const Verse = ({ verse, isEditing }: VerseProps) => {
   const ref = useRef<HTMLTextAreaElement>(null);
 
   const resizeTextArea = () => {
@@ -26,13 +27,13 @@ const Verse = ({ verse }: VerseProps) => {
       ref={ref}
       rows={1}
       value={verse}
-      // onChange={handleInput}
+      disabled={!isEditing}
     />
   );
 };
 
 const Verses = () => {
-  const { song, addVerse } = useSongContext();
+  const { song, addVerse, isEditing } = useSongContext();
 
   const [newVerse, setNewVerse] = useState("");
 
@@ -40,26 +41,28 @@ const Verses = () => {
     <div className="max-w-[700px] w-11/12 flex justify-start flex-wrap gap-y-2 text-sm">
       {song.verses?.map((verse, i) => (
         <div key={i} className="flex flex-col w-1/2">
-          <Verse index={i} verse={verse.text} />
+          <Verse index={i} verse={verse.text} isEditing={isEditing} />
         </div>
       ))}
-      <div className="w-1/2 flex flex-col print:hidden">
-        <textarea
-          placeholder="ďalšia sloha"
-          className="bg-transparent w-full"
-          value={newVerse}
-          onChange={(e) => setNewVerse(e.target.value)}
-          rows={4}
-        />
-        <Button
-          onClick={() => {
-            addVerse(newVerse);
-            setNewVerse("");
-          }}
-        >
-          + Uložiť
-        </Button>
-      </div>
+      {isEditing && (
+        <div className="w-1/2 flex flex-col print:hidden">
+          <textarea
+            placeholder="ďalšia sloha"
+            className="bg-transparent w-full"
+            value={newVerse}
+            onChange={(e) => setNewVerse(e.target.value)}
+            rows={4}
+          />
+          <Button
+            onClick={() => {
+              addVerse(newVerse);
+              setNewVerse("");
+            }}
+          >
+            + Uložiť
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
