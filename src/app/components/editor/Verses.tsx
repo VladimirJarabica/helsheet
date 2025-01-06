@@ -56,8 +56,6 @@ const Verse = ({ index, verse }: VerseProps) => {
 const Verses = () => {
   const { song, addVerse, isEditing } = useSongContext();
 
-  const [newVerse, setNewVerse] = useState("");
-
   return (
     <div className="max-w-[700px] w-11/12 flex justify-start flex-wrap gap-y-2 text-sm">
       {song.verses?.map((verse, i) => (
@@ -67,13 +65,6 @@ const Verses = () => {
       ))}
       {isEditing && (
         <div className="w-1/2 flex flex-col print:hidden">
-          {/* <textarea
-            placeholder="ďalšia sloha"
-            className="bg-transparent w-full"
-            value={newVerse}
-            onChange={(e) => setNewVerse(e.target.value)}
-            rows={4}
-          /> */}
           <Button
             onClick={() => {
               addVerse("");

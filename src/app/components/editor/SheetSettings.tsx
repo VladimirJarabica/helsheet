@@ -1,7 +1,8 @@
 "use client";
-import { Tuning } from "@prisma/client";
+import { Sheet, Tuning } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { TimeSignature } from "../../types";
+import Button from "../Button";
 
 export type FormData = {
   name: string;
@@ -15,11 +16,25 @@ export type FormData = {
 interface SheetSettingsProps {
   nickname?: string | null;
   onSubmit: (data: FormData) => Promise<void>;
+  sheet?: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl">;
+  timeSignature?: TimeSignature;
 }
 
-const SheetSettings = ({ onSubmit, nickname }: SheetSettingsProps) => {
+const SheetSettings = ({
+  onSubmit,
+  nickname,
+  sheet: existingSheet,
+  timeSignature,
+}: SheetSettingsProps) => {
   const { register, handleSubmit } = useForm<FormData>({
-    defaultValues: { author: nickname ?? "" },
+    defaultValues: {
+      name: existingSheet?.name ?? "",
+      author: nickname ?? "",
+      tuning: existingSheet?.tuning ?? Tuning.CF,
+      timeSignature: timeSignature,
+      sourceText: existingSheet?.sourceText ?? "",
+      sourceUrl: existingSheet?.sourceUrl ?? "",
+    },
   });
 
   return (
@@ -76,7 +91,7 @@ const SheetSettings = ({ onSubmit, nickname }: SheetSettingsProps) => {
             {...register("sourceText")}
           />
         </div>
-        <input type="submit" />
+        <Button onClick={handleSubmit(onSubmit)}>Uložiť</Button>
       </form>
     </div>
   );

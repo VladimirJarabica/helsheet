@@ -2,6 +2,7 @@
 import { Sheet, Tag, User } from "@prisma/client";
 import { useEffect, useRef, useState } from "react";
 import CreatableSelect from "react-select/creatable";
+import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import {
   BAR_LINES_PER_PAGE,
   CELL_SIZE,
@@ -25,9 +26,11 @@ import MelodicSettings from "./MelodicSettings";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
 import Verses from "./Verses";
+import ModalWrapper from "./ModalWrapper";
+import SheetSettings from "./SheetSettings";
 
 interface SongWrapperProps {
-  sheet: Pick<Sheet, "id" | "name"> & {
+  sheet: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl"> & {
     Author: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
   };
@@ -57,6 +60,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
   const columnsInBar = getColumnsInBar(song.timeSignature);
 
   const [barsPerLine, setBarsPerLine] = useState(4);
+  const [settingOpen, setSettingOpen] = useState(false);
   console.log("barsPerLine", barsPerLine);
 
   useEffect(() => {
@@ -135,6 +139,13 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
             <div className="print:hidden flex gap-2">
               {isEditing && (
                 <>
+                  <Button
+                    onClick={() => {
+                      setSettingOpen(true);
+                    }}
+                  >
+                    <Cog6ToothIcon className="w-5" />
+                  </Button>
                   <Button
                     onClick={async () => {
                       await save();
@@ -263,12 +274,25 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
           {activeColumn && <MelodicSettings />}
         </div>
       )}
+      {settingOpen && (
+        <ModalWrapper close={() => setSettingOpen(false)}>
+          <SheetSettings
+            onSubmit={async () => {}}
+            sheet={sheet}
+            timeSignature={song.timeSignature}
+            nickname={sheet.Author.nickname}
+          />
+        </ModalWrapper>
+      )}
     </div>
   );
 };
 
 interface EditorProps {
-  sheet: Pick<Sheet, "id" | "content" | "name" | "tuning"> & {
+  sheet: Pick<
+    Sheet,
+    "id" | "name" | "tuning" | "sourceText" | "sourceUrl" | "content"
+  > & {
     Author: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
   };
