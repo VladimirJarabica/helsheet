@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { LINE_HEADING_WIDTH_WITH_BORDER } from "../../../utils/consts";
+import {
+  LINE_HEADING_WIDTH_WITH_BORDER,
+  VARIANT_CELL_HEIGHT,
+} from "../../../utils/consts";
 import { Bar as BarType } from "./../../types";
 import Column from "./Column";
 import LineHeading from "./LineHeading";
@@ -66,29 +69,28 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
   return (
     <div className={`flex group flex-col relative`}>
       <div
-        className={`z-0 w-0 absolute ${variant ? "mt-[20px]" : ""}`}
-        style={{ left: -LINE_HEADING_WIDTH_WITH_BORDER }}
+        className={`z-0 w-0 absolute`}
+        style={{
+          left: -LINE_HEADING_WIDTH_WITH_BORDER,
+          marginTop: VARIANT_CELL_HEIGHT,
+        }}
       >
         <LineHeading />
       </div>
-      {variant && (
-        <div
-          className={`h-[20px] border-t-2 px-3
+      <div
+        className={`text-xs 
+          ${variant ? "border-t-2 px-3" : ""}
           ${previousBar?.variant !== bar.variant ? "border-l-2" : ""}
           ${followingBar?.variant !== bar.variant ? "border-r-2" : ""}
           border-black`}
-        >
-          {variant.name}
-        </div>
-      )}
+        style={{ height: VARIANT_CELL_HEIGHT }}
+      >
+        {variant?.name}
+      </div>
       <div className="flex z-10 bg-hel-bgDefault">
         {/* {onNewLine && <LineHeading />} */}
-        {bar.repeat?.start && (
-          <RepeatSign type="start" topOffset={variant ? 20 : 0} />
-        )}
-        {bar.repeat?.end && (
-          <RepeatSign type="end" topOffset={variant ? 20 : 0} />
-        )}
+        {bar.repeat?.start && <RepeatSign type="start" topOffset={20} />}
+        {bar.repeat?.end && <RepeatSign type="end" topOffset={20} />}
         {bar.columns.map((column, i) => (
           <Column
             key={i}

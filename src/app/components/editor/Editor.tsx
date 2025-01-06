@@ -7,6 +7,7 @@ import {
   CELL_SIZE,
   DIRECTION_CELL_SIZE,
   LINE_HEADING_WIDTH_WITH_BORDER,
+  VARIANT_CELL_HEIGHT,
 } from "../../../utils/consts";
 import { getColumnsInBar } from "../../../utils/sheet";
 import { createTag, setTagToSheet } from "../../../utils/tags";
@@ -156,7 +157,7 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
       <div className={`px-2 sm:px-4`}>
         <div
           className={`
-          flex flex-1 pt-5 flex-wrap max-w-full justify-center items-end
+          flex flex-1 pt-5 flex-wrap max-w-full justify-center
           sm:justify-start
           print:pt-5 print:w-full
           ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
@@ -182,7 +183,10 @@ const SongWrapper = ({ sheet, liked }: SongWrapperProps) => {
             </div>
           ))}
           {editable && (
-            <div className="print:hidden">
+            <div
+              className="print:hidden"
+              style={{ marginTop: VARIANT_CELL_HEIGHT }}
+            >
               <button
                 className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
                 onClick={() => {
