@@ -92,6 +92,7 @@ type SongContext = {
   addColumnToBar: (barIndex: number) => void;
   addVerse: (text: string) => void;
   removeVerse: (index: number) => void;
+  setVerseText: (index: number, text: string) => void;
   addVariant: (variant: string) => void;
   setBarVariant: (barIndex: number, variant?: number) => void;
 };
@@ -131,6 +132,7 @@ const songContext = createContext<SongContext>({
   addColumnToBar: () => {},
   addVerse: () => {},
   removeVerse: () => {},
+  setVerseText: () => {},
   addVariant: () => {},
   setBarVariant: () => {},
 });
@@ -677,6 +679,13 @@ export const SongContextProvider = ({
     }));
   };
 
+  const setVerseText = (index: number, text: string) => {
+    setSong((prev) => ({
+      ...prev,
+      verses: prev.verses?.map((verse, i) => (i === index ? { text } : verse)),
+    }));
+  };
+
   const addVariant = (variant: string) => {
     console.log("add variant", variant);
     setSong((prev) => {
@@ -740,6 +749,7 @@ export const SongContextProvider = ({
           removeLastColumnFromBar,
           addVerse,
           removeVerse,
+          setVerseText,
           addVariant,
           setBarVariant,
         }}
