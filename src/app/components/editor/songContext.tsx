@@ -512,9 +512,18 @@ export const SongContextProvider = ({
       ...oldColumn,
       melodic: oldColumn.melodic.map((cell) => ({
         ...cell,
-        subCells: cell.subCells.filter(
-          (_, index) => index === activeColumn.subColumnIndex
-        ),
+        subCells: cell.subCells
+          .filter((_, index) => index === activeColumn.subColumnIndex)
+          .map((subCell) => ({
+            ...subCell,
+            items: subCell.items.map((item) => ({
+              ...item,
+              length:
+                item.type !== "empty" && item.length
+                  ? Math.max(item.length, 1)
+                  : undefined,
+            })),
+          })),
       })),
       directions: [oldColumn.directions[0]],
     };

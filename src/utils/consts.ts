@@ -17,4 +17,10 @@ export const COLUMNS_FOR_TIME_SIGNATURES: Record<TimeSignature, number> = {
   "2/4": 4,
 };
 
+export const WHOLE_NOTE_LENGTH_FOR_TIME_SIGNATURE = {
+  "2/4": 8,
+  "3/4": 4,
+  "4/4": 4,
+};
+
 export const BAR_LINES_PER_PAGE = 5;

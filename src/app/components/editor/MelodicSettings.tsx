@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useMemo, useState } from "react";
 import { notEmpty } from "../../../utils/fnUtils";
 import {
@@ -12,11 +13,12 @@ import {
   Note,
   TuningNoteButton,
 } from "../../types";
+import Button from "../Button";
 import MelodeonButton, { MelodeonButtonWrapper } from "../MelodeonButton";
 import MusicSheetSelector from "./MusicSheetSelector";
+import NoteLengthSelect from "./NoteLengthSelect";
 import { useSongContext } from "./songContext";
 import { useTuningContext } from "./tuningContext";
-import Button from "../Button";
 
 const MelodicSettings = () => {
   const { tuning } = useTuningContext();
@@ -30,7 +32,6 @@ const MelodicSettings = () => {
     joinMelodicPart,
     joinBassPart,
     setMelodicButtons,
-    setLength,
     clearColumn,
     setMelodicButton,
   } = useSongContext();
@@ -199,90 +200,7 @@ const MelodicSettings = () => {
             <div>
               {tab === "length" && (
                 <>
-                  <div className="flex w-full flex-col">
-                    {tuning.melodic.toReversed().map((row) => {
-                      const subCells = column.melodic[row.row - 1].subCells;
-                      const items = subCells[activeColumn.subColumnIndex].items;
-
-                      return (
-                        <div key={row.row}>
-                          <div>Rad {row.row}</div>
-                          {items.map((item) => {
-                            if (item.type === "note") {
-                              const length =
-                                // If split, allow minimum 0.5 length, 1 otherwise
-                                item.length ?? (subCells.length > 1 ? 0.5 : 1);
-                              return (
-                                <div key={row.row + item.button}>
-                                  {item.button}
-                                  <select
-                                    className="bg-transparent"
-                                    value={length}
-                                    onChange={(e) => {
-                                      setLength(parseFloat(e.target.value), {
-                                        row: row.row,
-                                        button: item.button,
-                                      });
-                                    }}
-                                  >
-                                    {new Array(16).fill(0).map((_, i) => {
-                                      const val = (i + 1) / 2;
-                                      return (
-                                        <option key={val} value={val}>
-                                          {val}
-                                        </option>
-                                      );
-                                    })}
-                                  </select>
-                                </div>
-                              );
-                            }
-                          })}
-                        </div>
-                      );
-                    })}
-                    <div>
-                      <div>Basy</div>
-                      {
-                        // const subCells = column.melodic[row.row - 1].subCells;
-                        hasBassPart &&
-                          column.bass.subCells[
-                            activeColumn.subColumnIndex
-                          ].items.map((item) => {
-                            if (item.type === "bass") {
-                              const length =
-                                // If split, allow minimum 0.5 length, 1 otherwise
-                                item.length ??
-                                (column.bass.subCells.length > 1 ? 0.5 : 1);
-                              return (
-                                <div key={item.note.note}>
-                                  {item.note.note}
-                                  <select
-                                    className="bg-transparent"
-                                    value={length}
-                                    onChange={(e) => {
-                                      setLength(parseFloat(e.target.value), {
-                                        row: "bass",
-                                        bass: item.note,
-                                      });
-                                    }}
-                                  >
-                                    {new Array(16).fill(0).map((_, i) => {
-                                      const val = (i + 1) / 2;
-                                      return (
-                                        <option key={val} value={val}>
-                                          {val}
-                                        </option>
-                                      );
-                                    })}
-                                  </select>
-                                </div>
-                              );
-                            }
-                          })
-                      }
-                    </div>
-                  </div>
+                  <NoteLengthSelect />
                 </>
               )}
               {tab === "notes" && (

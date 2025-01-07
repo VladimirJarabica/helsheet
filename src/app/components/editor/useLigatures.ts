@@ -37,9 +37,14 @@ export const useLigatures = ({
       if (!("length" in subCellItem) || !subCellItem.length) {
         return;
       }
+      const isMulti = cell.subCells.length > 1;
+      const length = subCellItem.length;
+
+      if (length <= (isMulti ? 0.5 : 1)) {
+        return;
+      }
 
       const row = cell.row;
-      const isMulti = cell.subCells.length > 1;
       const isFirstSubCell = subCellIndex === 0;
       const position = {
         barIndex,
@@ -50,8 +55,6 @@ export const useLigatures = ({
         current: subCellItemIndex + 1,
         ofNotes: subCell.items.length,
       };
-
-      const length = subCellItem.length;
 
       const startOffset = isMulti ? (isFirstSubCell ? 0.25 : 0.75) : 0.5;
 
