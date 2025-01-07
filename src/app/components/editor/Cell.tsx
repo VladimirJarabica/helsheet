@@ -38,16 +38,17 @@ const Cell = <Item extends CellItem>({
   hoveredSubColumnIndex,
   directions,
 }: ColumnCellProps<Item>) => {
-  const { setActiveColumn, activeColumn, ligatures } = useSongContext();
+  const { setActiveColumn, activeColumn, ligatures, isEditing } =
+    useSongContext();
 
   const cellLigatures =
     ligatures[barIndex]?.[columnIndex]?.[cell.row as number | "bass"];
 
   return (
     <div
-      className={`flex border-b border-black cursor-pointer relative ${
-        lastColumnInBar ? "" : "border-r-0"
-      }
+      className={`flex border-b border-black relative 
+        ${lastColumnInBar ? "" : "border-r-0"}
+        ${isEditing ? "cursor-pointer" : ""}
       `}
       style={{ height: CELL_SIZE }}
     >
@@ -105,15 +106,16 @@ const Cell = <Item extends CellItem>({
             onClick={() => {
               // setActiveCell(cellPosition);
               // setActiveSubCell(i);
-              setActiveColumn({
-                barIndex,
-                columnIndex: columnIndex,
-                subColumnIndex: i,
-              });
+              isEditing &&
+                setActiveColumn({
+                  barIndex,
+                  columnIndex: columnIndex,
+                  subColumnIndex: i,
+                });
             }}
             hovered={hoveredSubColumnIndex === i}
             onHoverChange={(hovered: boolean) =>
-              setHoveredSubColumnIndex(hovered ? i : null)
+              isEditing && setHoveredSubColumnIndex(hovered ? i : null)
             }
             // onChange={(newSubCell: SubCellType<CellNote>) => {
             //   setMelodicSubCells(

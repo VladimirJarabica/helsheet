@@ -24,7 +24,8 @@ const Column = ({
   barIndex,
   columnIndex,
 }: ColumnProps) => {
-  const { setText, activeColumn, setActiveColumn } = useSongContext();
+  const { setText, activeColumn, setActiveColumn, isEditing } =
+    useSongContext();
   const textRef = useRef<HTMLTextAreaElement>(null);
 
   const [hoveredSubColumnIndex, setHoveredSubColumnIndex] = useState<
@@ -109,8 +110,10 @@ const Column = ({
                 followingDirection={
                   isLastDirectionInBar ? null : followingDirection
                 }
-                onHoverChange={(hovered) =>
-                  setHoveredSubColumnIndex(hovered ? 0 : null)
+                onHoverChange={
+                  isEditing
+                    ? (hovered) => setHoveredSubColumnIndex(hovered ? 0 : null)
+                    : undefined
                 }
                 hovered={hoveredSubColumnIndex === i}
                 onClick={() => {

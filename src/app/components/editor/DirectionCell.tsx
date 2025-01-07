@@ -6,7 +6,7 @@ interface DirectionCellProps {
   isFirst: boolean;
   previousDirection?: Direction | null;
   followingDirection?: Direction | null;
-  onHoverChange: (hovered: boolean) => void;
+  onHoverChange?: (hovered: boolean) => void;
   hovered: boolean;
   active: boolean;
   onClick: () => void;
@@ -24,7 +24,7 @@ const DirectionCell = ({
 }: DirectionCellProps) => {
   return (
     <div
-      className={`border-t border-black flex-1 cursor-pointer
+      className={`border-t border-black flex-1
         ${
           !isFirst
             ? "border-l border-l-gray-700 [border-left-style:dashed]"
@@ -33,10 +33,11 @@ const DirectionCell = ({
         ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
         ${active ? "bg-hel-bgActive text-hel-textActive" : ""}
         ${direction === "push" ? "bg-hel-bgEmphasis" : ""}
+        ${onHoverChange ? "cursor-pointer" : ""}
         `}
       style={{ height: DIRECTION_CELL_SIZE }}
-      onMouseOver={() => onHoverChange(true)}
-      onMouseLeave={() => onHoverChange(false)}
+      onMouseOver={onHoverChange ? () => onHoverChange(true) : undefined}
+      onMouseLeave={onHoverChange ? () => onHoverChange(false) : undefined}
       onClick={() => onClick()}
     >
       {direction !== "empty" && (
