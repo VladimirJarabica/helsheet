@@ -51,7 +51,7 @@ const NoteLengthSelector = ({
   return (
     <div className="flex flex-row gap-2">
       {new Array(7).fill(0).map((_, i) => {
-        const base = Math.max(length - 1, min);
+        const base = Math.max(length - 1.5, min);
         const val = base + i * 0.5;
 
         return (
