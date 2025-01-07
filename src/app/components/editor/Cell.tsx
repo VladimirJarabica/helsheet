@@ -103,59 +103,24 @@ const Cell = <Item extends CellItem>({
             direction={directions[i]?.direction ?? directions[0]?.direction}
             isFirst={i === 0}
             isActive={!!isSubCellActive}
-            onClick={() => {
-              // setActiveCell(cellPosition);
-              // setActiveSubCell(i);
-              isEditing &&
-                setActiveColumn({
-                  barIndex,
-                  columnIndex: columnIndex,
-                  subColumnIndex: i,
-                });
-            }}
+            onClick={
+              isEditing
+                ? () => {
+                    setActiveColumn({
+                      barIndex,
+                      columnIndex: columnIndex,
+                      subColumnIndex: i,
+                    });
+                  }
+                : undefined
+            }
             hovered={hoveredSubColumnIndex === i}
             onHoverChange={(hovered: boolean) =>
               isEditing && setHoveredSubColumnIndex(hovered ? i : null)
             }
-            // onChange={(newSubCell: SubCellType<CellNote>) => {
-            //   setMelodicSubCells(
-            //     cell.subCells.map((sc, ii) => (ii === i ? newSubCell : sc)),
-            //     {
-            //       barIndex,
-            //       beatIndex,
-            //       row: cell.row,
-            //     }
-            //   );
-            // }}
           />
         );
       })}
-      {/* <AnimatePresence>
-          {isCellActive && (
-            <motion.div
-              key="menu"
-              exit={{ opacity: 0 }}
-              className="min-w-10 min-h-4 border-gray-400 border ml-1 -mt-1 bg-white rounded-sm py-2 absolute z-10 left-12 mr-1 drop-shadow-md text-sm"
-            >
-              <button
-                className="text-nowrap px-2 py-1 hover:bg-gray-100 w-full text-left"
-                onClick={() => {
-                  console.log("rozdeliť bunku");
-                  splitCell(cellPosition, false);
-                  setActiveSubCell(null);
-                }}
-              >
-                Rozdeliť bunku
-              </button>
-              <button
-                className="text-nowrap px-2 py-1 hover:bg-gray-100 w-full text-left"
-                onClick={() => splitCell(cellPosition, true)}
-              >
-                Rozdeliť dobu
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence> */}
     </div>
   );
 };

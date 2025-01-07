@@ -6,7 +6,7 @@ interface CellItemProps<Item extends CellItem> {
   subCell: SubCellType<Item>;
   isFirst: boolean;
   isActive: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   onHoverChange: (hovered: boolean) => void;
   hovered: boolean;
   direction: Direction;
@@ -41,7 +41,7 @@ CellItemProps<Item>) => {
         ${isActive ? "bg-hel-bgActive text-hel-textActive" : ""}
         ${direction === "push" ? "bg-hel-bgEmphasis" : ""}
         `}
-      onClick={() => onClick()}
+      onClick={onClick ? () => onClick() : undefined}
       onMouseOver={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}
     >
