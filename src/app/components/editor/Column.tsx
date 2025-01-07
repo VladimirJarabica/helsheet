@@ -84,40 +84,51 @@ const Column = ({
           directions={column.directions}
         />
         <div className="flex">
-          {column.directions.map((direction, i) => (
-            <DirectionCell
-              key={i}
-              direction={direction.direction}
-              isFirst={i === 0}
-              previousDirection={
-                i > 0
-                  ? column.directions[i].direction
-                  : R.last(previousColumn?.directions ?? [])?.direction
-              }
-              followingDirection={
-                i < column.directions.length - 1
-                  ? column.directions[i + 1].direction
-                  : followingColumn?.directions[0]?.direction
-              }
-              onHoverChange={(hovered) =>
-                setHoveredSubColumnIndex(hovered ? 0 : null)
-              }
-              hovered={hoveredSubColumnIndex === i}
-              onClick={() => {
-                setActiveColumn({
-                  barIndex,
-                  columnIndex: columnIndex,
-                  subColumnIndex: i,
-                });
-              }}
-              active={
-                !!activeColumn &&
-                activeColumn.barIndex === barIndex &&
-                activeColumn.columnIndex === columnIndex &&
-                activeColumn.subColumnIndex === i
-              }
-            />
-          ))}
+          {column.directions.map((direction, i) => {
+            const isFirstDirectionInBar = columnIndex === 0 && i === 0;
+            const isLastDirectionInBar =
+              lastColumnInBar && i === column.directions.length - 1;
+
+            const previousDirection =
+              i > 0
+                ? column.directions[i].direction
+                : R.last(previousColumn?.directions ?? [])?.direction;
+
+            const followingDirection =
+              i < column.directions.length - 1
+                ? column.directions[i + 1].direction
+                : followingColumn?.directions[0]?.direction;
+            return (
+              <DirectionCell
+                key={i}
+                direction={direction.direction}
+                isFirst={i === 0}
+                previousDirection={
+                  isFirstDirectionInBar ? null : previousDirection
+                }
+                followingDirection={
+                  isLastDirectionInBar ? null : followingDirection
+                }
+                onHoverChange={(hovered) =>
+                  setHoveredSubColumnIndex(hovered ? 0 : null)
+                }
+                hovered={hoveredSubColumnIndex === i}
+                onClick={() => {
+                  setActiveColumn({
+                    barIndex,
+                    columnIndex: columnIndex,
+                    subColumnIndex: i,
+                  });
+                }}
+                active={
+                  !!activeColumn &&
+                  activeColumn.barIndex === barIndex &&
+                  activeColumn.columnIndex === columnIndex &&
+                  activeColumn.subColumnIndex === i
+                }
+              />
+            );
+          })}
         </div>
       </div>
       <textarea

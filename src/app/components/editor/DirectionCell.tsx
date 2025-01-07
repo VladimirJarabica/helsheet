@@ -4,8 +4,8 @@ import { Direction } from "../../types";
 interface DirectionCellProps {
   direction: Direction;
   isFirst: boolean;
-  previousDirection?: Direction;
-  followingDirection?: Direction;
+  previousDirection?: Direction | null;
+  followingDirection?: Direction | null;
   onHoverChange: (hovered: boolean) => void;
   hovered: boolean;
   active: boolean;
