@@ -22,12 +22,13 @@ import TagPill from "../TagPill";
 import { useTags } from "../TagsContext";
 import Bar from "./Bar";
 import LikeSheetButton from "./LikeSheetButton";
-import MelodicSettings from "./MelodicSettings";
+import ColumnSettings from "./ColumnSettings";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
 import Verses from "./Verses";
 import ModalWrapper from "./ModalWrapper";
 import SheetSettings from "./SheetSettings";
+import { KeyboardListenerContextProvider } from "./keyboardListenerContext";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl"> & {
@@ -271,7 +272,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
             e.preventDefault();
           }}
         >
-          {activeColumn && <MelodicSettings />}
+          {activeColumn && <ColumnSettings />}
         </div>
       )}
       {settingOpen && (
@@ -307,7 +308,9 @@ const Editor = ({ sheet, editable, liked }: EditorProps) => {
         editable={editable}
         initialSong={sheet.content as SongContent}
       >
-        <SongWrapper sheet={sheet} liked={liked} editable={editable} />
+        <KeyboardListenerContextProvider>
+          <SongWrapper sheet={sheet} liked={liked} editable={editable} />
+        </KeyboardListenerContextProvider>
       </SongContextProvider>
     </TuningContextProvider>
   );

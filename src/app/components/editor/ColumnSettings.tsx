@@ -1,4 +1,5 @@
 "use client";
+import * as R from "ramda";
 import { useEffect, useMemo, useState } from "react";
 import { notEmpty } from "../../../utils/fnUtils";
 import {
@@ -15,12 +16,16 @@ import {
 } from "../../types";
 import Button from "../Button";
 import MelodeonButton, { MelodeonButtonWrapper } from "../MelodeonButton";
+import {
+  useKeyboardListener,
+  useKeyboardListeners,
+} from "./keyboardListenerContext";
 import MusicSheetSelector from "./MusicSheetSelector";
 import NoteLengthSelect from "./NoteLengthSelect";
 import { useSongContext } from "./songContext";
 import { useTuningContext } from "./tuningContext";
 
-const MelodicSettings = () => {
+const ColumnSettings = () => {
   const { tuning } = useTuningContext();
   const {
     activeColumn,
@@ -34,8 +39,92 @@ const MelodicSettings = () => {
     setMelodicButtons,
     clearColumn,
     setMelodicButton,
+    setActiveColumn,
   } = useSongContext();
   const [tab, setTab] = useState<"notes" | "length" | "fingers">("notes");
+
+  useKeyboardListener({
+    id: "settingsTab",
+    key: " ",
+    listener: () => {
+      const tabs = ["notes", "length", "fingers"] as const;
+      setTab((activeTab) => tabs[(tabs.indexOf(activeTab) + 1) % tabs.length]);
+    },
+    preventDefault: true,
+  });
+
+  useKeyboardListener({
+    id: "moveColumn",
+    key: "Tab",
+    listener: ({ shiftKey }) => {
+      if (activeColumn) {
+        // Going back
+        if (shiftKey) {
+          if (activeColumn.subColumnIndex > 0) {
+            setActiveColumn({
+              barIndex: activeColumn.barIndex,
+              columnIndex: activeColumn.columnIndex,
+              subColumnIndex: activeColumn.subColumnIndex - 1,
+            });
+          } else if (activeColumn.columnIndex > 0) {
+            const currentBar = song.bars[activeColumn.columnIndex];
+            setActiveColumn({
+              barIndex: activeColumn.barIndex,
+              columnIndex: activeColumn.columnIndex - 1,
+              subColumnIndex:
+                currentBar.columns[currentBar.columns.length - 1].melodic[0]
+                  .subCells.length - 1,
+            });
+          } else {
+            const previousBarIndex =
+              activeColumn.barIndex > 0
+                ? activeColumn.barIndex - 1
+                : song.bars.length - 1;
+            const previousBar = song.bars[previousBarIndex];
+            setActiveColumn({
+              barIndex: previousBarIndex,
+              columnIndex: previousBar.columns.length - 1,
+              subColumnIndex:
+                previousBar.columns[previousBar.columns.length - 1].melodic[0]
+                  .subCells.length - 1,
+            });
+          }
+          return;
+        }
+        if (
+          activeColumn.subColumnIndex <
+          song.bars[activeColumn.barIndex].columns[activeColumn.columnIndex]
+            .melodic[0].subCells.length -
+            1
+        ) {
+          setActiveColumn({
+            barIndex: activeColumn.barIndex,
+            columnIndex: activeColumn.columnIndex,
+            subColumnIndex: activeColumn.subColumnIndex + 1,
+          });
+        } else if (
+          activeColumn.columnIndex <
+          song.bars[activeColumn.barIndex].columns.length - 1
+        ) {
+          setActiveColumn({
+            barIndex: activeColumn.barIndex,
+            columnIndex: activeColumn.columnIndex + 1,
+            subColumnIndex: 0,
+          });
+        } else {
+          setActiveColumn({
+            barIndex:
+              activeColumn.barIndex < song.bars.length - 1
+                ? activeColumn.barIndex + 1
+                : 0,
+            columnIndex: 0,
+            subColumnIndex: 0,
+          });
+        }
+      }
+    },
+    preventDefault: true,
+  });
 
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
 
@@ -57,6 +146,9 @@ const MelodicSettings = () => {
         "empty"
       : "empty";
 
+  const isMelodicPartSplit = !!column && getIsMelodicPartSplit(column);
+  const isBasPartSplit = !!column && getIsBassPartSplit(column);
+
   const hasMelodicPart = !!(
     column &&
     activeColumn &&
@@ -68,6 +160,94 @@ const MelodicSettings = () => {
     activeColumn &&
     column.bass.subCells[activeColumn.subColumnIndex]
   );
+
+  const canSetDirection = hasMelodicPart && hasBassPart;
+
+  const bassItems = hasBassPart
+    ? column.bass.subCells[activeColumn.subColumnIndex].items
+    : [];
+
+  useKeyboardListener({
+    id: "directionLeft",
+    key: "ArrowLeft",
+    listener: () => {
+      if (canSetDirection) {
+        setDirection("pull");
+      }
+    },
+  });
+
+  useKeyboardListener({
+    id: "directionLeft",
+    key: "ArrowRight",
+    listener: () => {
+      if (canSetDirection) {
+        setDirection("push");
+      }
+    },
+  });
+
+  const basses = tuning.bass.flatMap((row) =>
+    row.buttons.flatMap((button) => [
+      { direction: "pull" as DefinedDirection, bass: button.pull.note },
+      { direction: "push" as DefinedDirection, bass: button.push.note },
+    ])
+  );
+
+  useKeyboardListeners({
+    id: "bass",
+    keys: R.uniq(basses.map((bass) => bass.bass)),
+    listener: (bass: Bass["note"]) => {
+      if (!hasBassPart) {
+        return;
+      }
+      const selectedBasses = basses.filter(
+        (item) =>
+          item.bass === bass &&
+          (direction !== "empty" ? item.direction === direction : true)
+      );
+      console.log("selectedBasses ", selectedBasses);
+
+      if (selectedBasses.length > 1) {
+        alert("Nemožno priradiť bass, pretože je viacero možností");
+      }
+      if (selectedBasses.length === 1 && selectedBasses[0]) {
+        setBassButton(
+          { note: selectedBasses[0].bass },
+          selectedBasses[0].direction
+        );
+      }
+    },
+  });
+
+  useKeyboardListeners({
+    id: "melodic",
+    keys: [...new Array(9).fill(0).map((_, i) => `${i + 1}`), "x", "y"],
+    listener: (key: string, options) => {
+      if (direction === "empty") {
+        alert("Najprv zvoľ smer ťahu");
+        return;
+      }
+      const parsed = parseInt(key, 10);
+      console.log("Melodic", key, options, parsed);
+      const buttonNumber = Number.isNaN(parsed)
+        ? ["x", "y"].indexOf(key) + 10
+        : parsed;
+
+      const row = options.ctrlKey ? 2 : 1;
+      console.log("Melodic", key, options, parsed, {
+        buttonNUmber: buttonNumber,
+        row,
+        tuning,
+      });
+
+      if (buttonNumber <= tuning.melodic[row - 1].buttons.length) {
+        setMelodicButton(options.ctrlKey ? 2 : 1, buttonNumber, direction);
+      } else {
+        console.log("too much bori");
+      }
+    },
+  });
 
   useEffect(() => {
     setSelectedNotes(
@@ -177,15 +357,6 @@ const MelodicSettings = () => {
   if (!activeColumn || !column) {
     return null;
   }
-
-  const isMelodicPartSplit = getIsMelodicPartSplit(column);
-  const isBasPartSplit = getIsBassPartSplit(column);
-
-  const canSetDirection = hasMelodicPart && hasBassPart;
-
-  const bassItems = hasBassPart
-    ? column.bass.subCells[activeColumn.subColumnIndex].items
-    : [];
 
   return (
     <div className="print:hidden min-h-0 h-[50vh] fixed bottom-0 left-0 right-0 z-10 flex justify-center border-t border-black">
@@ -523,4 +694,4 @@ const MelodicSettings = () => {
   );
 };
 
-export default MelodicSettings;
+export default ColumnSettings;

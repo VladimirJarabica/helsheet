@@ -36,10 +36,9 @@ CellItemProps<Item>) => {
         ${items.length === 3 ? "text-xs" : ""}
         ${items.length === 4 ? "text-[9px]" : ""}
         ${items.length > 4 ? "text-[7px]" : ""}
-        ${hovered && false ? "bg-purple-100" : ""}
         ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
         ${isActive ? "bg-hel-bgActive text-hel-textActive" : ""}
-        ${direction === "push" ? "bg-hel-bgEmphasis" : ""}
+        ${direction === "push" && !isActive ? "bg-hel-bgEmphasis" : ""}
         `}
       onClick={onClick ? () => onClick() : undefined}
       onMouseOver={() => onHoverChange(true)}

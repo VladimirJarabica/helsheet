@@ -32,7 +32,7 @@ const DirectionCell = ({
         }
         ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
         ${active ? "bg-hel-bgActive text-hel-textActive" : ""}
-        ${direction === "push" ? "bg-hel-bgEmphasis" : ""}
+        ${direction === "push" && !active ? "bg-hel-bgEmphasis" : ""}
         ${onHoverChange ? "cursor-pointer" : ""}
         `}
       style={{ height: DIRECTION_CELL_SIZE }}
