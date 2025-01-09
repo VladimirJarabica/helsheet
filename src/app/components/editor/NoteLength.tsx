@@ -83,12 +83,9 @@ const NoteLength = ({ timeSignature, length }: NoteLengthProps) => {
       break;
     }
 
-    console.log("usedNotes", usedNotes);
-
     return usedNotes;
   }, [timeSignature, length]);
 
-  console.log(timeSignature, "length", length, "notes", notes);
   return (
     <div className="flex flex-row gap-1">
       {notes.map((note, i) => (
