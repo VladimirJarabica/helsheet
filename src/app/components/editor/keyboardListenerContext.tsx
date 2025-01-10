@@ -31,18 +31,6 @@ export const KeyboardListenerContextProvider = ({
 }: KeyboardListenerProviderProps) => {
   const { isEditing } = useSongContext();
 
-  const getKey = (
-    key: string,
-    {
-      metaKey,
-      shiftKey,
-      ctrlKey,
-    }: { metaKey?: boolean; shiftKey?: boolean; ctrlKey?: boolean }
-  ) =>
-    `${metaKey ? "meta-" : ""}${shiftKey ? "shift-" : ""}${
-      ctrlKey ? "ctrl-" : ""
-    }${key}`;
-
   const listenersRef = useRef<
     Record<
       string,
@@ -58,7 +46,7 @@ export const KeyboardListenerContextProvider = ({
   useEffect(() => {
     if (isEditing) {
       const listener = (e: KeyboardEvent) => {
-        const key = e.key; // getKey(e.key, e);
+        const key = e.key;
         console.log("key down", key, e.metaKey, e.shiftKey, e.ctrlKey);
 
         const keyListeners = listenersRef.current[key] ?? [];

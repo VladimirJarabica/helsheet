@@ -6,8 +6,7 @@ import NoteLengthSelect from "./NoteLengthSelect";
 import { useSongContext } from "./songContext";
 
 const ColumnSettings = () => {
-  const { activeColumn, song, setMelodicButton, setActiveColumn } =
-    useSongContext();
+  const { activeColumn, song, setActiveColumn } = useSongContext();
   const [tab, setTab] = useState<"notes" | "length" | "fingers">("notes");
 
   useKeyboardListener({

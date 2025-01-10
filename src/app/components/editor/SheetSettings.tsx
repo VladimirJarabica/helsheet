@@ -15,7 +15,7 @@ export type FormData = {
 
 interface SheetSettingsProps {
   nickname?: string | null;
-  onSubmit: (data: FormData) => Promise<void>;
+  onSubmit: (data: FormData) => Promise<Pick<Sheet, "id">>;
   sheet?: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl">;
   timeSignature?: TimeSignature;
 }
@@ -39,7 +39,7 @@ const SheetSettings = ({
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-80">
+      <form className="flex flex-col w-80">
         <div className="my-4 flex flex-col">
           <label htmlFor="name">Názov piesne</label>
           <input
