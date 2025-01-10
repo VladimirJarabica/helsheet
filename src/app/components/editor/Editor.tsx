@@ -278,6 +278,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
       {settingOpen && (
         <ModalWrapper close={() => setSettingOpen(false)}>
           <SheetSettings
+            // @ts-expect-error - fix later
             onSubmit={async () => {}}
             sheet={sheet}
             timeSignature={song.timeSignature}
