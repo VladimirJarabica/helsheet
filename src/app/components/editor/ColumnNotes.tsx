@@ -188,60 +188,39 @@ const ColumnNotes = () => {
     },
   });
 
-  // useEffect(() => {
-  //   setSelectedNotes(
-  //     hasMelodicPart
-  //       ? column?.melodic.flatMap((cell) =>
-  //           cell.subCells[activeColumn.subColumnIndex].items
-  //             .filter((item) => item.type === "note")
-  //             .map((item) =>
-  //               getNoteFromTuningByButton({
-  //                 button: item.button,
-  //                 row: cell.row,
-  //                 direction,
-  //                 tuning,
-  //               })
-  //             )
-  //             .filter(notEmpty)
-  //         ) ?? []
-  //       : []
-  //   );
-  //   setHoveredNote(null);
-  //   setHoveredBass(null);
-  //   setSelectedMelodicButtons(null);
-  // }, [hasMelodicPart, column, direction, tuning, activeColumn?.subColumnIndex]);
-
   const handleAddSelectedNote = (note: Note) => {
-    if (!direction) {
-      alert("Najprv zvoľ smer ťahu");
-      return;
-    }
-    const noteButtons = tuning.melodic.flatMap((row) => {
-      return (
-        row.buttons
-          // .map((button) => button[direction as DefinedDirection])
-          .filter((button) => {
-            const directionButton = button[direction as DefinedDirection];
-            return (
-              directionButton &&
-              directionButton.note === note.note &&
-              directionButton.pitch === note.pitch
-            );
-          })
-          .map((button) => ({
-            button: button.button,
-            row: row.row,
-            direction: direction as DefinedDirection,
-          }))
-      );
+    const possibleNoteButton = tuning.melodic.flatMap((row) => {
+      return row.buttons
+        .flatMap((button) => {
+          return [
+            (direction === "empty" || direction === "pull") &&
+            button.pull.note === note.note &&
+            button.pull.pitch === note.pitch
+              ? {
+                  button: button.button,
+                  row: row.row,
+                  direction: "pull" as DefinedDirection,
+                }
+              : null,
+            (direction === "empty" || direction === "push") &&
+            button.push.note === note.note &&
+            button.push.pitch === note.pitch
+              ? {
+                  button: button.button,
+                  row: row.row,
+                  direction: "push" as DefinedDirection,
+                }
+              : null,
+          ];
+        })
+        .filter(notEmpty);
     });
-    console.log("noteButtons", noteButtons);
 
-    if (noteButtons.length > 0 && noteButtons[0]) {
+    if (possibleNoteButton.length > 0 && possibleNoteButton[0]) {
       setMelodicButton(
-        noteButtons[0].row,
-        noteButtons[0].button,
-        noteButtons[0].direction
+        possibleNoteButton[0].row,
+        possibleNoteButton[0].button,
+        possibleNoteButton[0].direction
       );
       // alert("Pre zadanú notu neexistuje žiadny tlačidlo");
       return;
