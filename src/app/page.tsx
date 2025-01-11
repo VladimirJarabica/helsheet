@@ -16,6 +16,7 @@ export default async function Home() {
       Author: { select: { nickname: true } },
       Tags: { select: { id: true, name: true } },
     },
+    orderBy: { name: "asc" },
   });
 
   const authUser = await currentUser();
