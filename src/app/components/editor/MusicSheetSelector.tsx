@@ -84,16 +84,31 @@ type NoteSymbolProps = {
   note: Note;
   textPosition: "top" | "bottom";
   onClick?: () => void;
+  isSelected: boolean;
 };
 
-const NoteSymbol = ({ note, textPosition, onClick }: NoteSymbolProps) => {
+const NoteSymbol = ({
+  note,
+  textPosition,
+  onClick,
+  isSelected,
+}: NoteSymbolProps) => {
   return (
     <div
       className="h-[30px] w-3 relative rounded-br-xl cursor-pointer group"
       onClick={onClick}
     >
-      <div className="absolute w-[1px] right-0 h-[80%] bg-gray-500 group-hover:bg-black" />
-      <div className="rounded-full bg-gray-500 group-hover:bg-black w-3 h-[9px] bottom-0 absolute right-0 -skew-y-12" />
+      <div
+        className={`
+        absolute w-[1px] right-0 h-[80%] group-hover:bg-black
+        ${isSelected ? "bg-black" : "bg-gray-400"}
+        `}
+      />
+      <div
+        className={`rounded-full group-hover:bg-black w-3 h-[9px] bottom-0 absolute right-0 -skew-y-12
+          ${isSelected ? "bg-black" : "bg-gray-400"}
+          `}
+      />
       <div
         className={`absolute text-sm ${
           textPosition === "top" ? "bottom-full" : "top-full"
@@ -109,11 +124,13 @@ const NoteSymbol = ({ note, textPosition, onClick }: NoteSymbolProps) => {
 interface MusicSheetSelectorProps {
   setHoveredNote: (note: Note | null) => void;
   onSelectNote: (note: Note) => void;
+  selectedNotes: Note[];
 }
 
 const MusicSheetSelector = ({
   setHoveredNote,
   onSelectNote,
+  selectedNotes,
 }: MusicSheetSelectorProps) => {
   const [scale, setScale] = useState<Scale>(Scales[4]);
   return (
@@ -149,29 +166,37 @@ const MusicSheetSelector = ({
           <div className="w-full h-[9px] border border-t-0 border-black" />
         </div>
         {Notes.filter((note) => scale.notes.includes(note.note)).map(
-          (note, index) => (
-            <div
-              key={scale.signature + note.note + note.pitch}
-              className="absolute"
-              style={{ bottom: 4.5 * note.position, left: 5 + index * 19 }}
-              onMouseEnter={() => setHoveredNote(note)}
-              onMouseLeave={() => setHoveredNote(null)}
-            >
-              <NoteSymbol
-                note={note}
-                textPosition={note.position < 1 ? "bottom" : "top"}
-                onClick={() => onSelectNote(note)}
-              />
-              {(note.position < -2 || note.position > 7) && (
-                <div
-                  className="w-[24px] h-[1px] bg-gray-500 absolute left-[-5px]"
-                  style={{
-                    bottom: note.position % 2 === 0 ? 9 : 4.5,
-                  }}
+          (note, index) => {
+            const isSelected = selectedNotes.some(
+              (selectedNote) =>
+                selectedNote.note === note.note &&
+                selectedNote.pitch === note.pitch
+            );
+            return (
+              <div
+                key={scale.signature + note.note + note.pitch}
+                className="absolute"
+                style={{ bottom: 4.5 * note.position, left: 5 + index * 19 }}
+                onMouseEnter={() => setHoveredNote(note)}
+                onMouseLeave={() => setHoveredNote(null)}
+              >
+                <NoteSymbol
+                  note={note}
+                  textPosition={note.position < 1 ? "bottom" : "top"}
+                  onClick={() => onSelectNote(note)}
+                  isSelected={isSelected}
                 />
-              )}
-            </div>
-          )
+                {(note.position < -2 || note.position > 7) && (
+                  <div
+                    className="w-[24px] h-[1px] bg-gray-500 absolute left-[-5px]"
+                    style={{
+                      bottom: note.position % 2 === 0 ? 9 : 4.5,
+                    }}
+                  />
+                )}
+              </div>
+            );
+          }
         )}
       </div>
     </div>

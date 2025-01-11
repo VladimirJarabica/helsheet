@@ -1,6 +1,6 @@
 "use client";
 import * as R from "ramda";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { notEmpty } from "../../../utils/fnUtils";
 import {
   isBassPartSplit as getIsBassPartSplit,
@@ -9,6 +9,7 @@ import {
 } from "../../../utils/sheet";
 import {
   Bass,
+  CellRow,
   DefinedDirection,
   Direction,
   Note,
@@ -39,8 +40,6 @@ const ColumnNotes = () => {
     clearColumn,
     setMelodicButton,
   } = useSongContext();
-
-  const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
 
   const [hoveredNote, setHoveredNote] = useState<Note | null>(null);
 
@@ -80,6 +79,32 @@ const ColumnNotes = () => {
   const bassItems = hasBassPart
     ? column.bass.subCells[activeColumn.subColumnIndex].items
     : [];
+
+  const notes = hasMelodicPart
+    ? column?.melodic.flatMap((cell) =>
+        cell.subCells[activeColumn.subColumnIndex].items
+          .filter((item) => item.type === "note")
+          .map<(Note & { button: number; row: CellRow }) | null>((item) => {
+            const note = getNoteFromTuningByButton({
+              button: item.button,
+              row: cell.row,
+              direction,
+              tuning,
+            });
+            if (!note) {
+              return null;
+            }
+            return {
+              ...note,
+              button: item.button,
+              row: cell.row,
+            };
+          })
+          .filter(notEmpty)
+      ) ?? []
+    : [];
+
+  console.log("notes", notes);
 
   useKeyboardListener({
     id: "directionLeft",
@@ -163,42 +188,76 @@ const ColumnNotes = () => {
     },
   });
 
-  useEffect(() => {
-    setSelectedNotes(
-      hasMelodicPart
-        ? column?.melodic.flatMap((cell) =>
-            cell.subCells[activeColumn.subColumnIndex].items
-              .filter((item) => item.type === "note")
-              .map((item) =>
-                getNoteFromTuningByButton({
-                  button: item.button,
-                  row: cell.row,
-                  direction,
-                  tuning,
-                })
-              )
-              .filter(notEmpty)
-          ) ?? []
-        : []
-    );
-    setHoveredNote(null);
-    setHoveredBass(null);
-    setSelectedMelodicButtons(null);
-  }, [hasMelodicPart, column, direction, tuning, activeColumn?.subColumnIndex]);
+  // useEffect(() => {
+  //   setSelectedNotes(
+  //     hasMelodicPart
+  //       ? column?.melodic.flatMap((cell) =>
+  //           cell.subCells[activeColumn.subColumnIndex].items
+  //             .filter((item) => item.type === "note")
+  //             .map((item) =>
+  //               getNoteFromTuningByButton({
+  //                 button: item.button,
+  //                 row: cell.row,
+  //                 direction,
+  //                 tuning,
+  //               })
+  //             )
+  //             .filter(notEmpty)
+  //         ) ?? []
+  //       : []
+  //   );
+  //   setHoveredNote(null);
+  //   setHoveredBass(null);
+  //   setSelectedMelodicButtons(null);
+  // }, [hasMelodicPart, column, direction, tuning, activeColumn?.subColumnIndex]);
 
   const handleAddSelectedNote = (note: Note) => {
-    setSelectedNotes((sn) =>
-      sn.find((n) => n.note === note.note && n.pitch === note.pitch)
-        ? sn.filter((n) => n.note !== note.note || n.pitch !== note.pitch)
-        : [...sn, note]
-    );
+    if (!direction) {
+      alert("Najprv zvoľ smer ťahu");
+      return;
+    }
+    const noteButtons = tuning.melodic.flatMap((row) => {
+      return (
+        row.buttons
+          // .map((button) => button[direction as DefinedDirection])
+          .filter((button) => {
+            const directionButton = button[direction as DefinedDirection];
+            return (
+              directionButton &&
+              directionButton.note === note.note &&
+              directionButton.pitch === note.pitch
+            );
+          })
+          .map((button) => ({
+            button: button.button,
+            row: row.row,
+            direction: direction as DefinedDirection,
+          }))
+      );
+    });
+    console.log("noteButtons", noteButtons);
+
+    if (noteButtons.length > 0 && noteButtons[0]) {
+      setMelodicButton(
+        noteButtons[0].row,
+        noteButtons[0].button,
+        noteButtons[0].direction
+      );
+      // alert("Pre zadanú notu neexistuje žiadny tlačidlo");
+      return;
+    }
+    // setSelectedNotes((sn) =>
+    //   sn.find((n) => n.note === note.note && n.pitch === note.pitch)
+    //     ? sn.filter((n) => n.note !== note.note || n.pitch !== note.pitch)
+    //     : [...sn, note]
+    // );
   };
 
   const suggestedButtons = useMemo(() => {
     const pullButtons = tuning.melodic.flatMap((row) => {
       return row.buttons
         .filter(({ pull }) =>
-          selectedNotes.find(
+          notes.find(
             (selectedNote) =>
               selectedNote.note === pull.note &&
               selectedNote.pitch === pull.pitch
@@ -214,7 +273,7 @@ const ColumnNotes = () => {
     const pushButtons = tuning.melodic.flatMap((row) => {
       return row.buttons
         .filter(({ push }) =>
-          selectedNotes.find(
+          notes.find(
             (selectedNote) =>
               selectedNote.note === push.note &&
               selectedNote.pitch === push.pitch
@@ -259,14 +318,14 @@ const ColumnNotes = () => {
     };
 
     return {
-      push: getSuggestion(selectedNotes, pushButtons, "push").filter(
-        (suggestion) => suggestion.length === selectedNotes.length
+      push: getSuggestion(notes, pushButtons, "push").filter(
+        (suggestion) => suggestion.length === notes.length
       ),
-      pull: getSuggestion(selectedNotes, pullButtons, "pull").filter(
-        (suggestion) => suggestion.length === selectedNotes.length
+      pull: getSuggestion(notes, pullButtons, "pull").filter(
+        (suggestion) => suggestion.length === notes.length
       ),
     };
-  }, [selectedNotes, tuning.melodic]);
+  }, [notes, tuning.melodic]);
 
   if (!activeColumn || !column) {
     return null;
@@ -278,19 +337,16 @@ const ColumnNotes = () => {
         <div className="flex flex-col items-start">
           <div className="flex h-8">
             <div>Vybrané noty:</div>
-            {/* <div>Dĺžka:</div> */}
 
-            {selectedNotes.map((note) => (
+            {notes.map((note) => (
               <div key={note.note + note.pitch}>
                 <MelodeonButtonWrapper
                   onHover={(hovered) => setHoveredNote(hovered ? note : null)}
-                  onClick={() =>
-                    setSelectedNotes((sn) =>
-                      sn.filter(
-                        (s) => s.note != note.note || s.pitch != note.pitch
-                      )
-                    )
-                  }
+                  onClick={() => {
+                    if (typeof note.row === "number" && direction !== "empty") {
+                      setMelodicButton(note.row, note.button, direction);
+                    }
+                  }}
                 >
                   {note.note}
                   <sup className="top-[-0.5em]">{note.pitch}</sup>
@@ -301,7 +357,7 @@ const ColumnNotes = () => {
           <div className="flex gap-1 mt-4 flex-col sm:flex-row">
             <Button
               onClick={() => {
-                setSelectedNotes([]);
+                // setSelectedNotes([]);
                 clearColumn();
               }}
             >
@@ -327,7 +383,7 @@ const ColumnNotes = () => {
         </div>
         <div className="flex">
           Navrhované kombinácie:
-          {selectedNotes.length > 0 &&
+          {notes.length > 0 &&
             suggestedButtons.pull.length === 0 &&
             suggestedButtons.push.length === 0 &&
             " Pre zadané noty neexistujú žiadne kombinácie"}
@@ -430,6 +486,7 @@ const ColumnNotes = () => {
             <MusicSheetSelector
               setHoveredNote={setHoveredNote}
               onSelectNote={handleAddSelectedNote}
+              selectedNotes={notes}
             />
           </div>
         )}
