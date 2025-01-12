@@ -3,7 +3,7 @@ import {
   DIRECTION_CELL_SIZE,
   LINE_HEADING_WIDTH,
 } from "../../../utils/consts";
-import { useTuningContext } from "./tuningContext";
+import { useSheetContext } from "./sheetContext";
 
 const TO_ROMAN_NUMBER = {
   1: "I",
@@ -16,7 +16,7 @@ const TO_ROMAN_NUMBER = {
 };
 
 const LineHeading = () => {
-  const { tuning } = useTuningContext();
+  const { tuning } = useSheetContext();
 
   return (
     <div className="border-2 border-black w-fit h-fit">

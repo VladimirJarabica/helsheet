@@ -1,7 +1,7 @@
 "use client";
 import { CELL_SIZE } from "../../../utils/consts";
 import { CellItem, Cell as CellType, DirectionSubCell } from "./../../types";
-import { useSongContext } from "./songContext";
+import { useSheetContext } from "./sheetContext";
 import SubCell from "./SubCell";
 
 const LIGATURE_POSITIONS_BASE: {
@@ -39,7 +39,7 @@ const Cell = <Item extends CellItem>({
   directions,
 }: ColumnCellProps<Item>) => {
   const { setActiveColumn, activeColumn, ligatures, isEditing } =
-    useSongContext();
+    useSheetContext();
 
   const cellLigatures =
     ligatures[barIndex]?.[columnIndex]?.[cell.row as number | "bass"];

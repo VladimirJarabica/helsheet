@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Note, ScaleSignature } from "../../types";
+import { Scale as ScaleEnum } from "@prisma/client";
+import { useSheetContext } from "./sheetContext";
 
 const Notes: (Note & {
   position: number;
@@ -11,6 +13,7 @@ const Notes: (Note & {
   { note: "g", pitch: 0, position: -6 },
   { note: "gis", pitch: 0, position: -6 },
   { note: "a", pitch: 0, position: -5 },
+  { note: "as", pitch: 0, position: -5 },
   { note: "h", pitch: 0, position: -4 },
   { note: "b", pitch: 0, position: -4 },
   { note: "c", pitch: 1, position: -3 },
@@ -24,6 +27,7 @@ const Notes: (Note & {
   { note: "g", pitch: 1, position: 1 },
   { note: "gis", pitch: 1, position: 1 },
   { note: "a", pitch: 1, position: 2 },
+  { note: "as", pitch: 1, position: 2 },
   { note: "b", pitch: 1, position: 3 },
   { note: "h", pitch: 1, position: 3 },
   { note: "c", pitch: 2, position: 4 },
@@ -37,6 +41,7 @@ const Notes: (Note & {
   { note: "g", pitch: 2, position: 8 },
   { note: "gis", pitch: 2, position: 8 },
   { note: "a", pitch: 2, position: 9 },
+  { note: "as", pitch: 2, position: 9 },
   { note: "h", pitch: 2, position: 10 },
   { note: "b", pitch: 2, position: 10 },
   { note: "c", pitch: 3, position: 11 },
@@ -46,37 +51,59 @@ const Notes: (Note & {
 ];
 
 type Scale = {
+  id: ScaleEnum;
   name: string;
   signature: ScaleSignature;
   notes: Note["note"][];
 };
 const Scales: Scale[] = [
   {
+    id: ScaleEnum.E_dur,
     name: "E dur",
     signature: "####",
     notes: ["cis", "dis", "e", "fis", "gis", "a", "h"],
   },
   {
+    id: ScaleEnum.A_dur,
     name: "A dur",
     signature: "###",
     notes: ["cis", "d", "e", "fis", "gis", "a", "h"],
   },
   {
+    id: ScaleEnum.D_dur,
     name: "D dur",
     signature: "##",
     notes: ["cis", "d", "e", "fis", "g", "a", "h"],
   },
   {
+    id: ScaleEnum.G_dur,
     name: "G dur",
     signature: "#",
     notes: ["c", "d", "e", "fis", "g", "a", "h"],
   },
-  { name: "C dur", signature: "", notes: ["c", "d", "e", "f", "g", "a", "h"] },
-  { name: "F dur", signature: "b", notes: ["c", "d", "e", "f", "g", "a", "b"] },
   {
+    id: ScaleEnum.C_dur,
+    name: "C dur",
+    signature: "",
+    notes: ["c", "d", "e", "f", "g", "a", "h"],
+  },
+  {
+    id: ScaleEnum.F_dur,
+    name: "F dur",
+    signature: "b",
+    notes: ["c", "d", "e", "f", "g", "a", "b"],
+  },
+  {
+    id: ScaleEnum.B_dur,
     name: "B dur",
     signature: "bb",
     notes: ["c", "d", "es", "f", "g", "a", "b"],
+  },
+  {
+    id: ScaleEnum.Es_dur,
+    name: "Es dur",
+    signature: "bb",
+    notes: ["c", "d", "es", "f", "g", "as", "b"],
   },
 ];
 
@@ -132,7 +159,11 @@ const MusicSheetSelector = ({
   onSelectNote,
   selectedNotes,
 }: MusicSheetSelectorProps) => {
-  const [scale, setScale] = useState<Scale>(Scales[4]);
+  const { sheet } = useSheetContext();
+  const [scale, setScale] = useState<Scale>(
+    Scales.find((s) => s.id === sheet.scale) ?? Scales[4]
+  );
+
   return (
     <div className="max-w-[100vw] overflow-auto">
       <div className="relative my-20 w-[430px]">
@@ -140,10 +171,10 @@ const MusicSheetSelector = ({
           <label>Stupnica</label>
           <select
             className="bg-transparent"
-            value={scale.signature}
+            value={scale.id}
             onChange={(e) => {
               const newScale = Scales.find(
-                (scale) => scale.signature === e.target.value
+                (scale) => scale.id === e.target.value
               );
               if (newScale) {
                 setScale(newScale);
@@ -151,7 +182,7 @@ const MusicSheetSelector = ({
             }}
           >
             {Scales.map((scale) => (
-              <option key={scale.signature} value={scale.signature}>
+              <option key={scale.signature} value={scale.id}>
                 {`${scale.name}${
                   scale.signature ? ` (${scale.signature})` : ""
                 }`}

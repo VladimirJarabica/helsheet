@@ -1,5 +1,5 @@
 "use client";
-import { Sheet, Tuning } from "@prisma/client";
+import { Scale, Sheet, Tuning } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { TimeSignature } from "../../types";
 import Button from "../Button";
@@ -8,6 +8,7 @@ export type FormData = {
   name: string;
   author: string;
   tuning: Tuning;
+  scale: Scale | null;
   timeSignature: TimeSignature;
   sourceText: string | null;
   sourceUrl: string | null;
@@ -17,7 +18,10 @@ interface SheetSettingsProps {
   nickname?: string | null;
   onSubmit: (data: FormData) => Promise<void>;
   onDelete?: () => Promise<void>;
-  sheet?: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl">;
+  sheet?: Pick<
+    Sheet,
+    "id" | "name" | "tuning" | "scale" | "sourceText" | "sourceUrl"
+  >;
   timeSignature?: TimeSignature;
 }
 
@@ -33,6 +37,7 @@ const SheetSettings = ({
       name: existingSheet?.name ?? "",
       author: nickname ?? "",
       tuning: existingSheet?.tuning ?? Tuning.CF,
+      scale: existingSheet?.scale ?? null,
       timeSignature: timeSignature,
       sourceText: existingSheet?.sourceText ?? "",
       sourceUrl: existingSheet?.sourceUrl ?? "",
@@ -69,6 +74,23 @@ const SheetSettings = ({
             {Object.keys(Tuning).map((tuning) => (
               <option key={tuning} value={tuning}>
                 {tuning}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="my-4 flex flex-col">
+          <label htmlFor="scale">Stupnica</label>
+          <select
+            className="border-b"
+            {...register("scale", {
+              required: false,
+              setValueAs: (val) => (val === "" ? null : val),
+            })}
+          >
+            <option value={""}>Žiadna</option>
+            {Object.keys(Scale).map((scale) => (
+              <option key={scale} value={scale}>
+                {scale.replaceAll("_", " ")}
               </option>
             ))}
           </select>

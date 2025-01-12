@@ -5,7 +5,7 @@ import { CELL_SIZE } from "../../../utils/consts";
 import { Column as ColumnType } from "./../../types";
 import Cell from "./Cell";
 import DirectionCell from "./DirectionCell";
-import { useSongContext } from "./songContext";
+import { useSheetContext } from "./sheetContext";
 
 interface ColumnProps {
   lastColumnInBar: boolean;
@@ -25,7 +25,7 @@ const Column = ({
   columnIndex,
 }: ColumnProps) => {
   const { setText, activeColumn, setActiveColumn, isEditing } =
-    useSongContext();
+    useSheetContext();
   const textRef = useRef<HTMLTextAreaElement>(null);
 
   const [hoveredSubColumnIndex, setHoveredSubColumnIndex] = useState<

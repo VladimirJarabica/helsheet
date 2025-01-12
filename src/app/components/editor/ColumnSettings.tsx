@@ -3,10 +3,10 @@ import { useState } from "react";
 import ColumnNotes from "./ColumnNotes";
 import { useKeyboardListener } from "./keyboardListenerContext";
 import NoteLengthSelect from "./NoteLengthSelect";
-import { useSongContext } from "./songContext";
+import { useSheetContext } from "./sheetContext";
 
 const ColumnSettings = () => {
-  const { activeColumn, song, setActiveColumn } = useSongContext();
+  const { activeColumn, song, setActiveColumn } = useSheetContext();
   const [tab, setTab] = useState<"notes" | "length" | "fingers">("notes");
 
   useKeyboardListener({

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSongContext } from "./songContext";
+import { useSheetContext } from "./sheetContext";
 import Button from "../Button";
 
 interface VariantsProps {
@@ -7,7 +7,7 @@ interface VariantsProps {
 }
 
 const Variants = ({ onSelect }: VariantsProps) => {
-  const { song, addVariant } = useSongContext();
+  const { song, addVariant } = useSheetContext();
   const variants = song.variants ?? [];
 
   const [newGroupName, setNewGroupName] = useState("");

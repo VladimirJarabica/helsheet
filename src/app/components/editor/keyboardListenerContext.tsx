@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef } from "react";
-import { useSongContext } from "./songContext";
+import { useSheetContext } from "./sheetContext";
 
 type KeyOptions = {
   metaKey: boolean;
@@ -29,7 +29,7 @@ interface KeyboardListenerProviderProps {
 export const KeyboardListenerContextProvider = ({
   children,
 }: KeyboardListenerProviderProps) => {
-  const { isEditing } = useSongContext();
+  const { isEditing } = useSheetContext();
 
   const listenersRef = useRef<
     Record<

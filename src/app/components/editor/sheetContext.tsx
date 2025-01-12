@@ -1,5 +1,7 @@
+import { Sheet, Tuning as TuningType } from "@prisma/client";
 import { uniqBy } from "ramda";
 import { createContext, useContext, useState } from "react";
+import { CFTuning } from "../../../data/tunings/cf";
 import { groupByFn } from "../../../utils/fnUtils";
 import {
   getColumnsInBar,
@@ -20,10 +22,17 @@ import {
   Ligatures,
   SongContent,
   SubCell,
+  Tuning,
 } from "../../types";
 import { saveSong } from "./actions";
-import { useTuningContext } from "./tuningContext";
 import { useLigatures } from "./useLigatures";
+
+const TUNINGS: Record<TuningType, Tuning> = {
+  [TuningType.CF]: CFTuning,
+  // TODO: create other tunings
+  [TuningType.AD]: CFTuning,
+  [TuningType.DG]: CFTuning,
+};
 
 type CellPosition = {
   barIndex: number;
@@ -40,17 +49,19 @@ export type SubColumnPosition = ColumnPosition & {
   subColumnIndex: number;
 };
 
-interface SongContextProviderProps {
-  id: number;
+interface SheetContextProviderProps {
   editable: boolean;
   children: React.ReactNode;
+  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale">;
   initialSong: SongContent;
 }
 
-type SongContext = {
+type SheetContext = {
   isEditing: boolean;
   setEditing: (editing: boolean) => void;
   song: SongContent;
+  tuning: Tuning;
+  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale">;
   ligatures: Ligatures;
   activeCell: CellPosition | null;
   activeColumn: SubColumnPosition | null;
@@ -97,12 +108,15 @@ type SongContext = {
   setBarVariant: (barIndex: number, variant?: number) => void;
 };
 
-const songContext = createContext<SongContext>({
+const sheetContext = createContext<SheetContext>({
   isEditing: false,
   song: {
     timeSignature: "4/4",
     bars: [],
   },
+  tuning: CFTuning,
+  // @ts-expect-error will be set in provider
+  sheet: null,
   ligatures: {},
   activeCell: null,
   activeColumn: null,
@@ -137,18 +151,17 @@ const songContext = createContext<SongContext>({
   setBarVariant: () => {},
 });
 
-export const SongContextProvider = ({
-  id,
+export const SheetContextProvider = ({
   editable,
+  sheet,
   children,
   initialSong,
-}: SongContextProviderProps) => {
+}: SheetContextProviderProps) => {
   const [song, setSong] = useState<SongContent>(initialSong);
   const [activeCell, setActiveCell] = useState<CellPosition | null>(null);
   const [activeColumn, setActiveColumn] = useState<SubColumnPosition | null>(
     null
   );
-  const { tuning } = useTuningContext();
   const [isEditing, setIsEditing] = useState(false);
 
   const setEditing = (editing: boolean) => {
@@ -157,9 +170,11 @@ export const SongContextProvider = ({
 
   const columnsInBar = getColumnsInBar(song.timeSignature);
 
+  const tuning = TUNINGS[sheet.tuning];
+
   const save = async () => {
     if (editable && isEditing) {
-      await saveSong({ id, song });
+      await saveSong({ id: sheet.id, song });
     }
   };
 
@@ -724,10 +739,12 @@ export const SongContextProvider = ({
 
   return (
     <div>
-      <songContext.Provider
+      <sheetContext.Provider
         value={{
           isEditing,
           setEditing,
+          tuning,
+          sheet,
           song,
           ligatures,
           activeCell,
@@ -762,15 +779,15 @@ export const SongContextProvider = ({
         }}
       >
         {children}
-      </songContext.Provider>
+      </sheetContext.Provider>
     </div>
   );
 };
 
-export const useSongContext = () => useContext(songContext);
+export const useSheetContext = () => useContext(sheetContext);
 
 export const useSong = () => {
-  const { song } = useSongContext();
+  const { song } = useSheetContext();
 
   return song;
 };

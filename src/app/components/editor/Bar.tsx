@@ -9,7 +9,7 @@ import Column from "./Column";
 import LineHeading from "./LineHeading";
 import ModalWrapper from "./ModalWrapper";
 import RepeatSign from "./RepeatSign";
-import { useSongContext } from "./songContext";
+import { useSheetContext } from "./sheetContext";
 import Variants from "./Variants";
 
 interface BarProps {
@@ -28,7 +28,7 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
     removeLastColumnFromBar,
     setBarVariant,
     isEditing,
-  } = useSongContext();
+  } = useSheetContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSelectingVariant, setIsSelectingVariant] = useState(false);
 

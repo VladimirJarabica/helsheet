@@ -11,6 +11,7 @@ export type Note = {
     | "g"
     | "gis"
     | "a"
+    | "as"
     | "h"
     | "b";
   pitch: 0 | 1 | 2 | 3 | 4;

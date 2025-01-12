@@ -1,10 +1,9 @@
 import { useMemo, useState } from "react";
 import { TimeSignature } from "../../types";
 import { MelodeonButtonWrapper } from "../MelodeonButton";
-import NoteLength from "./NoteLength";
-import { useSongContext } from "./songContext";
-import { useTuningContext } from "./tuningContext";
 import { useKeyboardListeners } from "./keyboardListenerContext";
+import NoteLength from "./NoteLength";
+import { useSheetContext } from "./sheetContext";
 
 interface NoteWithLengthProps {
   timeSignature: TimeSignature;
@@ -82,8 +81,7 @@ const NoteLengthSelector = ({
 };
 
 const NoteLengthSelect = () => {
-  const { tuning } = useTuningContext();
-  const { song, activeColumn, setLength } = useSongContext();
+  const { song, tuning, activeColumn, setLength } = useSheetContext();
 
   const [activeButton, setActiveButton] = useState<{
     rowIndex: number;

@@ -27,13 +27,15 @@ import ColumnSettings from "./ColumnSettings";
 import { KeyboardListenerContextProvider } from "./keyboardListenerContext";
 import LikeSheetButton from "./LikeSheetButton";
 import ModalWrapper from "./ModalWrapper";
+import { SheetContextProvider, useSheetContext } from "./sheetContext";
 import SheetSettings from "./SheetSettings";
-import { SongContextProvider, useSongContext } from "./songContext";
-import { TuningContextProvider, useTuningContext } from "./tuningContext";
 import Verses from "./Verses";
 
 interface SongWrapperProps {
-  sheet: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl"> & {
+  sheet: Pick<
+    Sheet,
+    "id" | "name" | "tuning" | "scale" | "sourceText" | "sourceUrl"
+  > & {
     Author: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
   };
@@ -51,10 +53,9 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
     setActiveColumn,
     isEditing,
     setEditing,
-  } = useSongContext();
+    tuning,
+  } = useSheetContext();
   const tags = useTags();
-
-  const { tuning } = useTuningContext();
 
   const barsWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -256,7 +257,14 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
 interface EditorProps {
   sheet: Pick<
     Sheet,
-    "id" | "name" | "tuning" | "sourceText" | "sourceUrl" | "content"
+    | "id"
+    | "name"
+    | "tuning"
+    | "tempo"
+    | "scale"
+    | "sourceText"
+    | "sourceUrl"
+    | "content"
   > & {
     Author: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
@@ -266,17 +274,15 @@ interface EditorProps {
 }
 const Editor = ({ sheet, editable, liked }: EditorProps) => {
   return (
-    <TuningContextProvider tuning={sheet.tuning}>
-      <SongContextProvider
-        id={sheet.id}
-        editable={editable}
-        initialSong={sheet.content as SongContent}
-      >
-        <KeyboardListenerContextProvider>
-          <SongWrapper sheet={sheet} liked={liked} editable={editable} />
-        </KeyboardListenerContextProvider>
-      </SongContextProvider>
-    </TuningContextProvider>
+    <SheetContextProvider
+      editable={editable}
+      sheet={sheet}
+      initialSong={sheet.content as SongContent}
+    >
+      <KeyboardListenerContextProvider>
+        <SongWrapper sheet={sheet} liked={liked} editable={editable} />
+      </KeyboardListenerContextProvider>
+    </SheetContextProvider>
   );
 };
 

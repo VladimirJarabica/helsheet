@@ -1,6 +1,6 @@
 import { CELL_SIZE, DIRECTION_CELL_SIZE } from "../../../utils/consts";
 import { Bar } from "../../types";
-import { useTuningContext } from "./tuningContext";
+import { useSheetContext } from "./sheetContext";
 
 interface RepeatSignProps {
   type: keyof Exclude<Bar["repeat"], undefined>;
@@ -10,7 +10,7 @@ interface RepeatSignProps {
 const RADIUS_SIZE = 10;
 
 const RepeatSign = ({ type, topOffset }: RepeatSignProps) => {
-  const { tuning } = useTuningContext();
+  const { tuning } = useSheetContext();
   const height =
     (tuning.melodic.length + 1) * CELL_SIZE +
     DIRECTION_CELL_SIZE +

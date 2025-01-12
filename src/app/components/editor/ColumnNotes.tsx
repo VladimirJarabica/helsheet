@@ -22,12 +22,11 @@ import {
   useKeyboardListeners,
 } from "./keyboardListenerContext";
 import MusicSheetSelector from "./MusicSheetSelector";
-import { useSongContext } from "./songContext";
-import { useTuningContext } from "./tuningContext";
+import { useSheetContext } from "./sheetContext";
 
 const ColumnNotes = () => {
-  const { tuning } = useTuningContext();
   const {
+    tuning,
     activeColumn,
     song,
     setBassButton,
@@ -39,7 +38,7 @@ const ColumnNotes = () => {
     setMelodicButtons,
     clearColumn,
     setMelodicButton,
-  } = useSongContext();
+  } = useSheetContext();
 
   const [hoveredNote, setHoveredNote] = useState<Note | null>(null);
 

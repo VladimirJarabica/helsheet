@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Button from "../Button";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { useSongContext } from "./songContext";
+import { useSheetContext } from "./sheetContext";
 
 interface VerseProps {
   index: number;
@@ -11,7 +11,7 @@ const Verse = ({ index, verse }: VerseProps) => {
   const [hasFocus, setHasFocus] = useState(false);
   const ref = useRef<HTMLTextAreaElement>(null);
 
-  const { setVerseText, isEditing, removeVerse } = useSongContext();
+  const { setVerseText, isEditing, removeVerse } = useSheetContext();
 
   const resizeTextArea = () => {
     if (ref.current) {
@@ -53,7 +53,7 @@ const Verse = ({ index, verse }: VerseProps) => {
 };
 
 const Verses = () => {
-  const { song, addVerse, isEditing } = useSongContext();
+  const { song, addVerse, isEditing } = useSheetContext();
 
   return (
     <div className="max-w-[700px] w-11/12 flex justify-start flex-wrap gap-y-2 text-sm">

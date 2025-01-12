@@ -14,6 +14,17 @@ enum Tuning {
   DG
 }
 
+enum Scale {
+  E_dur
+  A_dur
+  D_dur
+  G_dur
+  C_dur
+  F_dur
+  B_dur
+  Es_dur
+}
+
 model User {
   id             String  @id
   nickname       String?
@@ -31,13 +42,16 @@ model Tag {
 }
 
 model Sheet {
-  id         Int     @id @default(autoincrement())
-  name       String
-  tuning     Tuning
-  content    Json
-  version    Int
-  sourceText String?
-  sourceUrl  String?
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  tuning      Tuning
+  content     Json
+  version     Int
+  sourceText  String?
+  sourceUrl   String?
+  scale       Scale?
+  tempo       Int?
 
   Author   User   @relation("author", fields: [authorId], references: [id])
   authorId String

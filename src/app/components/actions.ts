@@ -23,6 +23,7 @@ export const createSheet = async (
     data: {
       name: data.name,
       tuning: data.tuning,
+      scale: data.scale,
       content: {
         timeSignature: data.timeSignature,
         bars: [],
@@ -56,6 +57,7 @@ export const updateSheet = async (sheet: Pick<Sheet, "id">, data: FormData) => {
     data: {
       name: data.name,
       tuning: data.tuning,
+      scale: data.scale,
       sourceText: data.sourceText,
       sourceUrl: data.sourceUrl,
     },
