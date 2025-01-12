@@ -53,10 +53,8 @@ const Sheet = async (props: PageProps) => {
   const authUser = await currentUser();
 
   const user = authUser ? await getOrCreateUser(authUser.id) : null;
-  console.log("user", user);
 
   const isAuthor = sheet.Author.id === user?.id;
-  console.log("song", { sheet, isAuthor });
 
   return (
     <Editor

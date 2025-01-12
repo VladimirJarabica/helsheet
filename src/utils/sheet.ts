@@ -8,13 +8,9 @@ import {
 } from "../app/types";
 import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 
-export const getSheetUrl = (
-  sheet: Pick<Sheet, "id" | "name"> & { editSecret?: string }
-) => {
+export const getSheetUrl = (sheet: Pick<Sheet, "id" | "name">) => {
   const name = sheet.name.replace(/ /g, "-");
-  return `/sheet/${sheet.id}_${name}?${
-    sheet.editSecret ? `editSecret=${sheet.editSecret}` : ""
-  }`;
+  return `/sheet/${sheet.id}_${name}`;
 };
 
 export const getSheetNameFromSlug = (slug: string) => {

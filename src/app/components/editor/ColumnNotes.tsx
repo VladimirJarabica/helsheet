@@ -104,8 +104,6 @@ const ColumnNotes = () => {
       ) ?? []
     : [];
 
-  console.log("notes", notes);
-
   useKeyboardListener({
     id: "directionLeft",
     key: "ArrowLeft",
@@ -145,7 +143,6 @@ const ColumnNotes = () => {
           item.bass === bass &&
           (direction !== "empty" ? item.direction === direction : true)
       );
-      console.log("selectedBasses ", selectedBasses);
 
       if (selectedBasses.length > 1) {
         alert("Nemožno priradiť bass, pretože je viacero možností");
@@ -168,22 +165,14 @@ const ColumnNotes = () => {
         return;
       }
       const parsed = parseInt(key, 10);
-      console.log("Melodic", key, options, parsed);
       const buttonNumber = Number.isNaN(parsed)
         ? ["x", "y"].indexOf(key) + 10
         : parsed;
 
       const row = options.ctrlKey ? 2 : 1;
-      console.log("Melodic", key, options, parsed, {
-        buttonNUmber: buttonNumber,
-        row,
-        tuning,
-      });
 
       if (buttonNumber <= tuning.melodic[row - 1].buttons.length) {
         setMelodicButton(options.ctrlKey ? 2 : 1, buttonNumber, direction);
-      } else {
-        console.log("too much bori");
       }
     },
   });
@@ -484,10 +473,6 @@ const ColumnNotes = () => {
                       <MelodeonButton
                         key={button.button}
                         onClick={(bassDirection) => {
-                          console.log("set bass button", {
-                            button,
-                            bassDirection,
-                          });
                           // const note =
                           //   bassDirection === "pull" ? button.pull : button.push;
                           setBassButton(

@@ -1,11 +1,14 @@
 "use client";
+import { MouseEvent as ReactMouseEvent } from "react";
 import Link from "next/link";
 import { useState } from "react";
 
 interface ButtonProps {
   href?: React.ComponentProps<typeof Link>["href"];
   children: React.ReactNode;
-  onClick?: () => void | Promise<void>;
+  onClick?: (
+    e: ReactMouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void | Promise<void>;
 }
 
 const Button = ({ href, children, onClick }: ButtonProps) => {
@@ -19,8 +22,8 @@ const Button = ({ href, children, onClick }: ButtonProps) => {
     `}
       onClick={
         onClick
-          ? () => {
-              const res = onClick();
+          ? (e) => {
+              const res = onClick(e);
               if (res instanceof Promise) {
                 setIsLoading(true);
                 res.finally(() => {

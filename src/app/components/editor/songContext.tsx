@@ -696,11 +696,9 @@ export const SongContextProvider = ({
   };
 
   const addVariant = (variant: string) => {
-    console.log("add variant", variant);
     setSong((prev) => {
       const lastId = prev.variants?.[prev.variants.length - 1]?.id ?? 0;
 
-      console.log("add variant", { id: lastId + 1, name: variant });
       return {
         ...prev,
         variants: [...(prev.variants ?? []), { id: lastId + 1, name: variant }],

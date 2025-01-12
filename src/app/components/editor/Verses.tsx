@@ -30,7 +30,6 @@ const Verse = ({ index, verse }: VerseProps) => {
         <button
           className="w-6 absolute right-4 top-2 p-1 border border-black rounded hover:bg-hel-bgHover"
           onClick={() => {
-            console.log("on click", index);
             removeVerse(index);
           }}
         >

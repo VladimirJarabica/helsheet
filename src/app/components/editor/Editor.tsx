@@ -1,8 +1,9 @@
 "use client";
-import { Sheet, Tag, User } from "@prisma/client";
-import { useEffect, useRef, useState } from "react";
-import CreatableSelect from "react-select/creatable";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { Sheet, Tag, User } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import CreatableSelect from "react-select/creatable";
 import {
   BAR_LINES_PER_PAGE,
   CELL_SIZE,
@@ -10,25 +11,26 @@ import {
   LINE_HEADING_WIDTH_WITH_BORDER,
   VARIANT_CELL_HEIGHT,
 } from "../../../utils/consts";
-import { getColumnsInBar } from "../../../utils/sheet";
+import { getSheetUrl } from "../../../utils/sheet";
 import {
   createTag,
   removeTagFromSheet,
   setTagToSheet,
 } from "../../../utils/tags";
 import { SongContent } from "../../types";
+import { deleteSheet, updateSheet } from "../actions";
 import Button from "../Button";
 import TagPill from "../TagPill";
 import { useTags } from "../TagsContext";
 import Bar from "./Bar";
-import LikeSheetButton from "./LikeSheetButton";
 import ColumnSettings from "./ColumnSettings";
+import { KeyboardListenerContextProvider } from "./keyboardListenerContext";
+import LikeSheetButton from "./LikeSheetButton";
+import ModalWrapper from "./ModalWrapper";
+import SheetSettings from "./SheetSettings";
 import { SongContextProvider, useSongContext } from "./songContext";
 import { TuningContextProvider, useTuningContext } from "./tuningContext";
 import Verses from "./Verses";
-import ModalWrapper from "./ModalWrapper";
-import SheetSettings from "./SheetSettings";
-import { KeyboardListenerContextProvider } from "./keyboardListenerContext";
 
 interface SongWrapperProps {
   sheet: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl"> & {
@@ -40,6 +42,7 @@ interface SongWrapperProps {
 }
 
 const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
+  const router = useRouter();
   const {
     song,
     activeColumn,
@@ -50,68 +53,19 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
     setEditing,
   } = useSongContext();
   const tags = useTags();
-  console.log("tags", tags);
 
   const { tuning } = useTuningContext();
 
   const barsWrapperRef = useRef<HTMLDivElement>(null);
-  console.log("barsWrapperRef", barsWrapperRef.current);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const columnsInBar = getColumnsInBar(song.timeSignature);
 
-  const [barsPerLine, setBarsPerLine] = useState(4);
   const [settingOpen, setSettingOpen] = useState(false);
-  console.log("barsPerLine", barsPerLine);
-
-  useEffect(() => {
-    const element = barsWrapperRef.current;
-    console.log("calculate more", element);
-    if (!element) return;
-
-    const handleResize = () => {
-      if (element) {
-        const width = element.offsetWidth;
-        // Firstly remove the heading space, than calculate how many bars fits into the current width
-        const columns = Math.floor(
-          (width - CELL_SIZE) / (CELL_SIZE * columnsInBar + 1) // Bar has 44*x + 1 as border
-        );
-        console.log("Width", { width, columnsInBar, columns });
-        setBarsPerLine(columns);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [columnsInBar]);
-
-  // useEffect(() => {
-  //   const handleClick = (event: MouseEvent) => {
-  //     if (
-  //       wrapperRef.current &&
-  //       !wrapperRef.current.contains(event.target as HTMLElement)
-  //     ) {
-  //       setActiveColumn(null);
-  //     }
-  //   };
-
-  //   document.addEventListener("click", handleClick);
-
-  //   return () => {
-  //     document.removeEventListener("click", handleClick);
-  //   };
-  // });
 
   return (
     <div
       className="max-h-[100vh] w-screen flex flex-col items-center"
       onClick={(e) => {
-        console.log("Wrapper on click", e.target);
         if (
           activeColumn &&
           !barsWrapperRef.current?.contains(e.target as Node)
@@ -278,8 +232,17 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
       {settingOpen && (
         <ModalWrapper close={() => setSettingOpen(false)}>
           <SheetSettings
-            // @ts-expect-error - fix later
-            onSubmit={async () => {}}
+            onSubmit={async (data) => {
+              const updatedSheet = await updateSheet(sheet, data);
+              if (updatedSheet) {
+                setSettingOpen(false);
+                router.replace(getSheetUrl(updatedSheet));
+              }
+            }}
+            onDelete={async () => {
+              await deleteSheet(sheet);
+              router.push("/");
+            }}
             sheet={sheet}
             timeSignature={song.timeSignature}
             nickname={sheet.Author.nickname}

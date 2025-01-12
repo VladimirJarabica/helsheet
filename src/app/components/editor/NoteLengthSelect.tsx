@@ -90,8 +90,6 @@ const NoteLengthSelect = () => {
     buttonIndex: number;
   }>({ rowIndex: 0, buttonIndex: 0 });
 
-  console.log("activeButton", activeButton);
-
   const column = useMemo(
     () =>
       activeColumn

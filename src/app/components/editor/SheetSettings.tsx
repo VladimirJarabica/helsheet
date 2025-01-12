@@ -15,7 +15,8 @@ export type FormData = {
 
 interface SheetSettingsProps {
   nickname?: string | null;
-  onSubmit: (data: FormData) => Promise<Pick<Sheet, "id">>;
+  onSubmit: (data: FormData) => Promise<void>;
+  onDelete?: () => Promise<void>;
   sheet?: Pick<Sheet, "id" | "name" | "tuning" | "sourceText" | "sourceUrl">;
   timeSignature?: TimeSignature;
 }
@@ -25,8 +26,9 @@ const SheetSettings = ({
   nickname,
   sheet: existingSheet,
   timeSignature,
+  onDelete,
 }: SheetSettingsProps) => {
-  const { register, handleSubmit } = useForm<FormData>({
+  const { register, getValues } = useForm<FormData>({
     defaultValues: {
       name: existingSheet?.name ?? "",
       author: nickname ?? "",
@@ -91,7 +93,27 @@ const SheetSettings = ({
             {...register("sourceText")}
           />
         </div>
-        <Button onClick={handleSubmit(onSubmit)}>Uložiť</Button>
+        <div className="flex justify-between">
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              const values = getValues();
+              onSubmit(values);
+            }}
+          >
+            Uložiť
+          </Button>
+          {onDelete && (
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                onDelete();
+              }}
+            >
+              Vymazať
+            </Button>
+          )}
+        </div>
       </form>
     </div>
   );

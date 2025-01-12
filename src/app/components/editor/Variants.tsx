@@ -10,8 +10,6 @@ const Variants = ({ onSelect }: VariantsProps) => {
   const { song, addVariant } = useSongContext();
   const variants = song.variants ?? [];
 
-  console.log("barGroups", variants);
-
   const [newGroupName, setNewGroupName] = useState("");
 
   return (

@@ -26,7 +26,6 @@ const ColumnSettings = () => {
       if (activeColumn) {
         // Going back
         if (shiftKey) {
-          console.log("going back", activeColumn);
           if (activeColumn.subColumnIndex > 0) {
             setActiveColumn({
               barIndex: activeColumn.barIndex,

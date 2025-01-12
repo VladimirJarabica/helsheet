@@ -167,7 +167,5 @@ export const useLigatures = ({
     return lig;
   }, [bars, columnsInTuning]);
 
-  console.log("ligatures", ligatures);
-
   return ligatures;
 };
