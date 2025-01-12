@@ -136,8 +136,12 @@ const Column = ({
       </div>
       <textarea
         ref={textRef}
+        disabled={!isEditing}
         rows={1}
-        className="border-gray-500 mt-1 bg-transparent border-b w-full text-xs outline-none mx-[1px] resize-none print:border-none"
+        className={`
+          border-gray-500 mt-1 bg-transparent w-full text-xs outline-none mx-[1px] resize-none print:border-none
+          ${isEditing ? "border-b" : "border-none"}
+          `}
         value={column.text ?? ""}
         onChange={handleInput}
       />
