@@ -52,7 +52,7 @@ export type SubColumnPosition = ColumnPosition & {
 interface SheetContextProviderProps {
   editable: boolean;
   children: React.ReactNode;
-  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale">;
+  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale" | "access">;
   initialSong: SongContent;
 }
 
@@ -61,7 +61,7 @@ type SheetContext = {
   setEditing: (editing: boolean) => void;
   song: SongContent;
   tuning: Tuning;
-  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale">;
+  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale" | "access">;
   ligatures: Ligatures;
   activeCell: CellPosition | null;
   activeColumn: SubColumnPosition | null;

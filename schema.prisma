@@ -25,6 +25,11 @@ enum Scale {
   Es_dur
 }
 
+enum SheetAccess {
+  public
+  private
+}
+
 model User {
   id             String  @id
   nickname       String?
@@ -42,7 +47,7 @@ model Tag {
 }
 
 model Sheet {
-  id          Int     @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   description String?
   tuning      Tuning
@@ -52,6 +57,7 @@ model Sheet {
   sourceUrl   String?
   scale       Scale?
   tempo       Int?
+  access      SheetAccess @default(public)
 
   Author   User   @relation("author", fields: [authorId], references: [id])
   authorId String

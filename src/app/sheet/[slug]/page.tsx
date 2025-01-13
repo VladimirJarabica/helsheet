@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { SheetAccess } from "@prisma/client";
 import { Metadata } from "next";
 import { dbClient } from "../../../services/db";
 import {
@@ -31,7 +32,9 @@ const Sheet = async (props: PageProps) => {
     return <div>not found</div>;
   }
 
-  const sheet = await dbClient.sheet.findUnique({
+  const authUser = await currentUser();
+
+  const sheet = await dbClient.sheet.findFirst({
     select: {
       id: true,
       name: true,
@@ -44,15 +47,24 @@ const Sheet = async (props: PageProps) => {
       sourceUrl: true,
       Author: { select: { id: true, nickname: true } },
       Tags: { select: { id: true, name: true } },
+      access: true,
     },
-    where: { id: sheetId },
+    where: {
+      AND: [
+        { id: sheetId },
+        {
+          OR: [
+            { access: SheetAccess.public },
+            { authorId: authUser?.id ?? "" },
+          ],
+        },
+      ],
+    },
   });
 
   if (!sheet) {
     return <div>not found</div>;
   }
-
-  const authUser = await currentUser();
 
   const user = authUser ? await getOrCreateUser(authUser.id) : null;
 

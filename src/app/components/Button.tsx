@@ -9,9 +9,10 @@ interface ButtonProps {
   onClick?: (
     e: ReactMouseEvent<HTMLButtonElement, MouseEvent>
   ) => void | Promise<void>;
+  className?: string;
 }
 
-const Button = ({ href, children, onClick }: ButtonProps) => {
+const Button = ({ href, children, onClick, className }: ButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const inner = (
@@ -34,7 +35,12 @@ const Button = ({ href, children, onClick }: ButtonProps) => {
           : undefined
       }
     >
-      <div className={`${isLoading ? "invisible" : ""}`}>{children}</div>
+      <div
+        className={`${isLoading ? "invisible" : ""} 
+        ${className}`}
+      >
+        {children}
+      </div>
       {isLoading && <div className="absolute">...</div>}
     </button>
   );

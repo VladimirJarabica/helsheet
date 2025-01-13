@@ -1,5 +1,6 @@
 "use server";
 import { currentUser } from "@clerk/nextjs/server";
+import { SheetAccess } from "@prisma/client";
 import Link from "next/link";
 import { dbClient } from "../services/db";
 import { getSheetUrl } from "../utils/sheet";
@@ -7,8 +8,12 @@ import { getOrCreateUser } from "../utils/user";
 import LikeSheetButton from "./components/editor/LikeSheetButton";
 import Filter from "./components/Filter";
 import TagPill from "./components/TagPill";
+import { notEmpty } from "../utils/fnUtils";
 
 export default async function Home() {
+  const authUser = await currentUser();
+  const user = authUser ? await getOrCreateUser(authUser.id) : null;
+
   const sheets = await dbClient.sheet.findMany({
     select: {
       id: true,
@@ -16,11 +21,14 @@ export default async function Home() {
       Author: { select: { nickname: true } },
       Tags: { select: { id: true, name: true } },
     },
+    where: {
+      OR: [
+        { access: SheetAccess.public },
+        user ? { authorId: user.id } : null,
+      ].filter(notEmpty),
+    },
     orderBy: { name: "asc" },
   });
-
-  const authUser = await currentUser();
-  const user = authUser ? await getOrCreateUser(authUser.id) : null;
 
   return (
     <div className="flex flex-col max-w-[700px] w-11/12">

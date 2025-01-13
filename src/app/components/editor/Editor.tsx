@@ -1,6 +1,10 @@
 "use client";
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { Sheet, Tag, User } from "@prisma/client";
+import {
+  Cog6ToothIcon,
+  GlobeEuropeAfricaIcon,
+  LockClosedIcon,
+} from "@heroicons/react/24/outline";
+import { Sheet, SheetAccess, Tag, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import CreatableSelect from "react-select/creatable";
@@ -18,7 +22,7 @@ import {
   setTagToSheet,
 } from "../../../utils/tags";
 import { SongContent } from "../../types";
-import { deleteSheet, updateSheet } from "../actions";
+import { changeSheetAccess, deleteSheet, updateSheet } from "../actions";
 import Button from "../Button";
 import TagPill from "../TagPill";
 import { useTags } from "../TagsContext";
@@ -37,7 +41,7 @@ import Verses from "./Verses";
 interface SongWrapperProps {
   sheet: Pick<
     Sheet,
-    "id" | "name" | "tuning" | "scale" | "sourceText" | "sourceUrl"
+    "id" | "name" | "tuning" | "scale" | "sourceText" | "sourceUrl" | "access"
   > & {
     Author: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
@@ -126,13 +130,38 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
                 </>
               )}
               {!isEditing && editable && (
-                <Button
-                  onClick={() => {
-                    setEditing(true);
-                  }}
-                >
-                  Upraviť
-                </Button>
+                <>
+                  <Button
+                    onClick={() => {
+                      setEditing(true);
+                    }}
+                  >
+                    Upraviť
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      await changeSheetAccess(
+                        sheet,
+                        sheet.access === SheetAccess.private
+                          ? SheetAccess.public
+                          : SheetAccess.private
+                      );
+                    }}
+                    className="flex"
+                  >
+                    {sheet.access === SheetAccess.private ? (
+                      <>
+                        <LockClosedIcon className="w-4 mr-1" />
+                        Súkromné
+                      </>
+                    ) : (
+                      <>
+                        <GlobeEuropeAfricaIcon className="w-4 mr-1" />
+                        Verejné
+                      </>
+                    )}
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -273,6 +302,7 @@ interface EditorProps {
     | "sourceText"
     | "sourceUrl"
     | "content"
+    | "access"
   > & {
     Author: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];

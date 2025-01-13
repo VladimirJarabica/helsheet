@@ -1,5 +1,5 @@
 "use server";
-import { Sheet, User } from "@prisma/client";
+import { Sheet, SheetAccess, User } from "@prisma/client";
 import { dbClient } from "../../services/db";
 import { FormData } from "./editor/SheetSettings";
 import { currentUser } from "@clerk/nextjs/server";
@@ -32,6 +32,7 @@ export const createSheet = async (
       sourceUrl: data.sourceUrl,
       version: 0,
       Author: { connect: { id: user.id } },
+      access: SheetAccess.private,
     },
   });
 
@@ -81,4 +82,23 @@ export const deleteSheet = async (sheet: Pick<Sheet, "id" | "name">) => {
     where: { id: sheet.id, authorId: user.id },
   });
   revalidatePath(getSheetUrl(sheet));
+};
+
+export const changeSheetAccess = async (
+  sheet: Pick<Sheet, "id" | "name">,
+  access: SheetAccess
+) => {
+  const authUser = await currentUser();
+  if (!authUser) {
+    return;
+  }
+  const user = await getOrCreateUser(authUser.id);
+  const updatedSheet = await dbClient.sheet.update({
+    where: { id: sheet.id, authorId: user.id },
+    data: { access },
+  });
+  if (updatedSheet) {
+    revalidatePath(getSheetUrl(sheet));
+  }
+  return updatedSheet;
 };
