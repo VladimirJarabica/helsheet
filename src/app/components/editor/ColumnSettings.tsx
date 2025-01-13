@@ -20,6 +20,14 @@ const ColumnSettings = () => {
   });
 
   useKeyboardListener({
+    id: "closeSettings",
+    key: "Escape",
+    listener: () => {
+      setActiveColumn(null);
+    },
+  });
+
+  useKeyboardListener({
     id: "moveColumn",
     key: "Tab",
     listener: ({ shiftKey }) => {
@@ -33,7 +41,7 @@ const ColumnSettings = () => {
               subColumnIndex: activeColumn.subColumnIndex - 1,
             });
           } else if (activeColumn.columnIndex > 0) {
-            const currentBar = song.bars[activeColumn.columnIndex];
+            const currentBar = song.bars[activeColumn.barIndex];
             setActiveColumn({
               barIndex: activeColumn.barIndex,
               columnIndex: activeColumn.columnIndex - 1,

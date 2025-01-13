@@ -7,8 +7,13 @@ import { useEffect, useState } from "react";
 interface LikeSheetButtonProps {
   sheetId: number;
   liked: boolean;
+  className?: string;
 }
-const LikeSheetButton = ({ sheetId, liked }: LikeSheetButtonProps) => {
+const LikeSheetButton = ({
+  sheetId,
+  liked,
+  className,
+}: LikeSheetButtonProps) => {
   const [isLiked, setIsLiked] = useState(liked);
 
   useEffect(() => {
@@ -17,7 +22,7 @@ const LikeSheetButton = ({ sheetId, liked }: LikeSheetButtonProps) => {
 
   return (
     <button
-      className="w-6"
+      className={`w-6 ${className}`}
       title={isLiked ? "Odobrať z obľúbených" : "Pridať do obľúbených"}
       onClick={(e) => {
         e.preventDefault();

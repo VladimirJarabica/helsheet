@@ -24,7 +24,10 @@ import TagPill from "../TagPill";
 import { useTags } from "../TagsContext";
 import Bar from "./Bar";
 import ColumnSettings from "./ColumnSettings";
-import { KeyboardListenerContextProvider } from "./keyboardListenerContext";
+import {
+  KeyboardListenerContextProvider,
+  useKeyboardListener,
+} from "./keyboardListenerContext";
 import LikeSheetButton from "./LikeSheetButton";
 import ModalWrapper from "./ModalWrapper";
 import { SheetContextProvider, useSheetContext } from "./sheetContext";
@@ -57,6 +60,8 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
   } = useSheetContext();
   const tags = useTags();
 
+  useKeyboardListener({ id: "newBar", key: "+", listener: () => addBar() });
+
   const barsWrapperRef = useRef<HTMLDivElement>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -81,9 +86,11 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
           <div className="text-2xl font-bold flex gap-2 items-center">
             {sheet.name}
             {!isEditing && (
-              <div className="print:hidden">
-                <LikeSheetButton sheetId={sheet.id} liked={liked} />
-              </div>
+              <LikeSheetButton
+                className="print:hidden"
+                sheetId={sheet.id}
+                liked={liked}
+              />
             )}
           </div>
           <div className="flex gap-2 items-center">
@@ -171,9 +178,10 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
       <div className={`px-2 sm:px-4`}>
         <div
           className={`
-          flex flex-1 pt-5 flex-wrap max-w-full justify-center
+          flex flex-1 pt-5 flex-wrap justify-center
           sm:justify-start
           print:pt-5 print:w-full
+          max-w-[930px]
           ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
           `}
           ref={barsWrapperRef}
