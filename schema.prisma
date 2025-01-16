@@ -23,6 +23,7 @@ enum Scale {
   F_dur
   B_dur
   Es_dur
+  As_dur
 }
 
 enum SheetAccess {

@@ -15,6 +15,7 @@ const Notes: (Note & {
   { note: "cis", pitch: 0, position: -10 },
   { note: "d", pitch: 0, position: -9 },
   { note: "dis", pitch: 0, position: -9 },
+  { note: "des", pitch: 0, position: -9 },
   { note: "e", pitch: 0, position: -8 },
   { note: "es", pitch: 0, position: -8 },
   { note: "f", pitch: 0, position: -7 },
@@ -29,6 +30,7 @@ const Notes: (Note & {
   { note: "cis", pitch: 1, position: -3 },
   { note: "d", pitch: 1, position: -2 },
   { note: "dis", pitch: 1, position: -2 },
+  { note: "des", pitch: 1, position: -2 },
   { note: "e", pitch: 1, position: -1 },
   { note: "es", pitch: 1, position: -1 },
   { note: "f", pitch: 1, position: 0 },
@@ -43,6 +45,7 @@ const Notes: (Note & {
   { note: "cis", pitch: 2, position: 4 },
   { note: "d", pitch: 2, position: 5 },
   { note: "dis", pitch: 2, position: 5 },
+  { note: "des", pitch: 2, position: 5 },
   { note: "e", pitch: 2, position: 6 },
   { note: "es", pitch: 2, position: 6 },
   { note: "f", pitch: 2, position: 7 },
@@ -57,6 +60,7 @@ const Notes: (Note & {
   { note: "cis", pitch: 3, position: 11 },
   { note: "d", pitch: 3, position: 12 },
   { note: "dis", pitch: 3, position: 12 },
+  { note: "des", pitch: 3, position: 12 },
 ];
 
 type Scale = {
@@ -185,6 +189,21 @@ const Scales: Scale[] = [
       { note: "b", pitch: 1 },
       { note: "c", pitch: 2 },
       { note: "d", pitch: 2 },
+    ],
+  },
+  {
+    id: ScaleEnum.As_dur,
+    name: "As dur",
+    signature: "bbbb",
+    notes: ["c", "des", "es", "f", "g", "as", "b"],
+    transpositionNotes: [
+      { note: "as", pitch: 1 },
+      { note: "b", pitch: 1 },
+      { note: "c", pitch: 2 },
+      { note: "des", pitch: 2 },
+      { note: "es", pitch: 2 },
+      { note: "f", pitch: 2 },
+      { note: "g", pitch: 2 },
     ],
   },
 ];

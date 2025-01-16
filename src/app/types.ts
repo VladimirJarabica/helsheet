@@ -3,6 +3,7 @@ export type Note = {
     | "c"
     | "cis"
     | "d"
+    | "des"
     | "dis"
     | "e"
     | "es"
