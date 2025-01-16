@@ -452,6 +452,7 @@ const ColumnNotes = () => {
             Výber nôt zo stupnice:
             <MusicSheetSelector
               setHoveredNote={setHoveredNote}
+              hoveredNote={hoveredNote}
               onSelectNote={handleAddSelectedNote}
               selectedNotes={notes}
             />
