@@ -1,7 +1,6 @@
 import { Scale as ScaleEnum } from "@prisma/client";
 import { atom, useAtom } from "jotai";
 import { Note, ScaleSignature } from "../../types";
-import { useSheetContext } from "./sheetContext";
 
 const Notes: (Note & {
   position: number;
