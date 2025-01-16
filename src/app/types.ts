@@ -14,7 +14,7 @@ export type Note = {
     | "as"
     | "h"
     | "b";
-  pitch: 0 | 1 | 2 | 3 | 4;
+  pitch: -1 | 0 | 1 | 2 | 3 | 4;
 };
 export type Bass = {
   note: "F" | "f" | "G" | "g" | "A" | "a" | "B" | "b" | "C" | "c" | "D" | "d";

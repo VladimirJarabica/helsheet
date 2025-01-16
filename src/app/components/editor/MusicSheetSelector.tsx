@@ -1,11 +1,17 @@
-import { useState } from "react";
-import { Note, ScaleSignature } from "../../types";
 import { Scale as ScaleEnum } from "@prisma/client";
+import { atom, useAtom } from "jotai";
+import { Note, ScaleSignature } from "../../types";
 import { useSheetContext } from "./sheetContext";
 
 const Notes: (Note & {
   position: number;
 })[] = [
+  { note: "g", pitch: -1, position: -13 },
+  { note: "gis", pitch: -1, position: -13 },
+  { note: "a", pitch: -1, position: -12 },
+  { note: "as", pitch: -1, position: -12 },
+  { note: "h", pitch: -1, position: -11 },
+  { note: "b", pitch: -1, position: -11 },
   { note: "c", pitch: 0, position: -10 },
   { note: "cis", pitch: 0, position: -10 },
   { note: "d", pitch: 0, position: -9 },
@@ -339,6 +345,10 @@ const NoteSymbol = ({
   );
 };
 
+const scaleAtom = atom<Scale>(Scales[4]);
+const transposeScaleAtom = atom<Scale | null>(null);
+const pitchOffsetAtom = atom(0);
+
 interface MusicSheetSelectorProps {
   setHoveredNote: (note: Note | null) => void;
   hoveredNote: Note | null;
@@ -352,12 +362,11 @@ const MusicSheetSelector = ({
   onSelectNote,
   selectedNotes,
 }: MusicSheetSelectorProps) => {
-  const { sheet } = useSheetContext();
-  const [scale, setScale] = useState<Scale>(
-    Scales.find((s) => s.id === sheet.scale) ?? Scales[4]
+  const [scale, setScale] = useAtom<Scale>(scaleAtom);
+  const [transposeScale, setTransposeScale] = useAtom<Scale | null>(
+    transposeScaleAtom
   );
-  const [transposeScale, setTransposeScale] = useState<Scale | null>(null);
-  const [pitchOffset, setPitchOffset] = useState(0);
+  const [pitchOffset, setPitchOffset] = useAtom(pitchOffsetAtom);
 
   const originalScaleSelectedNotes = transposeScale
     ? selectedNotes.map((note) =>
