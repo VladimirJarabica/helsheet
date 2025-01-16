@@ -17,9 +17,9 @@ const Button = ({ href, children, onClick, className }: ButtonProps) => {
 
   const inner = (
     <button
-      className={`rounded-full border border-solid border-transparent relative w-fit h-fit
-        transition-colors flex items-center justify-center bg-foreground text-background gap-2
-        hover:bg-[#ccc] px-3 py-2 text-sm
+      className={`rounded border border-solid border-gray-400 bg-hel-bgDefault relative w-fit h-fit
+    transition-colors duration-300 flex items-center justify-center text-foreground gap-2
+    hover:border-foreground px-2 py-1 text-sm
     `}
       onClick={
         onClick
