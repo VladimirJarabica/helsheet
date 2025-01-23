@@ -52,6 +52,24 @@ enum SongAuthorType {
   original_song
 }
 
+enum Genre {
+  folk_music
+  country
+  sea_shanty
+}
+
+enum Country {
+  slovakia
+  czech_republic
+  poland
+  hungary
+  austria
+  ireland
+  scotland
+  england
+  france
+}
+
 model Sheet {
   id          Int         @id @default(autoincrement())
   name        String
@@ -64,6 +82,8 @@ model Sheet {
   scale       Scale?
   tempo       Int?
   access      SheetAccess @default(public)
+  genre       Genre?
+  country     Country?
 
   songAuthorType SongAuthorType @default(folk_song)
   // Song author (band, singer...)

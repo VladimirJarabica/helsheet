@@ -1,17 +1,54 @@
 "use client";
-import { Scale, Sheet, Tuning } from "@prisma/client";
+import {
+  Country,
+  Genre,
+  Scale,
+  Sheet,
+  SongAuthorType,
+  Tuning,
+} from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { TimeSignature } from "../../types";
 import Button from "../Button";
 
+const AUTHOR_TYPE_VALUE: Record<SongAuthorType, string> = {
+  [SongAuthorType.folk_song]: "Ľudová pieseň",
+  [SongAuthorType.original_song]: "Autorská pieseň",
+};
+
+const GENRE_VALUE: Record<Genre, string> = {
+  [Genre.country]: "Country",
+  [Genre.folk_music]: "Ľudová pieseň",
+  [Genre.sea_shanty]: "Sea shanty",
+};
+
+const COUNTRY_VALUE: Record<Country, string> = {
+  [Country.slovakia]: "Slovensko",
+  [Country.czech_republic]: "Česká republika",
+  [Country.poland]: "Poľsko",
+  [Country.hungary]: "Maďarsko",
+  [Country.austria]: "Rakúsko",
+  [Country.ireland]: "Írsko",
+  [Country.scotland]: "Škótsko",
+  [Country.england]: "Anglicko",
+  [Country.france]: "Francúzsko",
+};
+
 export type FormData = {
   name: string;
+  description?: string;
   author: string;
   tuning: Tuning;
   scale: Scale | null;
   timeSignature: TimeSignature;
+  tempo?: number;
+  genre?: Genre;
+  country?: Country;
   sourceText: string | null;
   sourceUrl: string | null;
+  songAuthorType: SongAuthorType;
+  songAuthor?: string;
+  noteSheetAuthor?: string;
 };
 
 interface SheetSettingsProps {
@@ -20,7 +57,13 @@ interface SheetSettingsProps {
   onDelete?: () => Promise<void>;
   sheet?: Pick<
     Sheet,
-    "id" | "name" | "tuning" | "scale" | "sourceText" | "sourceUrl"
+    | "id"
+    | "name"
+    | "description"
+    | "tuning"
+    | "scale"
+    | "sourceText"
+    | "sourceUrl"
   >;
   timeSignature?: TimeSignature;
 }
@@ -32,9 +75,10 @@ const SheetSettings = ({
   timeSignature,
   onDelete,
 }: SheetSettingsProps) => {
-  const { register, getValues } = useForm<FormData>({
+  const { register, getValues, watch } = useForm<FormData>({
     defaultValues: {
       name: existingSheet?.name ?? "",
+      description: existingSheet?.description ?? undefined,
       author: nickname ?? "",
       tuning: existingSheet?.tuning ?? Tuning.CF,
       scale: existingSheet?.scale ?? null,
@@ -44,49 +88,33 @@ const SheetSettings = ({
     },
   });
 
+  const songAuthorType = watch("songAuthorType");
+
   return (
     <div>
       <form className="flex flex-col w-80">
-        <div className="my-4 flex flex-col">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm/6 font-medium text-gray-900"
-            >
-              Email address
-            </label>
-            <div className="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
+        <div className="my-1 flex flex-col">
           <label htmlFor="name">Názov piesne</label>
           <input
-            className="border-b"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
             placeholder="Meno piesne"
             {...register("name", { required: true })}
           />
         </div>
-        <div className="my-4 flex flex-col">
-          <label htmlFor="author">Autor</label>
+        <div className="my-1 flex flex-col">
+          <label htmlFor="name">Popis</label>
           <input
-            className="border-b"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
-            placeholder="Autor"
-            {...register("author")}
+            placeholder="Popis"
+            {...register("description")}
           />
         </div>
-        <div className="my-4 flex flex-col">
+        <div className="my-1 flex flex-col">
           <label htmlFor="tuning">Ladenie</label>
           <select
-            className="border-b"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             {...register("tuning", { required: true })}
           >
             {Object.keys(Tuning).map((tuning) => (
@@ -96,10 +124,10 @@ const SheetSettings = ({
             ))}
           </select>
         </div>
-        <div className="my-4 flex flex-col">
+        <div className="my-1 flex flex-col">
           <label htmlFor="scale">Stupnica</label>
           <select
-            className="border-b"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             {...register("scale", {
               required: false,
               setValueAs: (val) => (val === "" ? null : val),
@@ -113,10 +141,10 @@ const SheetSettings = ({
             ))}
           </select>
         </div>
-        <div className="my-4 flex flex-col">
+        <div className="my-1 flex flex-col">
           <label htmlFor="timeSignature">Takt</label>
           <select
-            className="border-b"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             {...register("timeSignature", { required: true })}
           >
             <option value="4/4">4/4</option>
@@ -124,10 +152,78 @@ const SheetSettings = ({
             <option value="3/4">3/4</option>
           </select>
         </div>
-        <div className="my-4 flex flex-col">
-          <label htmlFor="author">Zdroj</label>
+        <div className="my-1 flex flex-col">
+          <label htmlFor="name">Tempo</label>
           <input
-            className="border-b"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            defaultValue=""
+            type="number"
+            {...register("tempo")}
+          />
+        </div>
+        <div className="my-1 flex flex-col">
+          <label htmlFor="genre">Žáner</label>
+          <select
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            {...register("genre")}
+          >
+            <option value={""}>Žiadny</option>
+            {Object.keys(Genre).map((genre) => (
+              <option key={genre} value={genre}>
+                {GENRE_VALUE[genre as Genre]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="my-1 flex flex-col">
+          <label htmlFor="country">Krajina</label>
+          <select
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            {...register("country")}
+          >
+            <option value={""}>Žiadna</option>
+            {Object.keys(Country).map((country) => (
+              <option key={country} value={country}>
+                {COUNTRY_VALUE[country as Country]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="my-1 flex flex-col">
+          <label htmlFor="songAuthorType">Autorstvo</label>
+          <select
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            {...register("songAuthorType", { required: true })}
+          >
+            {Object.keys(SongAuthorType).map((songAuthorType) => (
+              <option key={songAuthorType} value={songAuthorType}>
+                {AUTHOR_TYPE_VALUE[songAuthorType as SongAuthorType]}
+              </option>
+            ))}
+          </select>
+        </div>
+        {songAuthorType === SongAuthorType.original_song && (
+          <div className="my-1 flex flex-col">
+            <label htmlFor="songAuthor">Autor piesne</label>
+            <input
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              defaultValue=""
+              {...register("songAuthor")}
+            />
+          </div>
+        )}
+        <div className="my-1 flex flex-col">
+          <label htmlFor="noteSheetAuthor">Autor notového zápisu</label>
+          <input
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            defaultValue=""
+            {...register("noteSheetAuthor")}
+          />
+        </div>
+        <div className="my-1 flex flex-col">
+          <label htmlFor="sourceText">Zdroj</label>
+          <input
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
             placeholder="Zdroj"
             {...register("sourceText")}
@@ -138,7 +234,19 @@ const SheetSettings = ({
             onClick={(e) => {
               e.preventDefault();
               const values = getValues();
-              onSubmit(values);
+              onSubmit({
+                ...values,
+                description: values.description
+                  ? values.description
+                  : undefined,
+                tempo: values.tempo ? values.tempo : undefined,
+                genre: values.genre ? values.genre : undefined,
+                country: values.country ? values.country : undefined,
+                songAuthor: values.songAuthor ? values.songAuthor : undefined,
+                noteSheetAuthor: values.noteSheetAuthor
+                  ? values.noteSheetAuthor
+                  : undefined,
+              });
             }}
           >
             Uložiť

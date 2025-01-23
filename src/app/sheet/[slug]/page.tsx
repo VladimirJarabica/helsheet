@@ -38,6 +38,7 @@ const Sheet = async (props: PageProps) => {
     select: {
       id: true,
       name: true,
+      description: true,
       tuning: true,
       scale: true,
       content: true,

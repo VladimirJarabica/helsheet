@@ -41,7 +41,14 @@ import Verses from "./Verses";
 interface SongWrapperProps {
   sheet: Pick<
     Sheet,
-    "id" | "name" | "tuning" | "scale" | "sourceText" | "sourceUrl" | "access"
+    | "id"
+    | "name"
+    | "description"
+    | "tuning"
+    | "scale"
+    | "sourceText"
+    | "sourceUrl"
+    | "access"
   > & {
     SheetAuthor: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
@@ -301,6 +308,7 @@ interface EditorProps {
     Sheet,
     | "id"
     | "name"
+    | "description"
     | "tuning"
     | "tempo"
     | "scale"
