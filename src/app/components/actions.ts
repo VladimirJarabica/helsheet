@@ -31,7 +31,7 @@ export const createSheet = async (
       sourceText: data.sourceText,
       sourceUrl: data.sourceUrl,
       version: 0,
-      Author: { connect: { id: user.id } },
+      SheetAuthor: { connect: { id: user.id } },
       access: SheetAccess.private,
     },
   });
@@ -54,7 +54,7 @@ export const updateSheet = async (sheet: Pick<Sheet, "id">, data: FormData) => {
     });
   }
   const updatedSheet = await dbClient.sheet.update({
-    where: { id: sheet.id, authorId: user.id },
+    where: { id: sheet.id, sheetAuthorId: user.id },
     data: {
       name: data.name,
       tuning: data.tuning,
@@ -79,7 +79,7 @@ export const deleteSheet = async (sheet: Pick<Sheet, "id" | "name">) => {
     return;
   }
   await dbClient.sheet.delete({
-    where: { id: sheet.id, authorId: user.id },
+    where: { id: sheet.id, sheetAuthorId: user.id },
   });
   revalidatePath(getSheetUrl(sheet));
 };
@@ -94,7 +94,7 @@ export const changeSheetAccess = async (
   }
   const user = await getOrCreateUser(authUser.id);
   const updatedSheet = await dbClient.sheet.update({
-    where: { id: sheet.id, authorId: user.id },
+    where: { id: sheet.id, sheetAuthorId: user.id },
     data: { access },
   });
   if (updatedSheet) {

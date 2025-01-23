@@ -45,7 +45,7 @@ const Sheet = async (props: PageProps) => {
       tempo: true,
       sourceText: true,
       sourceUrl: true,
-      Author: { select: { id: true, nickname: true } },
+      SheetAuthor: { select: { id: true, nickname: true } },
       Tags: { select: { id: true, name: true } },
       access: true,
     },
@@ -55,7 +55,7 @@ const Sheet = async (props: PageProps) => {
         {
           OR: [
             { access: SheetAccess.public },
-            { authorId: authUser?.id ?? "" },
+            { sheetAuthorId: authUser?.id ?? "" },
           ],
         },
       ],
@@ -68,7 +68,7 @@ const Sheet = async (props: PageProps) => {
 
   const user = authUser ? await getOrCreateUser(authUser.id) : null;
 
-  const isAuthor = sheet.Author.id === user?.id;
+  const isAuthor = sheet.SheetAuthor.id === user?.id;
 
   return (
     <Editor

@@ -18,7 +18,7 @@ export const saveSong = async ({
     return;
   }
   await dbClient.sheet.update({
-    where: { id, Author: { id: user.id } },
+    where: { id, SheetAuthor: { id: user.id } },
     data: {
       content: song,
     },

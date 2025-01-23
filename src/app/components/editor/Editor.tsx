@@ -43,7 +43,7 @@ interface SongWrapperProps {
     Sheet,
     "id" | "name" | "tuning" | "scale" | "sourceText" | "sourceUrl" | "access"
   > & {
-    Author: Pick<User, "id" | "nickname">;
+    SheetAuthor: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
   };
   liked: boolean;
@@ -100,7 +100,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
           <div className="flex gap-2 items-center">
             {!isEditing && (
               <span className="text-base print:hidden">
-                (zapísal {sheet.Author.nickname})
+                (zapísal {sheet.SheetAuthor.nickname})
               </span>
             )}
             <div className="print:hidden flex gap-2">
@@ -255,6 +255,11 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
             </div>
           )}
         </div>
+        <div className="flex justify-end text-sm print:hidden">
+          <a href="https://martincernansky.com/" target="_blank">
+            Tabulátorový zápis podľa Martina Čerňanského
+          </a>
+        </div>
       </div>
       <Verses />
       {isEditing && (
@@ -283,7 +288,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
             }}
             sheet={sheet}
             timeSignature={song.timeSignature}
-            nickname={sheet.Author.nickname}
+            nickname={sheet.SheetAuthor.nickname}
           />
         </ModalWrapper>
       )}
@@ -304,7 +309,7 @@ interface EditorProps {
     | "content"
     | "access"
   > & {
-    Author: Pick<User, "id" | "nickname">;
+    SheetAuthor: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
   };
   editable: boolean;

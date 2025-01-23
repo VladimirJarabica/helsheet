@@ -18,13 +18,13 @@ export default async function Home() {
     select: {
       id: true,
       name: true,
-      Author: { select: { nickname: true } },
+      SheetAuthor: { select: { nickname: true } },
       Tags: { select: { id: true, name: true } },
     },
     where: {
       OR: [
         { access: SheetAccess.public },
-        user ? { authorId: user.id } : null,
+        user ? { sheetAuthorId: user.id } : null,
       ].filter(notEmpty),
     },
     orderBy: { name: "asc" },
@@ -50,7 +50,7 @@ export default async function Home() {
           </div>
           <div className="flex items-center">
             <span className="text-sm text-gray-500">
-              zapísal ({sheet.Author.nickname})
+              zapísal ({sheet.SheetAuthor.nickname})
             </span>
             {user && (
               <LikeSheetButton
