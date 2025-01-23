@@ -47,6 +47,11 @@ model Tag {
   sheets Sheet[]
 }
 
+enum SongAuthorType {
+  folk_song
+  original_song
+}
+
 model Sheet {
   id          Int         @id @default(autoincrement())
   name        String
@@ -60,10 +65,19 @@ model Sheet {
   tempo       Int?
   access      SheetAccess @default(public)
 
-  Author   User   @relation("author", fields: [authorId], references: [id])
-  authorId String
-  Likers   User[] @relation("like")
-  Tags     Tag[]
+  songAuthorType SongAuthorType @default(folk_song)
+  // Song author (band, singer...)
+  songAuthor     String?
+
+  // Author of note sheet representation
+  noteSheetAuthor String?
+
+  // Author of tabulator sheet
+  SheetAuthor   User   @relation("author", fields: [sheetAuthorId], references: [id])
+  sheetAuthorId String @map("authorId")
+
+  Likers User[] @relation("like")
+  Tags   Tag[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
