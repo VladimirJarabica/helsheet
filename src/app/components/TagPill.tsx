@@ -1,15 +1,14 @@
-import { Tag as TagType } from "@prisma/client";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 
 interface TagPillProps {
-  tag: Pick<TagType, "id" | "name">;
+  children: React.ReactNode;
   onRemove?: () => void;
 }
 
-const TagPill = ({ tag, onRemove }: TagPillProps) => {
+const TagPill = ({ children, onRemove }: TagPillProps) => {
   return (
-    <div className="text-xs h-fit flex gap-2 rounded py-1 px-2 bg-hel-bgButton text-hel-fgButton">
-      {tag.name}
+    <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
+      {children}
       {onRemove && (
         <button className="w-4" onClick={() => onRemove()}>
           <XMarkIcon />

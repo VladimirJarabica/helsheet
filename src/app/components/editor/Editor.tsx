@@ -16,15 +16,10 @@ import {
   VARIANT_CELL_HEIGHT,
 } from "../../../utils/consts";
 import { getSheetUrl } from "../../../utils/sheet";
-import {
-  createTag,
-  removeTagFromSheet,
-  setTagToSheet,
-} from "../../../utils/tags";
+import { createTag, setTagToSheet } from "../../../utils/tags";
 import { SongContent } from "../../types";
 import { changeSheetAccess, deleteSheet, updateSheet } from "../actions";
 import Button from "../Button";
-import TagPill from "../TagPill";
 import { useTags } from "../TagsContext";
 import Bar from "./Bar";
 import ColumnSettings from "./ColumnSettings";
@@ -46,6 +41,12 @@ interface SongWrapperProps {
     | "description"
     | "tuning"
     | "scale"
+    | "tempo"
+    | "genre"
+    | "country"
+    | "songAuthorType"
+    | "songAuthor"
+    | "noteSheetAuthor"
     | "sourceText"
     | "sourceUrl"
     | "access"
@@ -114,6 +115,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
               {isEditing && (
                 <>
                   <Button
+                    variant="secondary"
                     onClick={() => {
                       setSettingOpen(true);
                     }}
@@ -121,6 +123,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
                     <Cog6ToothIcon className="w-5" />
                   </Button>
                   <Button
+                    variant="secondary"
                     onClick={async () => {
                       await save();
                     }}
@@ -128,6 +131,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
                     Uložiť
                   </Button>
                   <Button
+                    variant="secondary"
                     onClick={() => {
                       setEditing(false);
                     }}
@@ -139,6 +143,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
               {!isEditing && editable && (
                 <>
                   <Button
+                    variant="secondary"
                     onClick={() => {
                       setEditing(true);
                     }}
@@ -146,6 +151,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
                     Upraviť
                   </Button>
                   <Button
+                    variant="secondary"
                     onClick={async () => {
                       await changeSheetAccess(
                         sheet,
@@ -175,7 +181,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
         </div>
 
         <div className="print:hidden flex gap-1 items-center">
-          {sheet.Tags.map((tag) => (
+          {/* {sheet.Tags.map((tag) => (
             <TagPill
               key={tag.id}
               tag={tag}
@@ -187,7 +193,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
                   : undefined
               }
             />
-          ))}
+          ))} */}
           {isEditing && (
             <CreatableSelect<{ value: number; label: string }>
               className="w-40 z-20"
@@ -312,6 +318,12 @@ interface EditorProps {
     | "tuning"
     | "tempo"
     | "scale"
+    | "tempo"
+    | "genre"
+    | "country"
+    | "songAuthorType"
+    | "songAuthor"
+    | "noteSheetAuthor"
     | "sourceText"
     | "sourceUrl"
     | "content"

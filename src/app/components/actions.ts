@@ -11,14 +11,14 @@ export const createSheet = async (
   user: Pick<User, "id" | "nickname">,
   data: FormData
 ) => {
-  if (user.nickname !== data.author) {
-    await dbClient.user.update({
-      where: { id: user.id },
-      data: {
-        nickname: data.author,
-      },
-    });
-  }
+  // if (user.nickname !== data.author) {
+  //   await dbClient.user.update({
+  //     where: { id: user.id },
+  //     data: {
+  //       nickname: data.author,
+  //     },
+  //   });
+  // }
   const newSheet = await dbClient.sheet.create({
     data: {
       name: data.name,
@@ -52,14 +52,14 @@ export const updateSheet = async (sheet: Pick<Sheet, "id">, data: FormData) => {
     return;
   }
   const user = await getOrCreateUser(authUser.id);
-  if (user.nickname !== data.author) {
-    await dbClient.user.update({
-      where: { id: user.id },
-      data: {
-        nickname: data.author,
-      },
-    });
-  }
+  // if (user.nickname !== data.author) {
+  //   await dbClient.user.update({
+  //     where: { id: user.id },
+  //     data: {
+  //       nickname: data.author,
+  //     },
+  //   });
+  // }
   const updatedSheet = await dbClient.sheet.update({
     where: { id: sheet.id, sheetAuthorId: user.id },
     data: {

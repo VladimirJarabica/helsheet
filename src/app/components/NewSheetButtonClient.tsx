@@ -24,7 +24,9 @@ const NewSheetButtonClient = ({
 
   return (
     <>
-      <Button onClick={() => setIsNewSheetOpen(true)}>Nový zápis</Button>
+      <Button onClick={() => setIsNewSheetOpen(true)} variant="secondary">
+        Nový zápis
+      </Button>
       {isNewSheetOpen && user && (
         <ModalWrapper close={() => setIsNewSheetOpen(false)}>
           <SheetSettings

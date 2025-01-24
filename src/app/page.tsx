@@ -1,14 +1,15 @@
 "use server";
 import { currentUser } from "@clerk/nextjs/server";
-import { SheetAccess } from "@prisma/client";
+import { SheetAccess, SongAuthorType } from "@prisma/client";
 import Link from "next/link";
 import { dbClient } from "../services/db";
+import { AUTHOR_TYPE_VALUE, COUNTRY_VALUE, GENRE_VALUE } from "../utils/consts";
+import { notEmpty } from "../utils/fnUtils";
 import { getSheetUrl } from "../utils/sheet";
 import { getOrCreateUser } from "../utils/user";
 import LikeSheetButton from "./components/editor/LikeSheetButton";
 import Filter from "./components/Filter";
 import TagPill from "./components/TagPill";
-import { notEmpty } from "../utils/fnUtils";
 
 export default async function Home() {
   const authUser = await currentUser();
@@ -19,7 +20,11 @@ export default async function Home() {
       id: true,
       name: true,
       SheetAuthor: { select: { nickname: true } },
-      Tags: { select: { id: true, name: true } },
+      songAuthorType: true,
+      songAuthor: true,
+      country: true,
+      genre: true,
+      tuning: true,
     },
     where: {
       OR: [
@@ -30,6 +35,8 @@ export default async function Home() {
     orderBy: { name: "asc" },
   });
 
+  console.log("sheets", sheets);
+
   return (
     <div className="flex flex-col max-w-[700px] w-11/12">
       <Filter />
@@ -38,14 +45,26 @@ export default async function Home() {
         <Link
           key={sheet.id}
           href={getSheetUrl(sheet)}
-          className="shadow-md hover:shadow transition-shadow rounded-sm p-5 mt-4 border border-zinc-200 flex items-center justify-between"
+          className="shadow-md hover:shadow transition-shadow rounded-sm p-4 mt-4 border border-zinc-200 flex items-center justify-between"
         >
           <div>
             <span className="font-bold">{sheet.name}</span>
-            <div className="flex gap-1">
-              {sheet.Tags.map((tag) => (
+            <div className="flex mt-1 gap-1">
+              <TagPill>{sheet.tuning}</TagPill>
+              {sheet.country && (
+                <TagPill>{COUNTRY_VALUE[sheet.country]}</TagPill>
+              )}
+              {sheet.songAuthorType && (
+                <TagPill>
+                  {sheet.songAuthorType && sheet.songAuthor
+                    ? sheet.songAuthor
+                    : AUTHOR_TYPE_VALUE[sheet.songAuthorType]}
+                </TagPill>
+              )}
+              {sheet.genre && <TagPill>{GENRE_VALUE[sheet.genre]}</TagPill>}
+              {/* {sheet.Tags.map((tag) => (
                 <TagPill key={tag.id} tag={tag} />
-              ))}
+              ))} */}
             </div>
           </div>
           <div className="flex items-center">

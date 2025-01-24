@@ -9,13 +9,18 @@ const ModalWrapper = ({ children, close }: ModalWrapperProps) => {
       onClick={() => {
         close();
       }}
-      className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center"
+      className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center"
     >
+      <div
+        className="fixed inset-0 bg-gray-500/75 transition-opacity"
+        aria-hidden="true"
+      ></div>
       <div
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="bg-hel-bgDefault p-5 rounded"
+        // className="bg-hel-bgDefault p-5 rounded"
+        className="relative transform max-h-[95vh] my-2 overflow-auto rounded-lg bg-white text-left shadow-xl transition-all w-[80vw] sm:my-8 sm:w-full sm:max-w-lg"
       >
         {children}
       </div>

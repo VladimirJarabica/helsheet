@@ -8,36 +8,18 @@ import {
   Tuning,
 } from "@prisma/client";
 import { useForm } from "react-hook-form";
+import {
+  AUTHOR_TYPE_VALUE,
+  COUNTRY_VALUE,
+  GENRE_VALUE,
+} from "../../../utils/consts";
 import { TimeSignature } from "../../types";
 import Button from "../Button";
-
-const AUTHOR_TYPE_VALUE: Record<SongAuthorType, string> = {
-  [SongAuthorType.folk_song]: "Ľudová pieseň",
-  [SongAuthorType.original_song]: "Autorská pieseň",
-};
-
-const GENRE_VALUE: Record<Genre, string> = {
-  [Genre.country]: "Country",
-  [Genre.folk_music]: "Ľudová pieseň",
-  [Genre.sea_shanty]: "Sea shanty",
-};
-
-const COUNTRY_VALUE: Record<Country, string> = {
-  [Country.slovakia]: "Slovensko",
-  [Country.czech_republic]: "Česká republika",
-  [Country.poland]: "Poľsko",
-  [Country.hungary]: "Maďarsko",
-  [Country.austria]: "Rakúsko",
-  [Country.ireland]: "Írsko",
-  [Country.scotland]: "Škótsko",
-  [Country.england]: "Anglicko",
-  [Country.france]: "Francúzsko",
-};
+import Select from "../Select";
 
 export type FormData = {
   name: string;
   description?: string;
-  author: string;
   tuning: Tuning;
   scale: Scale | null;
   timeSignature: TimeSignature;
@@ -62,6 +44,12 @@ interface SheetSettingsProps {
     | "description"
     | "tuning"
     | "scale"
+    | "tempo"
+    | "genre"
+    | "country"
+    | "songAuthorType"
+    | "songAuthor"
+    | "noteSheetAuthor"
     | "sourceText"
     | "sourceUrl"
   >;
@@ -70,7 +58,6 @@ interface SheetSettingsProps {
 
 const SheetSettings = ({
   onSubmit,
-  nickname,
   sheet: existingSheet,
   timeSignature,
   onDelete,
@@ -79,10 +66,15 @@ const SheetSettings = ({
     defaultValues: {
       name: existingSheet?.name ?? "",
       description: existingSheet?.description ?? undefined,
-      author: nickname ?? "",
       tuning: existingSheet?.tuning ?? Tuning.CF,
       scale: existingSheet?.scale ?? null,
       timeSignature: timeSignature,
+      tempo: existingSheet?.tempo ?? undefined,
+      genre: existingSheet?.genre ?? undefined,
+      country: existingSheet?.country ?? undefined,
+      songAuthorType: existingSheet?.songAuthorType ?? SongAuthorType.folk_song,
+      songAuthor: existingSheet?.songAuthor ?? "",
+      noteSheetAuthor: existingSheet?.noteSheetAuthor ?? "",
       sourceText: existingSheet?.sourceText ?? "",
       sourceUrl: existingSheet?.sourceUrl ?? "",
     },
@@ -91,8 +83,8 @@ const SheetSettings = ({
   const songAuthorType = watch("songAuthorType");
 
   return (
-    <div>
-      <form className="flex flex-col w-80">
+    <form className="flex flex-col w-full">
+      <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         <div className="my-1 flex flex-col">
           <label htmlFor="name">Názov piesne</label>
           <input
@@ -111,47 +103,34 @@ const SheetSettings = ({
             {...register("description")}
           />
         </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="tuning">Ladenie</label>
-          <select
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            {...register("tuning", { required: true })}
-          >
-            {Object.keys(Tuning).map((tuning) => (
-              <option key={tuning} value={tuning}>
-                {tuning}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="scale">Stupnica</label>
-          <select
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            {...register("scale", {
-              required: false,
-              setValueAs: (val) => (val === "" ? null : val),
-            })}
-          >
-            <option value={""}>Žiadna</option>
-            {Object.keys(Scale).map((scale) => (
-              <option key={scale} value={scale}>
-                {scale.replaceAll("_", " ")}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="timeSignature">Takt</label>
-          <select
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            {...register("timeSignature", { required: true })}
-          >
-            <option value="4/4">4/4</option>
-            <option value="2/4">2/4</option>
-            <option value="3/4">3/4</option>
-          </select>
-        </div>
+        <Select
+          {...register("tuning")}
+          label="Ladenie"
+          options={Object.keys(Tuning).map((tuning) => ({
+            value: tuning,
+            label: tuning,
+          }))}
+        />
+        <Select
+          {...register("scale")}
+          label="Stupnica"
+          options={[
+            { value: "-", label: "Žiadna" },
+            ...Object.keys(Scale).map((scale) => ({
+              value: scale,
+              label: scale.replaceAll("_", " "),
+            })),
+          ]}
+        />
+        <Select
+          {...register("timeSignature", { required: true })}
+          label="Takt"
+          options={[
+            { value: "4/4", label: "4/4" },
+            { value: "2/4", label: "2/4" },
+            { value: "3/4", label: "3/4" },
+          ]}
+        />
         <div className="my-1 flex flex-col">
           <label htmlFor="name">Tempo</label>
           <input
@@ -161,47 +140,36 @@ const SheetSettings = ({
             {...register("tempo")}
           />
         </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="genre">Žáner</label>
-          <select
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            {...register("genre")}
-          >
-            <option value={""}>Žiadny</option>
-            {Object.keys(Genre).map((genre) => (
-              <option key={genre} value={genre}>
-                {GENRE_VALUE[genre as Genre]}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="country">Krajina</label>
-          <select
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            {...register("country")}
-          >
-            <option value={""}>Žiadna</option>
-            {Object.keys(Country).map((country) => (
-              <option key={country} value={country}>
-                {COUNTRY_VALUE[country as Country]}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="songAuthorType">Autorstvo</label>
-          <select
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            {...register("songAuthorType", { required: true })}
-          >
-            {Object.keys(SongAuthorType).map((songAuthorType) => (
-              <option key={songAuthorType} value={songAuthorType}>
-                {AUTHOR_TYPE_VALUE[songAuthorType as SongAuthorType]}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          {...register("genre")}
+          label="Žáner"
+          options={[
+            { value: "", label: "Žiadny" },
+            ...Object.keys(Genre).map((genre) => ({
+              value: genre,
+              label: GENRE_VALUE[genre as Genre],
+            })),
+          ]}
+        />
+        <Select
+          {...register("country")}
+          label="Krajina"
+          options={[
+            { value: "", label: "Žiadna" },
+            ...Object.keys(Country).map((country) => ({
+              value: country,
+              label: COUNTRY_VALUE[country as Country],
+            })),
+          ]}
+        />
+        <Select
+          {...register("songAuthorType")}
+          label="Autorstvo"
+          options={Object.keys(SongAuthorType).map((songAuthorType) => ({
+            value: songAuthorType,
+            label: AUTHOR_TYPE_VALUE[songAuthorType as SongAuthorType],
+          }))}
+        />
         {songAuthorType === SongAuthorType.original_song && (
           <div className="my-1 flex flex-col">
             <label htmlFor="songAuthor">Autor piesne</label>
@@ -229,41 +197,41 @@ const SheetSettings = ({
             {...register("sourceText")}
           />
         </div>
-        <div className="flex justify-between">
+      </div>
+      <div className="bg-gray-50 px-4 py-3 flex flex-row justify-end sm:px-6 gap-4">
+        <Button
+          variant="primary"
+          onClick={(e) => {
+            e.preventDefault();
+            const values = getValues();
+            onSubmit({
+              ...values,
+              description: values.description ? values.description : undefined,
+              tempo: values.tempo ? values.tempo : undefined,
+              genre: values.genre ? values.genre : undefined,
+              country: values.country ? values.country : undefined,
+              songAuthor: values.songAuthor ? values.songAuthor : undefined,
+              noteSheetAuthor: values.noteSheetAuthor
+                ? values.noteSheetAuthor
+                : undefined,
+            });
+          }}
+        >
+          Uložiť
+        </Button>
+        {onDelete && (
           <Button
+            variant="danger"
             onClick={(e) => {
               e.preventDefault();
-              const values = getValues();
-              onSubmit({
-                ...values,
-                description: values.description
-                  ? values.description
-                  : undefined,
-                tempo: values.tempo ? values.tempo : undefined,
-                genre: values.genre ? values.genre : undefined,
-                country: values.country ? values.country : undefined,
-                songAuthor: values.songAuthor ? values.songAuthor : undefined,
-                noteSheetAuthor: values.noteSheetAuthor
-                  ? values.noteSheetAuthor
-                  : undefined,
-              });
+              onDelete();
             }}
           >
-            Uložiť
+            Vymazať
           </Button>
-          {onDelete && (
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                onDelete();
-              }}
-            >
-              Vymazať
-            </Button>
-          )}
-        </div>
-      </form>
-    </div>
+        )}
+      </div>
+    </form>
   );
 };
 
