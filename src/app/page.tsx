@@ -1,19 +1,31 @@
 "use server";
 import { currentUser } from "@clerk/nextjs/server";
-import { SheetAccess, SongAuthorType } from "@prisma/client";
+import { Genre, SheetAccess, SongAuthorType } from "@prisma/client";
 import Link from "next/link";
 import { dbClient } from "../services/db";
 import { AUTHOR_TYPE_VALUE, COUNTRY_VALUE, GENRE_VALUE } from "../utils/consts";
+import { parseFilter } from "../utils/filter";
 import { notEmpty } from "../utils/fnUtils";
 import { getSheetUrl } from "../utils/sheet";
 import { getOrCreateUser } from "../utils/user";
+import { getSongAuthors } from "./components/actions";
 import LikeSheetButton from "./components/editor/LikeSheetButton";
 import Filter from "./components/Filter";
 import TagPill from "./components/TagPill";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
   const authUser = await currentUser();
   const user = authUser ? await getOrCreateUser(authUser.id) : null;
+
+  const searchParamsValue = await searchParams;
+
+  const filter = parseFilter(searchParamsValue);
+
+  const authors = await getSongAuthors();
 
   const sheets = await dbClient.sheet.findMany({
     select: {
@@ -27,19 +39,36 @@ export default async function Home() {
       tuning: true,
     },
     where: {
-      OR: [
-        { access: SheetAccess.public },
-        user ? { sheetAuthorId: user.id } : null,
+      AND: [
+        filter.country ? { country: filter.country } : null,
+        filter.genre ? { genre: filter.genre } : null,
+        filter.tuning ? { tuning: filter.tuning } : null,
+        filter.songAuthor
+          ? {
+              songAuthorType:
+                filter.songAuthor === SongAuthorType.folk_song
+                  ? SongAuthorType.folk_song
+                  : SongAuthorType.original_song,
+              songAuthor:
+                filter.songAuthor === SongAuthorType.folk_song
+                  ? undefined
+                  : { contains: filter.songAuthor },
+            }
+          : null,
+        {
+          OR: [
+            { access: SheetAccess.public },
+            user ? { sheetAuthorId: user.id } : null,
+          ].filter(notEmpty),
+        },
       ].filter(notEmpty),
     },
     orderBy: { name: "asc" },
   });
 
-  console.log("sheets", sheets);
-
   return (
     <div className="flex flex-col max-w-[700px] w-11/12">
-      <Filter />
+      <Filter songAuthors={authors} />
 
       {sheets.map((sheet) => (
         <Link
@@ -61,7 +90,12 @@ export default async function Home() {
                     : AUTHOR_TYPE_VALUE[sheet.songAuthorType]}
                 </TagPill>
               )}
-              {sheet.genre && <TagPill>{GENRE_VALUE[sheet.genre]}</TagPill>}
+              {sheet.genre &&
+                // Do not show two "folk music" tags
+                (sheet.genre !== Genre.folk_music ||
+                  sheet.songAuthorType !== SongAuthorType.folk_song) && (
+                  <TagPill>{GENRE_VALUE[sheet.genre]}</TagPill>
+                )}
               {/* {sheet.Tags.map((tag) => (
                 <TagPill key={tag.id} tag={tag} />
               ))} */}

@@ -323,6 +323,7 @@ const ColumnNotes = () => {
           </div>
           <div className="flex gap-1 mt-4 flex-col sm:flex-row">
             <Button
+              variant="secondary"
               onClick={() => {
                 // setSelectedNotes([]);
                 clearColumn();
@@ -331,6 +332,7 @@ const ColumnNotes = () => {
               Vymazať
             </Button>
             <Button
+              variant="secondary"
               onClick={() =>
                 isMelodicPartSplit ? joinMelodicPart() : splitMelodicPart()
               }
@@ -340,6 +342,7 @@ const ColumnNotes = () => {
                 : "Rozdeliť melodickú časť"}
             </Button>
             <Button
+              variant="secondary"
               onClick={() =>
                 isBasPartSplit ? joinBassPart() : splitBassPart()
               }

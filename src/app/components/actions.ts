@@ -1,11 +1,28 @@
 "use server";
-import { Sheet, SheetAccess, User } from "@prisma/client";
-import { dbClient } from "../../services/db";
-import { FormData } from "./editor/SheetSettings";
 import { currentUser } from "@clerk/nextjs/server";
-import { getOrCreateUser } from "../../utils/user";
-import { revalidatePath } from "next/cache";
+import { Sheet, SheetAccess, User } from "@prisma/client";
+import {
+  unstable_cache as cache,
+  revalidatePath,
+  revalidateTag,
+} from "next/cache";
+import { dbClient } from "../../services/db";
 import { getSheetUrl } from "../../utils/sheet";
+import { getOrCreateUser } from "../../utils/user";
+import { FormData } from "./editor/SheetSettings";
+import { notEmpty } from "../../utils/fnUtils";
+
+export const getSongAuthors = cache(async () => {
+  const authors = await dbClient.sheet.findMany({
+    select: { songAuthor: true },
+    where: { songAuthor: { not: null } },
+    distinct: ["songAuthor"],
+  });
+  return authors
+    .map((a) => a.songAuthor)
+    .filter(notEmpty)
+    .flatMap((authors) => authors.split(",").map((a) => a.trim()));
+}, ["songAuthors"]);
 
 export const createSheet = async (
   user: Pick<User, "id" | "nickname">,
@@ -43,6 +60,8 @@ export const createSheet = async (
     },
   });
 
+  revalidateTag("songAuthors");
+
   return newSheet;
 };
 
@@ -78,6 +97,7 @@ export const updateSheet = async (sheet: Pick<Sheet, "id">, data: FormData) => {
     },
   });
 
+  revalidateTag("songAuthors");
   revalidatePath(getSheetUrl(updatedSheet));
 
   return updatedSheet;

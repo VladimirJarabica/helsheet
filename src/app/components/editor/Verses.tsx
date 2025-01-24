@@ -65,6 +65,7 @@ const Verses = () => {
       {isEditing && (
         <div className="w-1/2 flex flex-col print:hidden">
           <Button
+            variant="secondary"
             onClick={() => {
               addVerse("");
               // setNewVerse("");

@@ -24,7 +24,12 @@ const Variants = ({ onSelect }: VariantsProps) => {
                 className="flex justify-between items-center"
               >
                 {variant.name}
-                <Button onClick={() => onSelect(variant.id)}>Použiť</Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => onSelect(variant.id)}
+                >
+                  Použiť
+                </Button>
               </div>
             ))}
           </>
@@ -37,6 +42,7 @@ const Variants = ({ onSelect }: VariantsProps) => {
           onChange={(e) => setNewGroupName(e.target.value)}
         />
         <Button
+          variant="secondary"
           onClick={() => {
             addVariant(newGroupName);
             setNewGroupName("");
