@@ -4,7 +4,8 @@ import {
   GlobeEuropeAfricaIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
-import { Sheet, SheetAccess, Tag, User } from "@prisma/client";
+import { Sheet, SheetAccess, SongAuthorType, Tag, User } from "@prisma/client";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import CreatableSelect from "react-select/creatable";
@@ -31,6 +32,7 @@ import LikeSheetButton from "./LikeSheetButton";
 import ModalWrapper from "./ModalWrapper";
 import { SheetContextProvider, useSheetContext } from "./sheetContext";
 import SheetSettings from "./SheetSettings";
+import SourceUrl from "./SourceUrl";
 import Verses from "./Verses";
 
 interface SongWrapperProps {
@@ -46,9 +48,8 @@ interface SongWrapperProps {
     | "country"
     | "songAuthorType"
     | "songAuthor"
-    | "noteSheetAuthor"
-    | "sourceText"
-    | "sourceUrl"
+    | "originalSheetAuthor"
+    | "source"
     | "access"
   > & {
     SheetAuthor: Pick<User, "id" | "nickname">;
@@ -95,20 +96,24 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
     >
       <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-2 flex-col gap-4 justify-between">
         <div className="flex items-end gap-2 justify-between">
-          <div className="text-2xl font-bold flex gap-2 items-center">
-            {sheet.name}
-            {!isEditing && (
-              <LikeSheetButton
-                className="print:hidden"
-                sheetId={sheet.id}
-                liked={liked}
-              />
-            )}
+          <div>
+            <div className="text-2xl font-bold flex gap-2 items-center">
+              {sheet.name}
+              {!isEditing && (
+                <LikeSheetButton
+                  className="print:hidden"
+                  sheetId={sheet.id}
+                  liked={liked}
+                />
+              )}
+            </div>
+            {sheet.songAuthorType === SongAuthorType.original_song &&
+              sheet.songAuthor && <div>{sheet.songAuthor}</div>}
           </div>
           <div className="flex gap-2 items-center">
             {!isEditing && (
               <span className="text-base print:hidden">
-                (zapísal {sheet.SheetAuthor.nickname})
+                ({sheet.SheetAuthor.nickname})
               </span>
             )}
             <div className="print:hidden flex gap-2">
@@ -217,12 +222,37 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
           )}
         </div>
       </div>
-      <div className={`px-2 sm:px-4`}>
+      <div className={`px-2 pt-5 print:pt-5 sm:px-4`}>
+        <div className="flex justify-between text-sm flex-wrap">
+          {sheet.tempo ? (
+            <div className="flex gap-1">
+              <Image
+                src={`/quarter-note.png`}
+                className=" h-[15px] w-[auto] mt-0.5"
+                width={20}
+                height={20}
+                alt="note"
+              />
+              = {sheet.tempo}
+            </div>
+          ) : (
+            <div />
+          )}
+          <div>
+            <div className="flex gap-x-4 flex-wrap">
+              <div>
+                Zapísal:&nbsp;
+                {sheet.originalSheetAuthor ?? sheet.SheetAuthor.nickname}
+              </div>
+              <SourceUrl url={sheet.source} />
+            </div>
+          </div>
+        </div>
         <div
           className={`
-          flex flex-1 pt-5 flex-wrap justify-center
+          flex flex-1 flex-wrap justify-center
           sm:justify-start
-          print:pt-5 print:w-full
+          print:w-full
           max-w-[930px]
           ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
           `}
@@ -316,16 +346,14 @@ interface EditorProps {
     | "name"
     | "description"
     | "tuning"
-    | "tempo"
     | "scale"
     | "tempo"
     | "genre"
     | "country"
     | "songAuthorType"
     | "songAuthor"
-    | "noteSheetAuthor"
-    | "sourceText"
-    | "sourceUrl"
+    | "originalSheetAuthor"
+    | "source"
     | "content"
     | "access"
   > & {
@@ -336,6 +364,7 @@ interface EditorProps {
   liked: boolean;
 }
 const Editor = ({ sheet, editable, liked }: EditorProps) => {
+  console.log("Sheet", sheet);
   return (
     <SheetContextProvider
       editable={editable}

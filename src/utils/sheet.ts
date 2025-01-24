@@ -17,6 +17,23 @@ export const getSheetNameFromSlug = (slug: string) => {
   return decodeURIComponent(slug).split("_")[1]?.replace(/-/g, " ");
 };
 
+const getUrl = (str: string) => {
+  try {
+    return new URL(str);
+  } catch {
+    return null;
+  }
+};
+
+export const getHostname = (str: string) => {
+  const url = getUrl(str);
+
+  if (!url) {
+    return null;
+  }
+  return url.hostname;
+};
+
 export const getSheetIdFromParam = (slug: string) => {
   const id = slug.split("_")[0];
   const parsed = parseInt(id, 10);

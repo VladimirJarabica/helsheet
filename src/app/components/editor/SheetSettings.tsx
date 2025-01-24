@@ -27,11 +27,11 @@ export type FormData = {
   tempo?: number;
   genre?: Genre;
   country?: Country;
-  sourceText: string | null;
+  source: string | null;
   sourceUrl: string | null;
   songAuthorType: SongAuthorType;
   songAuthor?: string;
-  noteSheetAuthor?: string;
+  originalSheetAuthor?: string;
 };
 
 interface SheetSettingsProps {
@@ -50,9 +50,8 @@ interface SheetSettingsProps {
     | "country"
     | "songAuthorType"
     | "songAuthor"
-    | "noteSheetAuthor"
-    | "sourceText"
-    | "sourceUrl"
+    | "originalSheetAuthor"
+    | "source"
   >;
   timeSignature?: TimeSignature;
 }
@@ -75,9 +74,8 @@ const SheetSettings = ({
       country: existingSheet?.country ?? undefined,
       songAuthorType: existingSheet?.songAuthorType ?? SongAuthorType.folk_song,
       songAuthor: existingSheet?.songAuthor ?? "",
-      noteSheetAuthor: existingSheet?.noteSheetAuthor ?? "",
-      sourceText: existingSheet?.sourceText ?? "",
-      sourceUrl: existingSheet?.sourceUrl ?? "",
+      originalSheetAuthor: existingSheet?.originalSheetAuthor ?? "",
+      source: existingSheet?.source ?? "",
     },
   });
 
@@ -157,7 +155,7 @@ const SheetSettings = ({
               defaultValue=""
               type="number"
               placeholder="160 / 120 / ..."
-              {...register("tempo")}
+              {...register("tempo", { setValueAs: (value) => parseInt(value) })}
             />
           </div>
         </div>
@@ -205,24 +203,24 @@ const SheetSettings = ({
           </div>
         )}
         <div className="mt-3 flex flex-col">
-          <label className="text-sm/6 mb-1" htmlFor="noteSheetAuthor">
+          <label className="text-sm/6 mb-1" htmlFor="originalSheetAuthor">
             Autor zápisu (ak ním nie si ty)
           </label>
           <input
             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
-            {...register("noteSheetAuthor")}
+            {...register("originalSheetAuthor")}
           />
         </div>
         <div className="mt-3 flex flex-col">
-          <label className="text-sm/6 mb-1" htmlFor="sourceText">
+          <label className="text-sm/6 mb-1" htmlFor="source">
             Zdroj
           </label>
           <input
             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
             placeholder="Napríklad pesnicky.orava.sk / harmonika.cz"
-            {...register("sourceText")}
+            {...register("source")}
           />
         </div>
       </div>
@@ -239,8 +237,8 @@ const SheetSettings = ({
               genre: values.genre ? values.genre : undefined,
               country: values.country ? values.country : undefined,
               songAuthor: values.songAuthor ? values.songAuthor : undefined,
-              noteSheetAuthor: values.noteSheetAuthor
-                ? values.noteSheetAuthor
+              originalSheetAuthor: values.originalSheetAuthor
+                ? values.originalSheetAuthor
                 : undefined,
             });
           }}
