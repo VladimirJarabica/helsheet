@@ -34,7 +34,7 @@ const SourceUrl = ({ url }: SourceUrlProps) => {
         rel="noreferrer"
         className="flex items-center"
       >
-        {image && (
+        {image ? (
           <Image
             src={image}
             alt={hostName}
@@ -42,9 +42,9 @@ const SourceUrl = ({ url }: SourceUrlProps) => {
             width={16}
             height={16}
           />
+        ) : (
+          hostName
         )}
-        &nbsp;
-        {hostName}
       </a>
     </div>
   );
