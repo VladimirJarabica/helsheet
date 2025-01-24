@@ -12,9 +12,9 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 
 const Select = ({ options, label, ...props }: SelectProps) => {
   return (
-    <div className="mt-4 flex flex-col relative">
+    <div className="mt-3 flex flex-col relative">
       {label && (
-        <label className="text-sm/6 mb-2" htmlFor={props.name}>
+        <label className="text-sm/6 mb-1" htmlFor={props.name}>
           {label}
         </label>
       )}

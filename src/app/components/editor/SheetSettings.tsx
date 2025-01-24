@@ -7,6 +7,7 @@ import {
   SongAuthorType,
   Tuning,
 } from "@prisma/client";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import {
   AUTHOR_TYPE_VALUE,
@@ -85,8 +86,11 @@ const SheetSettings = ({
   return (
     <form className="flex flex-col w-full">
       <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div className="my-1 flex flex-col">
-          <label htmlFor="name">Názov piesne</label>
+        <div className="mt-3 flex flex-col">
+          <div className="text-xl mb-2 text-center">Nový zápis</div>
+          <label className="text-sm/6 mb-1" htmlFor="name">
+            Názov piesne
+          </label>
           <input
             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
@@ -94,8 +98,10 @@ const SheetSettings = ({
             {...register("name", { required: true })}
           />
         </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="name">Popis</label>
+        <div className="mt-3 flex flex-col">
+          <label className="text-sm/6 mb-1" htmlFor="name">
+            Popis
+          </label>
           <input
             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
@@ -115,7 +121,7 @@ const SheetSettings = ({
           {...register("scale")}
           label="Stupnica"
           options={[
-            { value: "-", label: "Žiadna" },
+            { value: "", label: "-" },
             ...Object.keys(Scale).map((scale) => ({
               value: scale,
               label: scale.replaceAll("_", " "),
@@ -131,20 +137,35 @@ const SheetSettings = ({
             { value: "3/4", label: "3/4" },
           ]}
         />
-        <div className="my-1 flex flex-col">
-          <label htmlFor="name">Tempo</label>
-          <input
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            defaultValue=""
-            type="number"
-            {...register("tempo")}
-          />
+        <div className="mt-3 flex flex-col">
+          <label className="text-sm/6 mb-1" htmlFor="name">
+            Tempo
+          </label>
+          <div className="relative">
+            <div className="flex gap-1 absolute bottom-1 left-3">
+              <Image
+                src={`/quarter-note.png`}
+                className=" h-[15px] w-[auto] mt-0.5"
+                width={20}
+                height={20}
+                alt="note"
+              />
+              =
+            </div>
+            <input
+              className="pl-8 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              defaultValue=""
+              type="number"
+              placeholder="160 / 120 / ..."
+              {...register("tempo")}
+            />
+          </div>
         </div>
         <Select
           {...register("genre")}
           label="Žáner"
           options={[
-            { value: "", label: "Žiadny" },
+            { value: "", label: "-" },
             ...Object.keys(Genre).map((genre) => ({
               value: genre,
               label: GENRE_VALUE[genre as Genre],
@@ -155,7 +176,7 @@ const SheetSettings = ({
           {...register("country")}
           label="Krajina"
           options={[
-            { value: "", label: "Žiadna" },
+            { value: "", label: "-" },
             ...Object.keys(Country).map((country) => ({
               value: country,
               label: COUNTRY_VALUE[country as Country],
@@ -171,29 +192,36 @@ const SheetSettings = ({
           }))}
         />
         {songAuthorType === SongAuthorType.original_song && (
-          <div className="my-1 flex flex-col">
-            <label htmlFor="songAuthor">Autor piesne</label>
+          <div className="mt-3 flex flex-col">
+            <label className="text-sm/6 mb-1" htmlFor="songAuthor">
+              Autor piesne
+            </label>
             <input
               className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               defaultValue=""
+              placeholder="spevák, kapela, skladateľ (viac autorov oddeliť čiarkou)"
               {...register("songAuthor")}
             />
           </div>
         )}
-        <div className="my-1 flex flex-col">
-          <label htmlFor="noteSheetAuthor">Autor notového zápisu</label>
+        <div className="mt-3 flex flex-col">
+          <label className="text-sm/6 mb-1" htmlFor="noteSheetAuthor">
+            Autor zápisu (ak ním nie si ty)
+          </label>
           <input
             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
             {...register("noteSheetAuthor")}
           />
         </div>
-        <div className="my-1 flex flex-col">
-          <label htmlFor="sourceText">Zdroj</label>
+        <div className="mt-3 flex flex-col">
+          <label className="text-sm/6 mb-1" htmlFor="sourceText">
+            Zdroj
+          </label>
           <input
             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             defaultValue=""
-            placeholder="Zdroj"
+            placeholder="Napríklad pesnicky.orava.sk / harmonika.cz"
             {...register("sourceText")}
           />
         </div>

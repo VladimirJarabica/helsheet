@@ -34,7 +34,7 @@ const Filter = ({ songAuthors }: FilterProps) => {
   };
 
   return (
-    <div className="pt-5 flex items-end gap-1 flex-wrap">
+    <div className="pt-5 flex flex-col sm:flex-row sm:items-end gap-1 justify-between">
       {/* <Button variant="secondary" className="flex gap-1">
         <HeartIcon className="w-4" /> Obľúbené
       </Button> */}
