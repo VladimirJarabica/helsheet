@@ -85,6 +85,7 @@ type SheetContext = {
   ) => void;
   addBar: () => void;
   duplicateBar: (barIndex: number) => void;
+  copyBarToTheEnd: (barIndex: number) => void;
   removeBar: (barIndex: number) => void;
   setLength: (
     length: number,
@@ -136,6 +137,7 @@ const sheetContext = createContext<SheetContext>({
   setMelodicButtons: () => {},
   addBar: () => {},
   duplicateBar: () => {},
+  copyBarToTheEnd: () => {},
   removeBar: () => {},
   setLength: () => {},
   setText: () => {},
@@ -226,6 +228,17 @@ export const SheetContextProvider = ({
           barToDuplicate,
           ...prev.bars.slice(barIndex + 1),
         ],
+      };
+    });
+  };
+
+  const copyBarToTheEnd = (barIndex: number) => {
+    setSong((prev) => {
+      const barToDuplicate = prev.bars[barIndex];
+      if (!barToDuplicate) return prev;
+      return {
+        ...prev,
+        bars: [...prev.bars, barToDuplicate],
       };
     });
   };
@@ -763,6 +776,7 @@ export const SheetContextProvider = ({
           setMelodicButtons,
           addBar,
           duplicateBar,
+          copyBarToTheEnd,
           removeBar,
           setLength,
           setText,

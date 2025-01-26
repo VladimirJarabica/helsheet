@@ -207,6 +207,21 @@ const Scales: Scale[] = [
     ],
   },
   {
+    id: ScaleEnum.A_mol,
+    name: "C dur",
+    signature: "",
+    notes: ["c", "d", "e", "f", "g", "a", "h"],
+    transpositionNotes: [
+      { note: "a", pitch: 0 },
+      { note: "h", pitch: 0 },
+      { note: "c", pitch: 1 },
+      { note: "d", pitch: 1 },
+      { note: "e", pitch: 1 },
+      { note: "f", pitch: 1 },
+      { note: "g", pitch: 1 },
+    ],
+  },
+  {
     id: ScaleEnum.D_mol,
     name: "d mol",
     signature: "b",

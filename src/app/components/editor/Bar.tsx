@@ -22,6 +22,7 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
   const {
     song,
     duplicateBar,
+    copyBarToTheEnd,
     removeBar,
     setRepeatOfBar,
     addColumnToBar,
@@ -200,6 +201,14 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
                   Odstrániť stĺpec
                 </button>
               )}
+              <button
+                onClick={() => {
+                  copyBarToTheEnd(barIndex);
+                }}
+                className="px-2 hover:bg-[#dbc991]"
+              >
+                Skopírovať takt na koniec
+              </button>
             </div>
           )}
         </div>
