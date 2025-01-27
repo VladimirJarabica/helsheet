@@ -43,7 +43,6 @@ model User {
   id             String  @id
   nickname       String?
   authoredSheets Sheet[] @relation("author")
-  likedSheets    Sheet[] @relation("like")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -98,8 +97,6 @@ model Sheet {
   // Author of tabulator sheet
   SheetAuthor   User   @relation("author", fields: [sheetAuthorId], references: [id])
   sheetAuthorId String @map("authorId")
-
-  Likers User[] @relation("like")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

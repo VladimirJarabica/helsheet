@@ -76,15 +76,7 @@ const Sheet = async (props: PageProps) => {
 
   const isAuthor = sheet.SheetAuthor.id === user?.id;
 
-  return (
-    <Editor
-      editable={isAuthor}
-      sheet={sheet}
-      liked={
-        !!user?.likedSheets.some((likedSheet) => likedSheet.id === sheet.id)
-      }
-    />
-  );
+  return <Editor editable={isAuthor} sheet={sheet} />;
 };
 
 export default Sheet;

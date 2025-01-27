@@ -27,7 +27,6 @@ import {
   KeyboardListenerContextProvider,
   useKeyboardListener,
 } from "./keyboardListenerContext";
-import LikeSheetButton from "./LikeSheetButton";
 import ModalWrapper from "./ModalWrapper";
 import { SheetContextProvider, useSheetContext } from "./sheetContext";
 import SheetSettings from "./SheetSettings";
@@ -55,11 +54,10 @@ interface SongWrapperProps {
   > & {
     SheetAuthor: Pick<User, "id" | "nickname">;
   };
-  liked: boolean;
   editable: boolean;
 }
 
-const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
+const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
   const router = useRouter();
   const {
     song,
@@ -98,13 +96,6 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
           <div>
             <div className="text-2xl font-bold flex gap-2 items-center">
               {sheet.name}
-              {!isEditing && (
-                <LikeSheetButton
-                  className="print:hidden"
-                  sheetId={sheet.id}
-                  liked={liked}
-                />
-              )}
             </div>
             {sheet.songAuthorType === SongAuthorType.original_song &&
               sheet.songAuthor && <div>{sheet.songAuthor}</div>}
@@ -331,9 +322,8 @@ interface EditorProps {
     SheetAuthor: Pick<User, "id" | "nickname">;
   };
   editable: boolean;
-  liked: boolean;
 }
-const Editor = ({ sheet, editable, liked }: EditorProps) => {
+const Editor = ({ sheet, editable }: EditorProps) => {
   console.log("Sheet", sheet);
   return (
     <SheetContextProvider
@@ -342,7 +332,7 @@ const Editor = ({ sheet, editable, liked }: EditorProps) => {
       initialSong={sheet.content as SongContent}
     >
       <KeyboardListenerContextProvider>
-        <SongWrapper sheet={sheet} liked={liked} editable={editable} />
+        <SongWrapper sheet={sheet} editable={editable} />
       </KeyboardListenerContextProvider>
     </SheetContextProvider>
   );

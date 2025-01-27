@@ -11,7 +11,6 @@ export const getOrCreateUser = async (userId: string) => {
         select: {
           id: true,
           nickname: true,
-          likedSheets: { select: { id: true, name: true } },
         },
       });
 
@@ -26,7 +25,6 @@ export const getOrCreateUser = async (userId: string) => {
         select: {
           id: true,
           nickname: true,
-          likedSheets: { select: { id: true, name: true } },
         },
       });
     },
