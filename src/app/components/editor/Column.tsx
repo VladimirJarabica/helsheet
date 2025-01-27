@@ -66,6 +66,7 @@ const Column = ({
           .map((cell, i) => (
             <Cell
               key={i}
+              type="note"
               lastColumnInBar={lastColumnInBar}
               cell={cell}
               barIndex={barIndex}
@@ -76,6 +77,7 @@ const Column = ({
             />
           ))}
         <Cell
+          type="bass"
           lastColumnInBar={lastColumnInBar}
           cell={column.bass}
           barIndex={barIndex}

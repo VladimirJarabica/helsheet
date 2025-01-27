@@ -1,10 +1,13 @@
 "use client";
 import React from "react";
 import { CellItem, Direction, SubCell as SubCellType } from "./../../types";
+import { sortNoteItems } from "../../../utils/sheet";
 
 interface CellItemProps<Item extends CellItem> {
+  type: Item["type"];
   subCell: SubCellType<Item>;
   isFirst: boolean;
+  isMulti: boolean;
   isActive: boolean;
   onClick?: () => void;
   onHoverChange: (hovered: boolean) => void;
@@ -15,7 +18,9 @@ interface CellItemProps<Item extends CellItem> {
 }
 
 const SubCell = <Item extends CellItem>({
+  type,
   subCell,
+  isMulti,
   isFirst,
   isActive,
   onClick,
@@ -28,14 +33,28 @@ CellItemProps<Item>) => {
   const items = subCell.items;
   return (
     <div
-      className={`flex flex-1 items-center flex-col justify-around leading-none
+      className={`flex flex-1 items-center flex-col justify-around leading-none overflow-hidden
         ${!isFirst ? "border-l border-gray-700 border-dashed" : ""}
         ${isActive && false ? "bg-green-50" : ""}
-        ${items.length === 1 ? "text-2xl" : ""}
-        ${items.length === 2 ? "text-lg" : ""}
-        ${items.length === 3 ? "text-xs" : ""}
-        ${items.length === 4 ? "text-[9px]" : ""}
-        ${items.length > 4 ? "text-[7px]" : ""}
+        ${(() => {
+          if (items.length === 1) {
+            if (type === "bass") return "text-xl";
+            if (isMulti) return "text-base";
+            return "text-2xl";
+          }
+          if (items.length === 2) {
+            if (isMulti) return "text-base";
+            return "text-lg";
+          }
+          if (items.length === 3) {
+            if (isMulti) return "text-[9px]";
+            return "text-xs";
+          }
+          if (items.length === 4) {
+            return "text-[9px]";
+          }
+          return "text-[7px]";
+        })()}
         ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
         ${isActive ? "bg-hel-bgActive text-hel-textActive" : ""}
         ${direction === "push" && !isActive ? "bg-hel-bgEmphasis" : ""}
@@ -44,14 +63,14 @@ CellItemProps<Item>) => {
       onMouseOver={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}
     >
-      {items
-        .filter((item) => (item.type === "note" ? !!item.button : true))
-        .map((item, index) => (
-          <React.Fragment key={index}>
-            {item.type === "note" && <div>{item.button}</div>}
-            {item.type === "bass" && <div>{item.note.note}</div>}
-          </React.Fragment>
-        ))}
+      {sortNoteItems(
+        items.filter((item) => (item.type === "note" ? !!item.button : true))
+      ).map((item, index) => (
+        <React.Fragment key={index}>
+          {item.type === "note" && <div>{item.button}</div>}
+          {item.type === "bass" && <div>{item.note.note}</div>}
+        </React.Fragment>
+      ))}
     </div>
   );
 };

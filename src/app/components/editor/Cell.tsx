@@ -20,6 +20,7 @@ const LIGATURE_POSITIONS_BASE: {
 };
 
 interface ColumnCellProps<Item extends CellItem> {
+  type: Item["type"];
   lastColumnInBar: boolean;
   cell: CellType<Item>;
   barIndex: number;
@@ -30,6 +31,7 @@ interface ColumnCellProps<Item extends CellItem> {
 }
 
 const Cell = <Item extends CellItem>({
+  type,
   lastColumnInBar,
   cell,
   barIndex,
@@ -101,6 +103,8 @@ const Cell = <Item extends CellItem>({
         return (
           <SubCell
             key={i}
+            type={type}
+            isMulti={cell.subCells.length > 1}
             subCell={subCell}
             direction={directions[i]?.direction ?? directions[0]?.direction}
             isFirst={i === 0}

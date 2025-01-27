@@ -135,7 +135,14 @@ export const CFTuning: Tuning = {
         { button: 1, pull: { note: "B" }, push: { note: "B" } },
         { button: 2, pull: { note: "b" }, push: { note: "b" } },
         { button: 3, pull: { note: "D" }, push: { note: "A" } },
-        { button: 4, pull: { note: "d" }, push: { note: "a" } },
+        {
+          button: 4,
+          pull: {
+            note: "dm",
+            shortcutKey: "d",
+          },
+          push: { note: "a" },
+        },
       ],
     },
   ],

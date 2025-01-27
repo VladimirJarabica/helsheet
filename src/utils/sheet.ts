@@ -1,5 +1,5 @@
 import { Sheet, TimeSignature } from "@prisma/client";
-import { CellRow, Column, Direction, Tuning } from "../app/types";
+import { CellItem, CellRow, Column, Direction, Tuning } from "../app/types";
 import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 
 export const getSheetUrl = (sheet: Pick<Sheet, "id" | "name">) => {
@@ -62,3 +62,22 @@ export const isMelodicPartSplit = (column: Column) =>
   column.melodic.some((cell) => cell.subCells.length > 1);
 export const isBassPartSplit = (column: Column) =>
   column.bass.subCells.length > 1;
+
+export const sortNoteItems = <Item extends CellItem>(items: Item[]): Item[] =>
+  items.toSorted((a, b) => {
+    if (a.type === "bass" && b.type === "bass") {
+      const aNote = a.note.note;
+      const bNote = b.note.note;
+      if (aNote === aNote.toUpperCase()) {
+        if (bNote === bNote.toUpperCase()) {
+          return aNote.localeCompare(bNote);
+        }
+        return -1;
+      }
+      if (bNote === bNote.toUpperCase()) {
+        return 1;
+      }
+      return aNote.localeCompare(bNote);
+    }
+    return 0;
+  });

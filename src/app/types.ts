@@ -18,7 +18,20 @@ export type Note = {
   pitch: -1 | 0 | 1 | 2 | 3 | 4;
 };
 export type Bass = {
-  note: "F" | "f" | "G" | "g" | "A" | "a" | "B" | "b" | "C" | "c" | "D" | "d";
+  note:
+    | "F"
+    | "f"
+    | "G"
+    | "g"
+    | "A"
+    | "a"
+    | "B"
+    | "b"
+    | "C"
+    | "c"
+    | "D"
+    | "d"
+    | "dm";
 };
 
 export type ScaleSignature =
@@ -40,14 +53,22 @@ export type ScaleSignature =
 
 export type TuningNoteButton = {
   button: number;
-  pull: Note;
-  push: Note;
+  pull: Note & {
+    shortcutKey?: string;
+  };
+  push: Note & {
+    shortcutKey?: string;
+  };
 };
 
 export type TuningBassButton = {
   button: number;
-  pull: Bass;
-  push: Bass;
+  pull: Bass & {
+    shortcutKey?: string;
+  };
+  push: Bass & {
+    shortcutKey?: string;
+  };
 };
 
 export type Tuning = {

@@ -6,6 +6,7 @@ import {
   isBassPartSplit as getIsBassPartSplit,
   isMelodicPartSplit as getIsMelodicPartSplit,
   getNoteFromTuningByButton,
+  sortNoteItems,
 } from "../../../utils/sheet";
 import {
   Bass,
@@ -133,21 +134,29 @@ const ColumnNotes = () => {
 
   const basses = tuning.bass.flatMap((row) =>
     row.buttons.flatMap((button) => [
-      { direction: "pull" as DefinedDirection, bass: button.pull.note },
-      { direction: "push" as DefinedDirection, bass: button.push.note },
+      {
+        direction: "pull" as DefinedDirection,
+        bass: button.pull.note,
+        shortcutKey: button.pull.shortcutKey ?? button.pull.note,
+      },
+      {
+        direction: "push" as DefinedDirection,
+        bass: button.push.note,
+        shortcutKey: button.push.shortcutKey ?? button.push.note,
+      },
     ])
   );
 
   useKeyboardListeners({
     id: "bass",
-    keys: R.uniq(basses.map((bass) => bass.bass)),
-    listener: (bass: Bass["note"]) => {
+    keys: R.uniq(basses.map((bass) => bass.shortcutKey)),
+    listener: (bass: string) => {
       if (!hasBassPart) {
         return;
       }
       const selectedBasses = basses.filter(
         (item) =>
-          item.bass === bass &&
+          item.shortcutKey === bass &&
           (direction !== "empty" ? item.direction === direction : true)
       );
 
@@ -435,8 +444,8 @@ const ColumnNotes = () => {
                     );
                   })}
                   <div className="border-b border-black w-8 h-8 flex justify-center items-center">
-                    {bassItems
-                      .filter(
+                    {sortNoteItems(
+                      bassItems.filter(
                         (bassItem) =>
                           "note" in bassItem &&
                           tuning.bass.some((bassRow) =>
@@ -447,6 +456,7 @@ const ColumnNotes = () => {
                             )
                           )
                       )
+                    )
                       .map((bassItem) =>
                         "note" in bassItem ? bassItem.note.note : null
                       )
