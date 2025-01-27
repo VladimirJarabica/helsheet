@@ -14,8 +14,10 @@ import {
   CELL_SIZE,
   DIRECTION_CELL_SIZE,
   LINE_HEADING_WIDTH_WITH_BORDER,
+  TIME_SIGNATURE_VALUE,
   VARIANT_CELL_HEIGHT,
 } from "../../../utils/consts";
+import { formatScaleId } from "../../../utils/scale";
 import { getSheetUrl } from "../../../utils/sheet";
 import { createTag, setTagToSheet } from "../../../utils/tags";
 import { SongContent } from "../../types";
@@ -52,6 +54,7 @@ interface SongWrapperProps {
     | "originalSheetAuthor"
     | "source"
     | "access"
+    | "updatedAt"
   > & {
     SheetAuthor: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];
@@ -225,20 +228,22 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
       </div>
       <div className={`px-2 pt-5 print:pt-5 sm:px-4`}>
         <div className="flex justify-between text-sm flex-wrap">
-          {sheet.tempo ? (
-            <div className="flex gap-1">
-              <Image
-                src={`/quarter-note.png`}
-                className=" h-[15px] w-[auto] mt-0.5"
-                width={20}
-                height={20}
-                alt="note"
-              />
-              = {sheet.tempo}
-            </div>
-          ) : (
-            <div />
-          )}
+          <div className="flex gap-4">
+            {sheet.tempo && (
+              <div className="flex gap-1">
+                <Image
+                  src={`/quarter-note.png`}
+                  className=" h-[15px] w-[auto] mt-0.5"
+                  width={20}
+                  height={20}
+                  alt="note"
+                />
+                = {sheet.tempo}
+              </div>
+            )}
+            {sheet.scale && <div>{formatScaleId(sheet.scale)}</div>}
+            <div>{TIME_SIGNATURE_VALUE[sheet.timeSignature]}</div>
+          </div>
           <div>
             <div className="flex gap-x-4 flex-wrap">
               <div>
@@ -299,7 +304,13 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
             </div>
           )}
         </div>
-        <div className="flex justify-end text-sm print:hidden">
+        <div className="flex justify-between text-sm print:hidden flex-wrap">
+          <div>
+            Naposledy upravené:{" "}
+            {`${sheet.updatedAt.getDate()}.${
+              sheet.updatedAt.getMonth() + 1
+            }.${sheet.updatedAt.getFullYear()}`}
+          </div>
           <a href="https://martincernansky.com/" target="_blank">
             Tabulátorový zápis podľa Martina Čerňanského
           </a>
@@ -357,6 +368,7 @@ interface EditorProps {
     | "source"
     | "content"
     | "access"
+    | "updatedAt"
   > & {
     SheetAuthor: Pick<User, "id" | "nickname">;
     Tags: Pick<Tag, "id" | "name">[];

@@ -54,6 +54,7 @@ const Sheet = async (props: PageProps) => {
       SheetAuthor: { select: { id: true, nickname: true } },
       Tags: { select: { id: true, name: true } },
       access: true,
+      updatedAt: true,
     },
     where: {
       AND: [
