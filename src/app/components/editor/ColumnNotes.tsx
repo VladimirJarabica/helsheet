@@ -83,29 +83,33 @@ const ColumnNotes = () => {
     bassItems.map((item) => (item.type === "bass" ? item.note.note : null))
   );
 
-  const notes = hasMelodicPart
-    ? column?.melodic.flatMap((cell) =>
-        cell.subCells[activeColumn.subColumnIndex].items
-          .filter((item) => item.type === "note")
-          .map<(Note & { button: number; row: CellRow }) | null>((item) => {
-            const note = getNoteFromTuningByButton({
-              button: item.button,
-              row: cell.row,
-              direction,
-              tuning,
-            });
-            if (!note) {
-              return null;
-            }
-            return {
-              ...note,
-              button: item.button,
-              row: cell.row,
-            };
-          })
-          .filter(notEmpty)
-      ) ?? []
-    : [];
+  const notes = useMemo(
+    () =>
+      hasMelodicPart
+        ? column?.melodic.flatMap((cell) =>
+            cell.subCells[activeColumn.subColumnIndex].items
+              .filter((item) => item.type === "note")
+              .map<(Note & { button: number; row: CellRow }) | null>((item) => {
+                const note = getNoteFromTuningByButton({
+                  button: item.button,
+                  row: cell.row,
+                  direction,
+                  tuning,
+                });
+                if (!note) {
+                  return null;
+                }
+                return {
+                  ...note,
+                  button: item.button,
+                  row: cell.row,
+                };
+              })
+              .filter(notEmpty)
+          ) ?? []
+        : [],
+    [column, activeColumn, direction, hasMelodicPart, tuning]
+  );
 
   useKeyboardListener({
     id: "directionLeft",

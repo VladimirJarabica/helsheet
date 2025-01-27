@@ -139,10 +139,12 @@ export const useKeyboardListeners = <Key extends string>({
     keyboardListenerContext
   );
 
+  const keysDependency = keys.join("_");
+
   useEffect(() => {
     keys.forEach((key) => {
       registerListener(id + key, key, (options) => listener(key, options));
     });
     return () => keys.forEach((key) => unregisterListener(id + key, key));
-  }, [id, keys.join("_"), listener, registerListener, unregisterListener]);
+  }, [id, keysDependency, listener, registerListener, unregisterListener]);
 };
