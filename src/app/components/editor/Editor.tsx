@@ -304,19 +304,19 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
             </div>
           )}
         </div>
-        <div className="flex justify-between text-sm print:hidden flex-wrap">
-          <div>
-            Naposledy upravené:{" "}
-            {`${sheet.updatedAt.getDate()}.${
-              sheet.updatedAt.getMonth() + 1
-            }.${sheet.updatedAt.getFullYear()}`}
-          </div>
-          <a href="https://martincernansky.com/" target="_blank">
-            Tabulátorový zápis podľa Martina Čerňanského
-          </a>
-        </div>
       </div>
       <Verses />
+      <div className="w-full max-w-[930px] flex justify-between text-xs flex-wrap mt-8 px-2 sm:px-4">
+        <div>
+          Naposledy upravené:{" "}
+          {`${sheet.updatedAt.getDate()}.${
+            sheet.updatedAt.getMonth() + 1
+          }.${sheet.updatedAt.getFullYear()}`}
+        </div>
+        <a href="https://martincernansky.com/" target="_blank">
+          Tabulátorový zápis podľa Martina Čerňanského
+        </a>
+      </div>
       {isEditing && (
         <div
           onClick={(e) => {

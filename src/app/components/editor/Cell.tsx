@@ -73,17 +73,19 @@ const Cell = <Item extends CellItem>({
               ? -(CELL_SIZE * ligature.startOffset)
               : CELL_SIZE * ligature.renderRange.from;
 
+            const ligatureArchDepth = ligature.fullLigatureLength > 3 ? 70 : 40;
+
             return (
               <path
                 key={i}
                 d={`M ${-svgLigatureOffset},${
                   (CELL_SIZE * position) / 100
-                } A ${svgFullLigatureWidth},100 0 0 0 ${
+                } A ${svgFullLigatureWidth},${ligatureArchDepth} 0 0 0 ${
                   svgFullLigatureWidth - svgLigatureOffset
                 },${(CELL_SIZE * position) / 100}`}
                 fill="none"
                 stroke="black"
-                strokeWidth="1"
+                strokeWidth={0.75}
               />
             );
           })}

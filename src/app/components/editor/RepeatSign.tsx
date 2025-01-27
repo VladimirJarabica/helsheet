@@ -25,8 +25,8 @@ const RepeatSign = ({ type, topOffset }: RepeatSignProps) => {
     >
       <div
         className={`absolute ${
-          type === "start" ? "left-0 border-l-2" : "right-0 border-r-2"
-        } border-black z-10 rounded-[10px] border-t-2 border-b-2 w-10`}
+          type === "start" ? "left-0 border-l" : "right-0 border-r"
+        } border-black z-10 rounded-[10px] border-t border-b w-10`}
         style={{ height }}
       >
         <div
