@@ -255,7 +255,7 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
           sm:justify-start
           print:w-full
           max-w-[930px]
-          ${activeColumn ? "pb-[50vh] overflow-auto" : ""}
+          ${activeColumn ? "pb-[50vh]" : ""}
           `}
           ref={barsWrapperRef}
           style={{ paddingLeft: LINE_HEADING_WIDTH_WITH_BORDER }}

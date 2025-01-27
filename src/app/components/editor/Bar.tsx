@@ -1,4 +1,5 @@
 "use client";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
 import {
   LINE_HEADING_WIDTH_WITH_BORDER,
@@ -114,101 +115,116 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
       </div>
       {isEditing && (
         <div
-          className="absolute right-0 top-0 bg-transparent z-20 print:hidden w-fit"
+          className="absolute right-0 -top-2 bg-transparent z-20 print:hidden w-fit"
           ref={menuRef}
         >
           {!isMenuOpen && (
-            <button
-              className="border border-black hidden group-hover:block px-2 text-xs rounded-md bg-[#e3d9bc] shadow"
-              onClick={() => {
-                setIsMenuOpen(true);
-              }}
-            >
-              ...
-            </button>
+            <div>
+              <button
+                type="button"
+                className="hidden group-hover:inline-flex w-full justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50"
+                id="menu-button"
+                aria-expanded="true"
+                aria-haspopup="true"
+                onClick={() => setIsMenuOpen(true)}
+              >
+                <ChevronDownIcon className="w-4 text-gray-400" />
+              </button>
+            </div>
+            // <button
+            //   className="border border-black hidden group-hover:block px-2 text-xs rounded-md bg-[#e3d9bc] shadow"
+            //   onClick={() => {
+            //     setIsMenuOpen(true);
+            //   }}
+            // >
+            //   ...
+            // </button>
           )}
           {isMenuOpen && (
-            <div className="border border-black bg-[#e3d9bc] m-2 flex flex-col">
-              <button
-                onClick={() => duplicateBar(barIndex)}
-                className="px-2 hover:bg-[#dbc991]"
-              >
-                Duplikovať takt
-              </button>
-              <button
-                onClick={() => {
-                  removeBar(barIndex);
-                  setIsMenuOpen(false);
-                }}
-                className="px-2 hover:bg-[#dbc991]"
-              >
-                Vymazať takt
-              </button>
-              <button
-                onClick={() => {
-                  handleChangeRepeat("start");
-                }}
-                className="px-2 hover:bg-[#dbc991]"
-              >
-                {bar.repeat?.start
-                  ? "Zrušiť začiatok opakovania"
-                  : "Začať opakovanie"}
-              </button>
-              <button
-                onClick={() => {
-                  handleChangeRepeat("end");
-                }}
-                className="px-2 hover:bg-[#dbc991]"
-              >
-                {bar.repeat?.end
-                  ? "Zrušiť koniec opakovania"
-                  : "Ukončiť opakovanie"}
-              </button>
-              {bar.variant ? (
-                <button
-                  onClick={() => {
-                    setBarVariant(barIndex, undefined);
-                  }}
-                  className="px-2 hover:bg-[#dbc991]"
-                >
-                  Odobrať variant
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setIsSelectingVariant(true);
-                  }}
-                  className="px-2 hover:bg-[#dbc991]"
-                >
-                  Pridať variant
-                </button>
-              )}
-              <button
-                onClick={() => {
-                  addColumnToBar(barIndex);
-                }}
-                className="px-2 hover:bg-[#dbc991]"
-              >
-                Pridať stĺpec
-              </button>
-              {bar.columns.length > 1 && (
-                <button
-                  onClick={() => {
-                    removeLastColumnFromBar(barIndex);
-                  }}
-                  className="px-2 hover:bg-[#dbc991]"
-                >
-                  Odstrániť stĺpec
-                </button>
-              )}
-              <button
-                onClick={() => {
-                  copyBarToTheEnd(barIndex);
-                }}
-                className="px-2 hover:bg-[#dbc991]"
-              >
-                Skopírovať takt na koniec
-              </button>
+            <div
+              className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-button"
+              tabIndex={-1}
+            >
+              <div className="py-1" role="none">
+                {(
+                  [
+                    {
+                      label: "Duplikovať takt",
+                      onClick: () => duplicateBar(barIndex),
+                    },
+                    {
+                      label: "Vymazať takt",
+                      onClick: () => {
+                        removeBar(barIndex);
+                        setIsMenuOpen(false);
+                      },
+                    },
+                    {
+                      label: "Skopírovať takt na koniec",
+                      onClick: () => {
+                        copyBarToTheEnd(barIndex);
+                      },
+                    },
+                    null,
+                    {
+                      label: bar.repeat?.start
+                        ? "Zrušiť začiatok opakovania"
+                        : "Začať opakovanie",
+                      onClick: () => {
+                        handleChangeRepeat("start");
+                      },
+                    },
+                    {
+                      label: bar.repeat?.end
+                        ? "Zrušiť koniec opakovania"
+                        : "Ukončiť opakovanie",
+                      onClick: () => {
+                        handleChangeRepeat("end");
+                      },
+                    },
+                    null,
+                    {
+                      label: bar.variant ? "Odobrať variant" : "Pridať variant",
+                      onClick: () => {
+                        if (bar.variant) {
+                          setBarVariant(barIndex, undefined);
+                        } else {
+                          setIsSelectingVariant(true);
+                        }
+                      },
+                    },
+                    null,
+                    {
+                      label: "Pridať stĺpec",
+                      onClick: () => {
+                        addColumnToBar(barIndex);
+                      },
+                    },
+                    {
+                      label: "Odstrániť stĺpec",
+                      onClick: () => {
+                        removeLastColumnFromBar(barIndex);
+                      },
+                    },
+                  ] as const
+                ).map((item, i) =>
+                  item ? (
+                    <div
+                      className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 hover:outline-hidden"
+                      role="menuitem"
+                      id="menu-item-0"
+                      onClick={item.onClick}
+                    >
+                      {item.label}
+                    </div>
+                  ) : (
+                    <hr className="my-1" />
+                  )
+                )}
+              </div>
             </div>
           )}
         </div>
