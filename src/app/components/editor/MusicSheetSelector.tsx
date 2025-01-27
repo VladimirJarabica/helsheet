@@ -222,7 +222,7 @@ const MusicSheetSelector = ({
               }}
             >
               {Scales.map((scale) => (
-                <option key={scale.signature} value={scale.id}>
+                <option key={scale.id} value={scale.id}>
                   {`${scale.name}${
                     scale.signature ? ` (${scale.signature})` : ""
                   }`}
@@ -245,7 +245,7 @@ const MusicSheetSelector = ({
             >
               <option value="">Žiadna</option>
               {Scales.map((scale) => (
-                <option key={scale.signature} value={scale.id}>
+                <option key={scale.id} value={scale.id}>
                   {`${scale.name}${
                     scale.signature ? ` (${scale.signature})` : ""
                   }`}
