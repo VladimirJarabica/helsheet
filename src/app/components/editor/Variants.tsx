@@ -13,7 +13,7 @@ const Variants = ({ onSelect }: VariantsProps) => {
   const [newGroupName, setNewGroupName] = useState("");
 
   return (
-    <div className="">
+    <div className="px-4 pt-5 pb-4 ">
       <div className="flex flex-col gap-2">
         {variants.length > 0 && (
           <>
