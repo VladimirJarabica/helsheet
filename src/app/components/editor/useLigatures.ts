@@ -65,8 +65,7 @@ export const useLigatures = ({
           (!isFirstSubCell ? -0.5 : 0)) %
           1 || 1;
 
-      const endOffset =
-        subCellItem.length === 1 ? 0.25 : endColumnLength === 0.5 ? 0.75 : 0.5; // TODO ifEndColumnIsMulti ? 0.25 : 0.5;
+      const endOffset = endColumnLength === 0.5 ? 0.75 : 0.5; // TODO ifEndColumnIsMulti ? 0.25 : 0.5;
 
       const numberOfCells = Math.ceil((subCellIndex > 0 ? 0.5 : 0) + length);
       const renderLigatureLength =
