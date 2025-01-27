@@ -222,7 +222,7 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
                       {item.label}
                     </div>
                   ) : (
-                    <hr className="my-1" />
+                    <hr key={i} className="my-1" />
                   )
                 )}
               </div>
