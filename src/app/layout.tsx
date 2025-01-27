@@ -2,9 +2,7 @@ import { skSK } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { getTags } from "../utils/tags";
 import Header from "./components/Header";
-import { TagsContextProvider } from "./components/TagsContext";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -28,19 +26,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const tags = await getTags();
   return (
     <ClerkProvider localization={skSK}>
-      <TagsContextProvider tags={tags}>
-        <html lang="en">
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
-          >
-            <Header />
-            <main className="flex justify-center">{children}</main>
-          </body>
-        </html>
-      </TagsContextProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
+        >
+          <Header />
+          <main className="flex justify-center">{children}</main>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }

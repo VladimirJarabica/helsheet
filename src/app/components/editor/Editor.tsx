@@ -4,11 +4,10 @@ import {
   GlobeEuropeAfricaIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
-import { Sheet, SheetAccess, SongAuthorType, Tag, User } from "@prisma/client";
+import { Sheet, SheetAccess, SongAuthorType, User } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import CreatableSelect from "react-select/creatable";
 import {
   BAR_LINES_PER_PAGE,
   CELL_SIZE,
@@ -19,11 +18,9 @@ import {
 } from "../../../utils/consts";
 import { formatScaleId } from "../../../utils/scale";
 import { getSheetUrl } from "../../../utils/sheet";
-import { createTag, setTagToSheet } from "../../../utils/tags";
 import { SongContent } from "../../types";
 import { changeSheetAccess, deleteSheet, updateSheet } from "../actions";
 import Button from "../Button";
-import { useTags } from "../TagsContext";
 import Bar from "./Bar";
 import ColumnSettings from "./ColumnSettings";
 import {
@@ -57,7 +54,6 @@ interface SongWrapperProps {
     | "updatedAt"
   > & {
     SheetAuthor: Pick<User, "id" | "nickname">;
-    Tags: Pick<Tag, "id" | "name">[];
   };
   liked: boolean;
   editable: boolean;
@@ -75,7 +71,6 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
     setEditing,
     tuning,
   } = useSheetContext();
-  const tags = useTags();
 
   useKeyboardListener({ id: "newBar", key: "+", listener: () => addBar() });
 
@@ -187,43 +182,6 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
               )}
             </div>
           </div>
-        </div>
-
-        <div className="print:hidden flex gap-1 items-center">
-          {/* {sheet.Tags.map((tag) => (
-            <TagPill
-              key={tag.id}
-              tag={tag}
-              onRemove={
-                isEditing
-                  ? () => {
-                      removeTagFromSheet(sheet.id, tag.id);
-                    }
-                  : undefined
-              }
-            />
-          ))} */}
-          {isEditing && (
-            <CreatableSelect<{ value: number; label: string }>
-              className="w-40 z-20"
-              options={tags
-                .filter((tag) => !sheet.Tags.some((t) => t.id === tag.id))
-                .map((tag) => ({
-                  value: tag.id,
-                  label: tag.name,
-                }))}
-              onCreateOption={async (option) => {
-                const newTag = await createTag(option);
-                setTagToSheet(sheet.id, newTag.id);
-              }}
-              value={null}
-              onChange={(value) => {
-                if (value) {
-                  setTagToSheet(sheet.id, value.value);
-                }
-              }}
-            />
-          )}
         </div>
       </div>
       <div className={`px-2 pt-5 print:pt-5 sm:px-4`}>
@@ -371,7 +329,6 @@ interface EditorProps {
     | "updatedAt"
   > & {
     SheetAuthor: Pick<User, "id" | "nickname">;
-    Tags: Pick<Tag, "id" | "name">[];
   };
   editable: boolean;
   liked: boolean;

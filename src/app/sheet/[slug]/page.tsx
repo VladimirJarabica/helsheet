@@ -52,7 +52,6 @@ const Sheet = async (props: PageProps) => {
       originalSheetAuthor: true,
       source: true,
       SheetAuthor: { select: { id: true, nickname: true } },
-      Tags: { select: { id: true, name: true } },
       access: true,
       updatedAt: true,
     },
