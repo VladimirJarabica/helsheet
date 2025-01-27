@@ -263,7 +263,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
           }.${sheet.updatedAt.getFullYear()}`}
         </div>
         <a href="https://martincernansky.com/" target="_blank">
-          Tabulátorový zápis podľa Martina Čerňanského
+          Tabuľková metóda zápisu podľa Martina Čerňanského
         </a>
       </div>
       {isEditing && (
