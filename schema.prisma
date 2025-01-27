@@ -28,6 +28,12 @@ enum Scale {
   A_mol
 }
 
+enum TimeSignature {
+  sig_3_4
+  sig_4_4
+  sig_2_4
+}
+
 enum SheetAccess {
   public
   private
@@ -73,18 +79,19 @@ enum Country {
 }
 
 model Sheet {
-  id          Int         @id @default(autoincrement())
-  name        String
-  description String?
-  tuning      Tuning
-  content     Json
-  version     Int
-  source      String?
-  scale       Scale?
-  tempo       Int?
-  access      SheetAccess @default(public)
-  genre       Genre?
-  country     Country?
+  id            Int           @id @default(autoincrement())
+  name          String
+  description   String?
+  tuning        Tuning
+  content       Json
+  version       Int
+  source        String?
+  scale         Scale?
+  timeSignature TimeSignature @default(sig_4_4)
+  tempo         Int?
+  access        SheetAccess   @default(public)
+  genre         Genre?
+  country       Country?
 
   songAuthorType SongAuthorType @default(folk_song)
   // Song author (band, singer...)

@@ -43,6 +43,7 @@ interface SongWrapperProps {
     | "description"
     | "tuning"
     | "scale"
+    | "timeSignature"
     | "tempo"
     | "genre"
     | "country"
@@ -330,7 +331,6 @@ const SongWrapper = ({ sheet, liked, editable }: SongWrapperProps) => {
               router.push("/");
             }}
             sheet={sheet}
-            timeSignature={song.timeSignature}
             nickname={sheet.SheetAuthor.nickname}
           />
         </ModalWrapper>
@@ -347,6 +347,7 @@ interface EditorProps {
     | "description"
     | "tuning"
     | "scale"
+    | "timeSignature"
     | "tempo"
     | "genre"
     | "country"

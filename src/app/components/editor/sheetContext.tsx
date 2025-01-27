@@ -52,7 +52,10 @@ export type SubColumnPosition = ColumnPosition & {
 interface SheetContextProviderProps {
   editable: boolean;
   children: React.ReactNode;
-  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale" | "access">;
+  sheet: Pick<
+    Sheet,
+    "id" | "name" | "tempo" | "tuning" | "scale" | "timeSignature" | "access"
+  >;
   initialSong: SongContent;
 }
 
@@ -61,7 +64,10 @@ type SheetContext = {
   setEditing: (editing: boolean) => void;
   song: SongContent;
   tuning: Tuning;
-  sheet: Pick<Sheet, "id" | "name" | "tempo" | "tuning" | "scale" | "access">;
+  sheet: Pick<
+    Sheet,
+    "id" | "name" | "tempo" | "tuning" | "scale" | "timeSignature" | "access"
+  >;
   ligatures: Ligatures;
   activeCell: CellPosition | null;
   activeColumn: SubColumnPosition | null;
@@ -112,7 +118,6 @@ type SheetContext = {
 const sheetContext = createContext<SheetContext>({
   isEditing: false,
   song: {
-    timeSignature: "4/4",
     bars: [],
   },
   tuning: CFTuning,
@@ -170,7 +175,7 @@ export const SheetContextProvider = ({
     setIsEditing(editable && editing);
   };
 
-  const columnsInBar = getColumnsInBar(song.timeSignature);
+  const columnsInBar = getColumnsInBar(sheet.timeSignature);
 
   const tuning = TUNINGS[sheet.tuning];
 

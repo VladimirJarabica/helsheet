@@ -1,5 +1,5 @@
+import { TimeSignature } from "@prisma/client";
 import { useMemo, useState } from "react";
-import { TimeSignature } from "../../types";
 import { MelodeonButtonWrapper } from "../MelodeonButton";
 import { useKeyboardListeners } from "./keyboardListenerContext";
 import NoteLength from "./NoteLength";
@@ -81,7 +81,7 @@ const NoteLengthSelector = ({
 };
 
 const NoteLengthSelect = () => {
-  const { song, tuning, activeColumn, setLength } = useSheetContext();
+  const { song, tuning, sheet, activeColumn, setLength } = useSheetContext();
 
   const [activeButton, setActiveButton] = useState<{
     rowIndex: number;
@@ -213,13 +213,13 @@ const NoteLengthSelect = () => {
                       <div>Stĺpce:</div>
                     </div>
                     <NoteWithLength
-                      timeSignature={song.timeSignature}
+                      timeSignature={sheet.timeSignature}
                       length={length}
                     />
                   </div>
                   {isActive && (
                     <NoteLengthSelector
-                      timeSignature={song.timeSignature}
+                      timeSignature={sheet.timeSignature}
                       length={item.length ?? 1}
                       onChange={(length) =>
                         setLength(length, {
@@ -276,13 +276,13 @@ const NoteLengthSelect = () => {
                           <div>Stĺpce:</div>
                         </div>
                         <NoteWithLength
-                          timeSignature={song.timeSignature}
+                          timeSignature={sheet.timeSignature}
                           length={length}
                         />
                       </div>
                       {isActive && (
                         <NoteLengthSelector
-                          timeSignature={song.timeSignature}
+                          timeSignature={sheet.timeSignature}
                           length={item.length ?? 1}
                           onChange={(length) =>
                             setLength(length, {

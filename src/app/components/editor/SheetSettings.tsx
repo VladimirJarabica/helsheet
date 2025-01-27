@@ -6,6 +6,7 @@ import {
   Sheet,
   SongAuthorType,
   Tuning,
+  TimeSignature,
 } from "@prisma/client";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -13,10 +14,11 @@ import {
   AUTHOR_TYPE_VALUE,
   COUNTRY_VALUE,
   GENRE_VALUE,
+  TIME_SIGNATURE_VALUE,
 } from "../../../utils/consts";
-import { TimeSignature } from "../../types";
 import Button from "../Button";
 import Select from "../Select";
+import { Scales } from "../../../utils/scale";
 
 export type FormData = {
   name: string;
@@ -45,6 +47,7 @@ interface SheetSettingsProps {
     | "description"
     | "tuning"
     | "scale"
+    | "timeSignature"
     | "tempo"
     | "genre"
     | "country"
@@ -53,13 +56,11 @@ interface SheetSettingsProps {
     | "originalSheetAuthor"
     | "source"
   >;
-  timeSignature?: TimeSignature;
 }
 
 const SheetSettings = ({
   onSubmit,
   sheet: existingSheet,
-  timeSignature,
   onDelete,
 }: SheetSettingsProps) => {
   const { register, getValues, watch } = useForm<FormData>({
@@ -68,7 +69,7 @@ const SheetSettings = ({
       description: existingSheet?.description ?? undefined,
       tuning: existingSheet?.tuning ?? Tuning.CF,
       scale: existingSheet?.scale ?? null,
-      timeSignature: timeSignature,
+      timeSignature: existingSheet?.timeSignature ?? TimeSignature.sig_4_4,
       tempo: existingSheet?.tempo ?? undefined,
       genre: existingSheet?.genre ?? undefined,
       country: existingSheet?.country ?? undefined,
@@ -120,20 +121,21 @@ const SheetSettings = ({
           label="Stupnica"
           options={[
             { value: "", label: "-" },
-            ...Object.keys(Scale).map((scale) => ({
-              value: scale,
-              label: scale.replaceAll("_", " "),
+            ...Scales.map((scale) => ({
+              value: scale.id,
+              label: `${scale.name}${
+                scale.signature ? ` (${scale.signature})` : ""
+              }`,
             })),
           ]}
         />
         <Select
           {...register("timeSignature", { required: true })}
           label="Takt"
-          options={[
-            { value: "4/4", label: "4/4" },
-            { value: "2/4", label: "2/4" },
-            { value: "3/4", label: "3/4" },
-          ]}
+          options={Object.keys(TimeSignature).map((timeSignature) => ({
+            value: timeSignature,
+            label: TIME_SIGNATURE_VALUE[timeSignature as TimeSignature],
+          }))}
         />
         <div className="mt-3 flex flex-col">
           <label className="text-sm/6 mb-1" htmlFor="name">

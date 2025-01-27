@@ -128,8 +128,6 @@ export type Bar = {
   variant?: number;
 };
 
-export type TimeSignature = "3/4" | "4/4" | "2/4";
-
 export type Variant = {
   id: number;
   name: string;
@@ -140,7 +138,6 @@ export type Verse = {
 };
 
 export type SongContent = {
-  timeSignature: TimeSignature;
   bars: Bar[];
   variants?: Variant[];
   verses?: Verse[];

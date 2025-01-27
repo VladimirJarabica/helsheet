@@ -1,11 +1,5 @@
-import { Sheet } from "@prisma/client";
-import {
-  CellRow,
-  Column,
-  Direction,
-  TimeSignature,
-  Tuning,
-} from "../app/types";
+import { Sheet, TimeSignature } from "@prisma/client";
+import { CellRow, Column, Direction, Tuning } from "../app/types";
 import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 
 export const getSheetUrl = (sheet: Pick<Sheet, "id" | "name">) => {

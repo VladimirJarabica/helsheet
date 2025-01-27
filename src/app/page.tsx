@@ -3,9 +3,15 @@ import { currentUser } from "@clerk/nextjs/server";
 import { Genre, SheetAccess, SongAuthorType } from "@prisma/client";
 import Link from "next/link";
 import { dbClient } from "../services/db";
-import { AUTHOR_TYPE_VALUE, COUNTRY_VALUE, GENRE_VALUE } from "../utils/consts";
+import {
+  AUTHOR_TYPE_VALUE,
+  COUNTRY_VALUE,
+  GENRE_VALUE,
+  TIME_SIGNATURE_VALUE,
+} from "../utils/consts";
 import { parseFilter } from "../utils/filter";
 import { notEmpty } from "../utils/fnUtils";
+import { formatScaleId } from "../utils/scale";
 import { getSheetUrl } from "../utils/sheet";
 import { getOrCreateUser } from "../utils/user";
 import { getSongAuthors } from "./components/actions";
@@ -37,6 +43,8 @@ export default async function Home({
       country: true,
       genre: true,
       tuning: true,
+      timeSignature: true,
+      scale: true,
     },
     where: {
       AND: [
@@ -79,7 +87,9 @@ export default async function Home({
           <div>
             <span className="font-bold">{sheet.name}</span>
             <div className="flex mt-1 gap-1">
+              {sheet.scale && <TagPill>{formatScaleId(sheet.scale)}</TagPill>}
               <TagPill>{sheet.tuning}</TagPill>
+              <TagPill>{TIME_SIGNATURE_VALUE[sheet.timeSignature]}</TagPill>
               {sheet.country && (
                 <TagPill>{COUNTRY_VALUE[sheet.country]}</TagPill>
               )}
@@ -96,9 +106,6 @@ export default async function Home({
                   sheet.songAuthorType !== SongAuthorType.folk_song) && (
                   <TagPill>{GENRE_VALUE[sheet.genre]}</TagPill>
                 )}
-              {/* {sheet.Tags.map((tag) => (
-                <TagPill key={tag.id} tag={tag} />
-              ))} */}
             </div>
           </div>
           <div className="flex items-center">

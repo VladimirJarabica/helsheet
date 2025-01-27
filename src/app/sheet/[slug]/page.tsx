@@ -41,6 +41,7 @@ const Sheet = async (props: PageProps) => {
       description: true,
       tuning: true,
       scale: true,
+      timeSignature: true,
       content: true,
       version: true,
       tempo: true,

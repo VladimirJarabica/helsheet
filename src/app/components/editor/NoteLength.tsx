@@ -1,7 +1,7 @@
+import { TimeSignature } from "@prisma/client";
 import Image from "next/image";
 import { useMemo } from "react";
 import { WHOLE_NOTE_LENGTH_FOR_TIME_SIGNATURE } from "../../../utils/consts";
-import { TimeSignature } from "../../types";
 
 enum NOTE_TYPES {
   whole = "whole",

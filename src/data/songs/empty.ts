@@ -1,7 +1,6 @@
 import { SongContent } from "../../app/types";
 
 export const empty: SongContent = {
-  timeSignature: "4/4",
   bars: [
     {
       columns: [
