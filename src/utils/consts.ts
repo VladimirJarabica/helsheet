@@ -47,6 +47,7 @@ export const COUNTRY_VALUE: Record<Country, string> = {
   [Country.scotland]: "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Škótsko",
   [Country.england]: "🇬🇧 Anglicko",
   [Country.france]: "🇫🇷 Francúzsko",
+  [Country.italy]: "🇮🇹 Taliansko",
 };
 
 export const TIME_SIGNATURE_VALUE: Record<TimeSignature, string> = {

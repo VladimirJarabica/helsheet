@@ -76,6 +76,7 @@ enum Country {
   scotland
   england
   france
+  italy
 }
 
 model Sheet {
