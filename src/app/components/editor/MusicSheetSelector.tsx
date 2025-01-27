@@ -205,7 +205,7 @@ const MusicSheetSelector = ({
 
   return (
     <div className="max-w-[100vw] overflow-auto">
-      <div className="relative my-20 w-[510px]">
+      <div className="relative mb-20 w-[510px]">
         <div className="flex mb-16 gap-2">
           <div className="flex">
             <label>Stupnica</label>

@@ -1,6 +1,6 @@
 "use client";
 import * as R from "ramda";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { notEmpty } from "../../../utils/fnUtils";
 import {
   isBassPartSplit as getIsBassPartSplit,
@@ -78,6 +78,10 @@ const ColumnNotes = () => {
   const bassItems = hasBassPart
     ? column.bass.subCells[activeColumn.subColumnIndex].items
     : [];
+
+  const activeBasses = new Set(
+    bassItems.map((item) => (item.type === "bass" ? item.note.note : null))
+  );
 
   const notes = hasMelodicPart
     ? column?.melodic.flatMap((cell) =>
@@ -302,7 +306,7 @@ const ColumnNotes = () => {
     <>
       <div className="flex gap-10 w-full mb-4 flex-col sm:flex-row">
         <div className="flex flex-col items-start">
-          <div className="flex h-8">
+          <div className="flex h-9">
             <div>Vybrané noty:</div>
 
             {notes.map((note) => (
@@ -351,7 +355,7 @@ const ColumnNotes = () => {
             </Button>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex h-[130px] items-start">
           Navrhované kombinácie:
           {notes.length > 0 &&
             suggestedButtons.pull.length === 0 &&
@@ -420,21 +424,34 @@ const ColumnNotes = () => {
                     ${rowButtons.length > 2 ? "text-xs" : "text-sm"}
                     `}
                       >
-                        {
-                          rowButtons.map((button) => (
-                            <>{button.button} </>
-                          ))
-                          // .join(<>&nbsp;</>)
-                        }
+                        {rowButtons.map((button) => (
+                          <>{button.button} </>
+                        ))}
                       </div>
                     );
                   })}
                   <div className="border-b border-black w-8 h-8 flex justify-center items-center">
-                    {isOppositeDirection
-                      ? ""
-                      : bassItems.map((bassItem) =>
-                          "note" in bassItem ? <>{bassItem.note.note} </> : null
-                        )}
+                    {bassItems
+                      .filter(
+                        (bassItem) =>
+                          "note" in bassItem &&
+                          tuning.bass.some((bassRow) =>
+                            bassRow.buttons.some(
+                              (bassButton) =>
+                                bassButton[suggestedDirection].note ===
+                                bassItem.note.note
+                            )
+                          )
+                      )
+                      .map((bassItem) =>
+                        "note" in bassItem ? bassItem.note.note : null
+                      )
+                      .filter(notEmpty)
+                      .map((bassNote) => (
+                        <React.Fragment key={bassNote}>
+                          {bassNote}
+                        </React.Fragment>
+                      ))}
                   </div>
                   <div
                     className={`w-8 h-6 flex justify-center items-center ${
@@ -451,40 +468,29 @@ const ColumnNotes = () => {
       </div>
       <div className="flex gap-4 flex-wrap justify-center">
         {hasMelodicPart && (
-          <div>
-            Výber nôt zo stupnice:
-            <MusicSheetSelector
-              setHoveredNote={setHoveredNote}
-              hoveredNote={hoveredNote}
-              onSelectNote={handleAddSelectedNote}
-              selectedNotes={notes}
-            />
-          </div>
+          <MusicSheetSelector
+            setHoveredNote={setHoveredNote}
+            hoveredNote={hoveredNote}
+            onSelectNote={handleAddSelectedNote}
+            selectedNotes={notes}
+          />
         )}
         <div className="flex items-center justify-between">
           {hasBassPart && (
             <div className="flex items-center flex-row">
               {tuning.bass.map((row) => {
-                const activeBasses = new Set(
-                  bassItems.map((item) =>
-                    item.type === "bass" ? item.note.note : null
-                  )
-                );
+                console.log("activeBasses", activeBasses);
                 return (
                   <div key={row.row} className="flex flex-col">
                     {row.buttons.map((button) => (
                       <MelodeonButton
                         key={button.button}
                         onClick={(bassDirection) => {
-                          // const note =
-                          //   bassDirection === "pull" ? button.pull : button.push;
                           setBassButton(
                             button[bassDirection],
                             direction === "empty" ? bassDirection : direction
                           );
-                          // handleAddSelectedBass(button[direction], direction);
                         }}
-                        // disabled={!!hoveredNote && button.pull.note != hoveredNote}
                         button={button}
                         buttonNumberHidden
                         hoveredNote={hoveredBass}
@@ -493,9 +499,10 @@ const ColumnNotes = () => {
                           selectedMelodicButtons?.direction ?? direction
                         }
                         selected={
-                          // TODO: fix if direction is picked
-                          activeBasses.has(button.pull.note) ||
-                          activeBasses.has(button.push.note)
+                          (direction !== "push" &&
+                            activeBasses.has(button.pull.note)) ||
+                          (direction !== "pull" &&
+                            activeBasses.has(button.push.note))
                         }
                       />
                     ))}

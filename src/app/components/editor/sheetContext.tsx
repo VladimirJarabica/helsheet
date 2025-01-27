@@ -438,6 +438,27 @@ export const SheetContextProvider = ({
           };
         }
       ),
+      bass: {
+        ...oldColumn.bass,
+        subCells: oldColumn.bass.subCells.map<SubCell<CellBass | EmptyCell>>(
+          (subCell, index) => ({
+            ...subCell,
+            items:
+              index === activeColumn.subColumnIndex && direction
+                ? subCell.items.filter(
+                    (bassItem) =>
+                      "note" in bassItem &&
+                      tuning.bass.some((bassRow) =>
+                        bassRow.buttons.some(
+                          (bassButton) =>
+                            bassButton[direction].note === bassItem.note.note
+                        )
+                      )
+                  )
+                : subCell.items,
+          })
+        ),
+      },
       directions: direction
         ? oldColumn.directions.map((dir, index) =>
             index === activeColumn.subColumnIndex ? { direction } : dir
