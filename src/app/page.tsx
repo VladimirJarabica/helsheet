@@ -35,11 +35,11 @@ export default async function Home() {
               ostatnými muzikantmi.
               <br />
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-4">
+            <div className="mt-10 flex items-center justify-center gap-x-3">
               <Button variant="primary" href="/filter">
                 Prezeraj
               </Button>
-              <span className="text-sm text-gray-500">alebo</span>
+              <span className="text-sm text-gray-500">alebo vytvor</span>
               <NewSheetButton />
             </div>
             <a
