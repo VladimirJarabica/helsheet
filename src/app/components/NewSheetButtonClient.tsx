@@ -13,18 +13,24 @@ interface NewSheetButtonClientProps {
     user: Pick<User, "id" | "nickname">,
     data: FormData
   ) => Promise<Pick<Sheet, "id" | "name">>;
+  size?: React.ComponentProps<typeof Button>["size"];
 }
 
 const NewSheetButtonClient = ({
   user,
   createSheet,
+  size,
 }: NewSheetButtonClientProps) => {
   const router = useRouter();
   const [isNewSheetOpen, setIsNewSheetOpen] = useState(false);
 
   return (
     <>
-      <Button onClick={() => setIsNewSheetOpen(true)} variant="secondary">
+      <Button
+        onClick={() => setIsNewSheetOpen(true)}
+        variant="secondary"
+        size={size}
+      >
         Nový zápis
       </Button>
       {isNewSheetOpen && user && (

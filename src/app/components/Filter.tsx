@@ -1,9 +1,10 @@
 "use client";
-import { Country, Genre, SongAuthorType, Tuning } from "@prisma/client";
+import { Country, Genre, Scale, SongAuthorType, Tuning } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { COUNTRY_VALUE, GENRE_VALUE } from "../../utils/consts";
 import { FilterKey, FilterValue, parseFilter } from "../../utils/filter";
 import Select from "./Select";
+import { formatScaleId } from "../../utils/scale";
 
 interface FilterProps {
   songAuthors: string[];
@@ -19,6 +20,7 @@ const Filter = ({ songAuthors }: FilterProps) => {
     country: searchParams.get("country") ?? "",
     genre: searchParams.get("genre") ?? "",
     tuning: searchParams.get("tuning") ?? "",
+    scale: searchParams.get("scale") ?? "",
     songAuthor: searchParams.get("songAuthor") ?? "",
   });
 
@@ -64,13 +66,25 @@ const Filter = ({ songAuthors }: FilterProps) => {
       />
       <Select
         label="Ladenie heligónky"
-        value={filter.country ?? ""}
+        value={filter.tuning ?? ""}
         onChange={(e) => setFilter("tuning", e.target.value as Tuning)}
         options={[
           { value: "", label: "-" },
           ...Object.keys(Tuning).map((tuning) => ({
             value: tuning,
             label: tuning,
+          })),
+        ]}
+      />
+      <Select
+        label="Stupnica"
+        value={filter.scale ?? ""}
+        onChange={(e) => setFilter("scale", e.target.value as Tuning)}
+        options={[
+          { value: "", label: "-" },
+          ...Object.keys(Scale).map((scale) => ({
+            value: scale,
+            label: formatScaleId(scale as Scale),
           })),
         ]}
       />

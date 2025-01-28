@@ -15,7 +15,7 @@ import { notEmpty } from "../../utils/fnUtils";
 export const getSongAuthors = cache(async () => {
   const authors = await dbClient.sheet.findMany({
     select: { songAuthor: true },
-    where: { songAuthor: { not: null } },
+    where: { songAuthor: { not: null }, access: SheetAccess.public },
     distinct: ["songAuthor"],
   });
   return authors

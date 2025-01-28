@@ -10,7 +10,8 @@ interface ButtonProps {
     e: ReactMouseEvent<HTMLButtonElement, MouseEvent>
   ) => void | Promise<void>;
   className?: string;
-  variant: "primary" | "secondary" | "danger";
+  variant: "primary" | "secondary" | "danger" | "link";
+  size?: "small" | "medium";
 }
 
 const Button = ({
@@ -19,6 +20,7 @@ const Button = ({
   onClick,
   className,
   variant,
+  size = "medium",
 }: ButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,7 +31,8 @@ const Button = ({
       // hover:border-foreground px-2 py-1 text-sm
       // `}
       className={`inline-flex w-auto justify-center rounded-md
-        px-3 py-2 
+        ${size === "medium" ? "px-3 py-2" : ""}
+        ${size === "small" ? "px-2 py-1" : ""}
         text-sm 
         shadow-xs
         ${
@@ -43,6 +46,7 @@ const Button = ({
             : ""
         }
         ${variant === "danger" ? "bg-red-600 hover:bg-red-500 text-white" : ""}
+        ${variant === "link" ? "text-gray-800 hover:text-gray-950" : ""}
         `}
       onClick={
         onClick
