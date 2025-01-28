@@ -43,7 +43,7 @@ export default async function Home() {
               <NewSheetButton />
             </div>
             <a
-              className="text-gray-500 inline-block mt-8"
+              className="text-gray-500 inline-block mt-8 text-sm"
               href="https://martincernansky.com/"
               target="_blank"
             >
