@@ -96,14 +96,24 @@ const NoteLengthSelect = () => {
         : null,
     [activeColumn, song]
   );
+
+  const hasBassPart = !!(
+    column &&
+    activeColumn &&
+    column.bass.subCells[activeColumn.subColumnIndex]
+  );
+
   const maxIndex = useMemo(() => {
-    return activeColumn && column
-      ? column.melodic.flatMap(
-          (row) => row.subCells[activeColumn.subColumnIndex].items
-        ).length +
-          column.bass.subCells[activeColumn.subColumnIndex].items.length -
-          1
+    if (!activeColumn || !column) {
+      return 0;
+    }
+    const melodicItems = column.melodic.flatMap(
+      (row) => row.subCells[activeColumn.subColumnIndex].items
+    ).length;
+    const basItems = hasBassPart
+      ? column.bass.subCells[activeColumn.subColumnIndex].items.length
       : 0;
+    return melodicItems + basItems - 1;
   }, [activeColumn, column]);
 
   const melodicRows =
@@ -139,12 +149,6 @@ const NoteLengthSelect = () => {
   if (!activeColumn || !column) {
     return null;
   }
-
-  const hasBassPart = !!(
-    column &&
-    activeColumn &&
-    column.bass.subCells[activeColumn.subColumnIndex]
-  );
 
   let globalIndex = 0;
 
