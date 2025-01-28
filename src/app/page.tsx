@@ -19,10 +19,15 @@ export default async function Home() {
           ></div>
         </div>
         <div className="mx-auto max-w-2xl py-20 sm:py-32 py- lg:py-36">
-          <div className="text-center">
-            <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl">
-              HeliNotes
+          <div className="relative text-center">
+            <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
+              Heli&nbsp;Notes
             </h1>
+            <hr className="-z-10 absolute w-5/6 right-4 top-4 bg-gray-600" />
+            <hr className="-z-10 absolute w-5/6 right-6 top-6 bg-gray-600" />
+            <hr className="-z-10 absolute w-5/6 right-8 top-8 bg-gray-600" />
+            <hr className="-z-10 absolute w-5/6 right-10 top-10 bg-gray-600" />
+            <hr className="-z-10 absolute w-5/6 right-12 top-12 bg-gray-600" />
             <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
               Databáza piesní pre Heligónku.
               <br />
