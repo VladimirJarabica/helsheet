@@ -1,4 +1,5 @@
 "use server";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import Button from "./components/Button";
 import NewSheetButton from "./components/NewSheetButtonServer";
 
@@ -39,8 +40,19 @@ export default async function Home() {
               <Button variant="primary" href="/filter">
                 Prezeraj
               </Button>
-              <span className="text-sm text-gray-500">alebo vytvor</span>
-              <NewSheetButton />
+              <SignedOut>
+                <span className="text-sm text-gray-500">alebo sa</span>
+                <SignInButton>
+                  <Button variant="secondary">Prihlás</Button>
+                </SignInButton>
+                <span className="text-sm text-gray-500">
+                  a vytvor nový záznam
+                </span>
+              </SignedOut>
+              <SignedIn>
+                <span className="text-sm text-gray-500">alebo vytvor</span>
+                <NewSheetButton />
+              </SignedIn>
             </div>
             <a
               className="text-gray-500 inline-block mt-8 text-sm"
