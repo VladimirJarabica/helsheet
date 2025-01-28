@@ -10,7 +10,7 @@ const Header = async () => {
       <div className="max-w-[700px] w-11/12 flex justify-between items-center">
         <div className="h-full flex">
           <MenuItem href="/">Domov</MenuItem>
-          <MenuItem href="/filter">Filter</MenuItem>
+          <MenuItem href="/sheet">Piesne</MenuItem>
         </div>
         <div className="flex items-center gap-4 py-2">
           <NewSheetButton size="small" />

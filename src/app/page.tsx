@@ -37,7 +37,7 @@ export default async function Home() {
               <br />
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-3">
-              <Button variant="primary" href="/filter">
+              <Button variant="primary" href="/sheet">
                 Prezeraj
               </Button>
               <SignedOut>

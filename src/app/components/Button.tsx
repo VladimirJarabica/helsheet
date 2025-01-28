@@ -31,7 +31,7 @@ const Button = ({
       // hover:border-foreground px-2 py-1 text-sm
       // `}
       className={`inline-flex w-auto justify-center rounded-md tracking-wide
-        ${size === "medium" ? "px-3 py-2" : ""}
+        ${size === "medium" ? "px-3 py-1.5" : ""}
         ${size === "small" ? "px-2 py-1" : ""}
         text-sm 
         shadow-xs

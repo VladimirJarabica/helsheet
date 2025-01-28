@@ -28,7 +28,7 @@ const Select = ({ options, label, ...props }: SelectProps) => {
           </option>
         ))}
       </select>
-      <ChevronDownIcon className="w-4 absolute bottom-2 right-2" />
+      <ChevronDownIcon className="w-4 absolute bottom-2 right-2 pointer-events-none" />
     </div>
   );
 };

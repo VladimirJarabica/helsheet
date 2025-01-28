@@ -15,6 +15,8 @@ import { formatScaleId } from "../../utils/scale";
 import { getSheetUrl } from "../../utils/sheet";
 import { getOrCreateUser } from "../../utils/user";
 import TagPill from "./../components/TagPill";
+import Filter from "../components/Filter";
+import { getSongAuthors } from "../components/actions";
 
 export default async function Home({
   searchParams,
@@ -28,6 +30,8 @@ export default async function Home({
 
   const filter = parseFilter(searchParamsValue);
   console.log("filter", searchParamsValue, filter);
+
+  const authors = await getSongAuthors();
 
   const sheets = await dbClient.sheet.findMany({
     select: {
@@ -72,7 +76,8 @@ export default async function Home({
   });
 
   return (
-    <>
+    <div className="flex flex-col max-w-[700px] w-11/12">
+      <Filter songAuthors={authors} />
       {sheets.map((sheet) => (
         <Link
           key={sheet.id}
@@ -110,6 +115,6 @@ export default async function Home({
           </div>
         </Link>
       ))}
-    </>
+    </div>
   );
 }
