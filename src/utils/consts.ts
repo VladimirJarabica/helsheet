@@ -125,9 +125,11 @@ export const MUSIC_INSTRUCTIONS: Instruction[] = [
   {
     id: KnownMusicInstruction.prima_volta,
     name: "Prima volta",
+    renderText: "1.",
   },
   {
     id: KnownMusicInstruction.seconda_volta,
     name: "Seconda volta",
+    renderText: "2.",
   },
 ];

@@ -21,7 +21,6 @@ interface BarProps {
 }
 const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
   const {
-    song,
     instructions,
     duplicateBar,
     copyBarToTheEnd,
@@ -88,8 +87,8 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
           border-black`}
         style={{ height: VARIANT_CELL_HEIGHT }}
       >
-        {previousBar?.instruction !== bar.instruction
-          ? instruction?.name
+        {previousBar?.instruction !== bar.instruction && instruction
+          ? instruction.renderText ?? instruction.name
           : null}
       </div>
       <div className="flex z-10 bg-hel-bgDefault">

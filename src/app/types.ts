@@ -152,6 +152,7 @@ export type Bar = {
 export type Instruction = {
   id: string;
   name: string;
+  renderText?: string;
 };
 
 export type Verse = {

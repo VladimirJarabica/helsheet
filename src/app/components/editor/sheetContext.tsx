@@ -159,7 +159,7 @@ const sheetContext = createContext<SheetContext>({
   addVerse: () => {},
   removeVerse: () => {},
   setVerseText: () => {},
-  addInstruction: () => {},
+  addInstruction: () => ({ id: "", name: "" }),
   setBarInstruction: () => {},
 });
 
