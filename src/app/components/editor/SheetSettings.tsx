@@ -132,10 +132,12 @@ const SheetSettings = ({
         <Select
           {...register("timeSignature", { required: true })}
           label="Takt"
-          options={Object.keys(TimeSignature).map((timeSignature) => ({
-            value: timeSignature,
-            label: TIME_SIGNATURE_VALUE[timeSignature as TimeSignature],
-          }))}
+          options={Object.keys(TimeSignature)
+            .toSorted()
+            .map((timeSignature) => ({
+              value: timeSignature,
+              label: TIME_SIGNATURE_VALUE[timeSignature as TimeSignature],
+            }))}
         />
         <div className="mt-3 flex flex-col">
           <label className="text-sm/6 mb-1" htmlFor="name">

@@ -7,7 +7,14 @@ interface TagPillProps {
 
 const TagPill = ({ children, onRemove }: TagPillProps) => {
   return (
-    <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
+    <div
+      className="inline-flex text-nowrap items-center rounded-md
+    px-2 py-1 text-xs font-medium
+    ring-1 ring-stone-800/10 ring-inset
+    text-stone-800
+    bg-stone-100
+    "
+    >
       {children}
       {onRemove && (
         <button className="w-4" onClick={() => onRemove()}>

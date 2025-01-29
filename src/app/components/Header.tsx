@@ -9,7 +9,9 @@ const Header = async () => {
     <header className="w-full shadow mb-1 flex justify-center print:hidden">
       <div className="max-w-[700px] w-11/12 flex justify-between items-center">
         <div className="h-full flex">
-          <MenuItem href="/">Domov</MenuItem>
+          <MenuItem href="/" exact>
+            Domov
+          </MenuItem>
           <MenuItem href="/sheet">Piesne</MenuItem>
         </div>
         <div className="flex items-center gap-4 py-2">

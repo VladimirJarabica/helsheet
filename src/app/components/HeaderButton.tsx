@@ -6,12 +6,13 @@ import Button from "./Button";
 interface MenuItemProps {
   href: string;
   children: React.ReactNode;
+  exact?: boolean;
 }
-const MenuItem = ({ href, children }: MenuItemProps) => {
+const MenuItem = ({ href, children, exact }: MenuItemProps) => {
   const pathname = usePathname();
   console.log("pathname", pathname);
 
-  const isActive = pathname === href;
+  const isActive = exact ? pathname === href : pathname.startsWith(href);
   return (
     <div
       className={`flex items-center border-b-2 ${
