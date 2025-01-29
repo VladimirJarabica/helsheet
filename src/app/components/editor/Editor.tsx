@@ -182,9 +182,9 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
               <div className="flex gap-1">
                 <Image
                   src={`/quarter-note.png`}
-                  className=" h-[15px] w-[auto] mt-0.5"
-                  width={20}
-                  height={20}
+                  className="h-[15px] mt-0.5"
+                  width={4.75}
+                  height={15}
                   alt="note"
                 />
                 = {sheet.tempo}
