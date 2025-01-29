@@ -1,24 +1,26 @@
 "use server";
+import { currentUser } from "@clerk/nextjs/server";
 import { SheetAccess, SongAuthorType, User } from "@prisma/client";
 import { dbClient } from "../../services/db";
 import { parseFilter } from "../../utils/filter";
+import { notEmpty } from "../../utils/fnUtils";
 import { getSongAuthors } from "./actions";
 import Filter from "./Filter";
 import SheetPreview from "./SheetPreview";
-import { notEmpty } from "../../utils/fnUtils";
 
 interface FilterableSheetsProps {
   searchParams: Record<string, string>;
-  currentUser?: Pick<User, "id"> | null;
-  onlyCurrentUserSheets?: boolean;
+  user?: Pick<User, "id"> | null;
 }
 
 const FilterableSheets = async ({
   searchParams,
-  currentUser,
-  onlyCurrentUserSheets,
+  user,
 }: FilterableSheetsProps) => {
   const authors = await getSongAuthors();
+  const authUser = await currentUser();
+
+  const showPrivate = !!user && user.id === authUser?.id;
 
   const filter = parseFilter(searchParams);
 
@@ -38,9 +40,17 @@ const FilterableSheets = async ({
     },
     where: {
       AND: [
-        onlyCurrentUserSheets && currentUser
-          ? { sheetAuthorId: currentUser.id }
-          : null,
+        user
+          ? {
+              sheetAuthorId: user.id,
+              access: showPrivate ? undefined : SheetAccess.public,
+            }
+          : {
+              OR: [
+                { access: SheetAccess.public },
+                authUser ? { sheetAuthorId: authUser.id } : null,
+              ].filter(notEmpty),
+            },
         filter.country ? { country: filter.country } : null,
         filter.genre ? { genre: filter.genre } : null,
         filter.tuning ? { tuning: filter.tuning } : null,
@@ -57,12 +67,7 @@ const FilterableSheets = async ({
                   : { contains: filter.songAuthor },
             }
           : null,
-        {
-          OR: [
-            { access: SheetAccess.public },
-            currentUser ? { sheetAuthorId: currentUser.id } : null,
-          ].filter(notEmpty),
-        },
+        ,
       ].filter(notEmpty),
     },
     orderBy: { name: "asc" },
@@ -72,11 +77,7 @@ const FilterableSheets = async ({
     <div className="flex flex-col gap-3">
       <Filter songAuthors={authors} />
       {sheets.map((sheet) => (
-        <SheetPreview
-          key={sheet.id}
-          sheet={sheet}
-          showPrivate={onlyCurrentUserSheets}
-        />
+        <SheetPreview key={sheet.id} sheet={sheet} showPrivate={showPrivate} />
       ))}
     </div>
   );

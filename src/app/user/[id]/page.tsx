@@ -52,11 +52,7 @@ const UserPage = async ({ params, searchParams }: PageProps) => {
           }
         />
       </div>
-      <FilterableSheets
-        searchParams={searchParamsValue}
-        currentUser={user}
-        onlyCurrentUserSheets
-      />
+      <FilterableSheets searchParams={searchParamsValue} user={user} />
     </div>
   );
 };
