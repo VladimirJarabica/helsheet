@@ -1,5 +1,5 @@
 import { Country, Genre, SongAuthorType, TimeSignature } from "@prisma/client";
-import { Note } from "../app/types";
+import { Instruction, Note } from "../app/types";
 
 export const CELL_SIZE = 36;
 
@@ -115,4 +115,19 @@ export const Notes: (Note & {
   { note: "d", pitch: 3, position: 12 },
   { note: "dis", pitch: 3, position: 12 },
   { note: "des", pitch: 3, position: 12 },
+];
+
+export enum KnownMusicInstruction {
+  prima_volta = "prima_volta",
+  seconda_volta = "seconda_volta",
+}
+export const MUSIC_INSTRUCTIONS: Instruction[] = [
+  {
+    id: KnownMusicInstruction.prima_volta,
+    name: "Prima volta",
+  },
+  {
+    id: KnownMusicInstruction.seconda_volta,
+    name: "Seconda volta",
+  },
 ];

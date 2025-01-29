@@ -1,4 +1,5 @@
 import { Sheet, Tuning as TuningType } from "@prisma/client";
+import { nanoid } from "nanoid";
 import { uniqBy } from "ramda";
 import { createContext, useContext, useState } from "react";
 import { CFTuning } from "../../../data/tunings/cf";
@@ -19,6 +20,7 @@ import {
   DefinedDirection,
   Direction,
   EmptyCell,
+  Instruction,
   Ligatures,
   SongContent,
   SubCell,
@@ -26,6 +28,7 @@ import {
 } from "../../types";
 import { saveSong } from "./actions";
 import { useLigatures } from "./useLigatures";
+import { MUSIC_INSTRUCTIONS } from "../../../utils/consts";
 
 const TUNINGS: Record<TuningType, Tuning> = {
   [TuningType.CF]: CFTuning,
@@ -63,6 +66,7 @@ type SheetContext = {
   isEditing: boolean;
   setEditing: (editing: boolean) => void;
   song: SongContent;
+  instructions: Instruction[];
   tuning: Tuning;
   sheet: Pick<
     Sheet,
@@ -111,8 +115,8 @@ type SheetContext = {
   addVerse: (text: string) => void;
   removeVerse: (index: number) => void;
   setVerseText: (index: number, text: string) => void;
-  addVariant: (variant: string) => void;
-  setBarVariant: (barIndex: number, variant?: number) => void;
+  addInstruction: (instruction: string) => Instruction;
+  setBarInstruction: (barIndex: number, instruction?: string) => void;
 };
 
 const sheetContext = createContext<SheetContext>({
@@ -120,6 +124,7 @@ const sheetContext = createContext<SheetContext>({
   song: {
     bars: [],
   },
+  instructions: [],
   tuning: CFTuning,
   // @ts-expect-error will be set in provider
   sheet: null,
@@ -154,8 +159,8 @@ const sheetContext = createContext<SheetContext>({
   addVerse: () => {},
   removeVerse: () => {},
   setVerseText: () => {},
-  addVariant: () => {},
-  setBarVariant: () => {},
+  addInstruction: () => {},
+  setBarInstruction: () => {},
 });
 
 export const SheetContextProvider = ({
@@ -749,22 +754,20 @@ export const SheetContextProvider = ({
     }));
   };
 
-  const addVariant = (variant: string) => {
-    setSong((prev) => {
-      const lastId = prev.variants?.[prev.variants.length - 1]?.id ?? 0;
-
-      return {
-        ...prev,
-        variants: [...(prev.variants ?? []), { id: lastId + 1, name: variant }],
-      };
-    });
+  const addInstruction = (instruction: string) => {
+    const newInstruction = { id: nanoid(5), name: instruction };
+    setSong((prev) => ({
+      ...prev,
+      instructions: [...(prev.instructions ?? []), newInstruction],
+    }));
+    return newInstruction;
   };
 
-  const setBarVariant = (barIndex: number, variant?: number) => {
+  const setBarInstruction = (barIndex: number, instruction?: string) => {
     setSong((prev) => ({
       ...prev,
       bars: prev.bars.map((bar, index) =>
-        index === barIndex ? { ...bar, variant } : bar
+        index === barIndex ? { ...bar, instruction } : bar
       ),
     }));
   };
@@ -785,6 +788,7 @@ export const SheetContextProvider = ({
           tuning,
           sheet,
           song,
+          instructions: [...MUSIC_INSTRUCTIONS, ...(song.instructions ?? [])],
           ligatures,
           activeCell,
           setActiveCell,
@@ -814,8 +818,8 @@ export const SheetContextProvider = ({
           addVerse,
           removeVerse,
           setVerseText,
-          addVariant,
-          setBarVariant,
+          addInstruction: addInstruction,
+          setBarInstruction: setBarInstruction,
         }}
       >
         {children}

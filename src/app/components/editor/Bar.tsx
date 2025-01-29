@@ -7,11 +7,11 @@ import {
 } from "../../../utils/consts";
 import { Bar as BarType } from "./../../types";
 import Column from "./Column";
+import Instructions from "./Instructions";
 import LineHeading from "./LineHeading";
 import ModalWrapper from "./ModalWrapper";
 import RepeatSign from "./RepeatSign";
 import { useSheetContext } from "./sheetContext";
-import Variants from "./Variants";
 
 interface BarProps {
   bar: BarType;
@@ -22,20 +22,21 @@ interface BarProps {
 const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
   const {
     song,
+    instructions,
     duplicateBar,
     copyBarToTheEnd,
     removeBar,
     setRepeatOfBar,
     addColumnToBar,
     removeLastColumnFromBar,
-    setBarVariant,
+    setBarInstruction,
     isEditing,
   } = useSheetContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSelectingVariant, setIsSelectingVariant] = useState(false);
+  const [isSelectingInstruction, setIsSelectingInstruction] = useState(false);
 
-  const variant = bar.variant
-    ? song.variants?.find((v) => v.id === bar.variant)
+  const instruction = bar.instruction
+    ? instructions.find((v) => v.id === bar.instruction)
     : null;
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -81,13 +82,15 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
       </div>
       <div
         className={`text-xs 
-          ${variant ? "border-t-2 px-3" : ""}
-          ${previousBar?.variant !== bar.variant ? "border-l-2" : ""}
-          ${followingBar?.variant !== bar.variant ? "border-r-2" : ""}
+          ${instruction ? "border-t-2 px-3" : ""}
+          ${previousBar?.instruction !== bar.instruction ? "border-l-2" : ""}
+          ${followingBar?.instruction !== bar.instruction ? "border-r-2" : ""}
           border-black`}
         style={{ height: VARIANT_CELL_HEIGHT }}
       >
-        {variant?.name}
+        {previousBar?.instruction !== bar.instruction
+          ? instruction?.name
+          : null}
       </div>
       <div className="flex z-10 bg-hel-bgDefault">
         {/* {onNewLine && <LineHeading />} */}
@@ -187,13 +190,16 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
                     },
                     null,
                     {
-                      label: bar.variant ? "Odobrať variant" : "Pridať variant",
+                      label: bar.instruction
+                        ? "Odobrať inštrukciu"
+                        : "Pridať inštrukciu",
                       onClick: () => {
-                        if (bar.variant) {
-                          setBarVariant(barIndex, undefined);
+                        if (bar.instruction) {
+                          setBarInstruction(barIndex, undefined);
                         } else {
-                          setIsSelectingVariant(true);
+                          setIsSelectingInstruction(true);
                         }
+                        setIsMenuOpen(false);
                       },
                     },
                     null,
@@ -230,12 +236,12 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
           )}
         </div>
       )}
-      {isSelectingVariant && (
-        <ModalWrapper close={() => setIsSelectingVariant(false)}>
-          <Variants
-            onSelect={(variantId) => {
-              setBarVariant(barIndex, variantId);
-              setIsSelectingVariant(false);
+      {isSelectingInstruction && (
+        <ModalWrapper close={() => setIsSelectingInstruction(false)}>
+          <Instructions
+            onSelect={(instructionId) => {
+              setBarInstruction(barIndex, instructionId);
+              setIsSelectingInstruction(false);
             }}
           />
         </ModalWrapper>

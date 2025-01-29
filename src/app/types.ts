@@ -146,11 +146,11 @@ export type Bar = {
     start: boolean;
     end: boolean;
   };
-  variant?: number;
+  instruction?: string;
 };
 
-export type Variant = {
-  id: number;
+export type Instruction = {
+  id: string;
   name: string;
 };
 
@@ -160,7 +160,7 @@ export type Verse = {
 
 export type SongContent = {
   bars: Bar[];
-  variants?: Variant[];
+  instructions?: Instruction[];
   verses?: Verse[];
 };
 
