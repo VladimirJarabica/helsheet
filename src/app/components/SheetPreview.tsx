@@ -39,7 +39,7 @@ const SheetPreview = ({ sheet, showPrivate = false }: SheetPreviewProps) => {
     <Link
       key={sheet.id}
       href={getSheetUrl(sheet)}
-      className="shadow hover:shadow-sm transition-shadow rounded-sm p-2 border border-zinc-200 flex flex-col"
+      className="hover:shadow-md transition-shadow rounded-sm p-2 border border-zinc-200 flex flex-col"
     >
       <div className="flex justify-between gap-2">
         <span className="font-bold flex gap-1">
