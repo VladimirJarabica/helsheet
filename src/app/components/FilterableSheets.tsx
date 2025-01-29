@@ -34,6 +34,7 @@ const FilterableSheets = async ({
       tuning: true,
       timeSignature: true,
       scale: true,
+      access: true,
     },
     where: {
       AND: [
@@ -71,7 +72,11 @@ const FilterableSheets = async ({
     <div className="flex flex-col gap-3">
       <Filter songAuthors={authors} />
       {sheets.map((sheet) => (
-        <SheetPreview key={sheet.id} sheet={sheet} />
+        <SheetPreview
+          key={sheet.id}
+          sheet={sheet}
+          showPrivate={onlyCurrentUserSheets}
+        />
       ))}
     </div>
   );

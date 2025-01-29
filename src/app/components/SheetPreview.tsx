@@ -1,14 +1,21 @@
-import { Genre, Sheet, SongAuthorType, User } from "@prisma/client";
+import { LockClosedIcon } from "@heroicons/react/24/outline";
+import {
+  Genre,
+  Sheet,
+  SheetAccess,
+  SongAuthorType,
+  User,
+} from "@prisma/client";
 import Link from "next/link";
-import { getSheetUrl } from "../../utils/sheet";
-import TagPill from "./TagPill";
-import { formatScaleId } from "../../utils/scale";
 import {
   AUTHOR_TYPE_VALUE,
   COUNTRY_VALUE,
   GENRE_VALUE,
   TIME_SIGNATURE_VALUE,
 } from "../../utils/consts";
+import { formatScaleId } from "../../utils/scale";
+import { getSheetUrl } from "../../utils/sheet";
+import TagPill from "./TagPill";
 
 interface SheetPreviewProps {
   sheet: Pick<
@@ -22,10 +29,12 @@ interface SheetPreviewProps {
     | "tuning"
     | "timeSignature"
     | "scale"
+    | "access"
   > & { SheetAuthor?: Pick<User, "id" | "nickname"> };
+  showPrivate?: boolean;
 }
 
-const SheetPreview = ({ sheet }: SheetPreviewProps) => {
+const SheetPreview = ({ sheet, showPrivate = false }: SheetPreviewProps) => {
   return (
     <Link
       key={sheet.id}
@@ -33,7 +42,12 @@ const SheetPreview = ({ sheet }: SheetPreviewProps) => {
       className="shadow hover:shadow-sm transition-shadow rounded-sm p-2 border border-zinc-200 flex flex-col"
     >
       <div className="flex justify-between gap-2">
-        <span className="font-bold">{sheet.name}</span>
+        <span className="font-bold flex gap-1">
+          {sheet.name}
+          {showPrivate && sheet.access === SheetAccess.private && (
+            <LockClosedIcon className="w-4 mr-1" />
+          )}
+        </span>
 
         {sheet.SheetAuthor && (
           <Link
