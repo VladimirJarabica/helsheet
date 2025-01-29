@@ -75,7 +75,7 @@ const FilterableSheets = async ({
 
   return (
     <div className="flex flex-col gap-3">
-      <Filter songAuthors={authors} />
+      <Filter songAuthors={authors} filter={filter} />
       {sheets.map((sheet) => (
         <SheetPreview key={sheet.id} sheet={sheet} showPrivate={showPrivate} />
       ))}

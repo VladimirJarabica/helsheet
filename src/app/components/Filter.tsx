@@ -2,26 +2,19 @@
 import { Country, Genre, Scale, SongAuthorType, Tuning } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { COUNTRY_VALUE, GENRE_VALUE } from "../../utils/consts";
-import { FilterKey, FilterValue, parseFilter } from "../../utils/filter";
-import Select from "./Select";
+import { FilterKey, FilterValue } from "../../utils/filter";
 import { formatScaleId } from "../../utils/scale";
+import Select from "./Select";
 
 interface FilterProps {
   songAuthors: string[];
+  filter: FilterValue;
 }
 
-const Filter = ({ songAuthors }: FilterProps) => {
+const Filter = ({ songAuthors, filter }: FilterProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  const filter = parseFilter({
-    country: searchParams.get("country") ?? "",
-    genre: searchParams.get("genre") ?? "",
-    tuning: searchParams.get("tuning") ?? "",
-    scale: searchParams.get("scale") ?? "",
-    songAuthor: searchParams.get("songAuthor") ?? "",
-  });
 
   console.log("filter", filter);
 
@@ -36,9 +29,6 @@ const Filter = ({ songAuthors }: FilterProps) => {
 
   return (
     <div className="pt-5 flex flex-col flex-wrap sm:flex-row sm:items-start gap-y-1 justify-start">
-      {/* <Button variant="secondary" className="flex gap-1">
-        <HeartIcon className="w-4" /> Obľúbené
-      </Button> */}
       <Select
         label="Krajina"
         value={filter.country ?? ""}
