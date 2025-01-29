@@ -111,6 +111,7 @@ const SheetSettings = ({
         <Select
           {...register("tuning")}
           label="Ladenie"
+          className="mt-3"
           options={Object.keys(Tuning).map((tuning) => ({
             value: tuning,
             label: tuning,
@@ -119,6 +120,7 @@ const SheetSettings = ({
         <Select
           {...register("scale")}
           label="Stupnica"
+          className="mt-3"
           options={[
             { value: "", label: "-" },
             ...Scales.map((scale) => ({
@@ -132,6 +134,7 @@ const SheetSettings = ({
         <Select
           {...register("timeSignature", { required: true })}
           label="Takt"
+          className="mt-3"
           options={Object.keys(TimeSignature)
             .toSorted()
             .map((timeSignature) => ({
@@ -166,6 +169,7 @@ const SheetSettings = ({
         <Select
           {...register("genre")}
           label="Žáner"
+          className="mt-3"
           options={[
             { value: "", label: "-" },
             ...Object.keys(Genre).map((genre) => ({
@@ -177,6 +181,7 @@ const SheetSettings = ({
         <Select
           {...register("country")}
           label="Krajina"
+          className="mt-3"
           options={[
             { value: "", label: "-" },
             ...Object.keys(Country).map((country) => ({
@@ -188,6 +193,7 @@ const SheetSettings = ({
         <Select
           {...register("songAuthorType")}
           label="Autorstvo"
+          className="mt-3"
           options={Object.keys(SongAuthorType).map((songAuthorType) => ({
             value: songAuthorType,
             label: AUTHOR_TYPE_VALUE[songAuthorType as SongAuthorType],

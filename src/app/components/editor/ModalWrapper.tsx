@@ -1,3 +1,4 @@
+"use client";
 interface ModalWrapperProps {
   children: React.ReactNode;
   close: () => void;
@@ -7,7 +8,7 @@ const ModalWrapper = ({ children, close }: ModalWrapperProps) => {
   return (
     <div
       onClick={() => {
-        close();
+        close?.();
       }}
       className="fixed top-0 left-0 w-screen h-dvh z-50 flex items-center justify-center"
     >

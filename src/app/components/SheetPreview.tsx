@@ -22,7 +22,7 @@ interface SheetPreviewProps {
     | "tuning"
     | "timeSignature"
     | "scale"
-  > & { SheetAuthor: Pick<User, "id" | "nickname"> };
+  > & { SheetAuthor?: Pick<User, "id" | "nickname"> };
 }
 
 const SheetPreview = ({ sheet }: SheetPreviewProps) => {
@@ -34,9 +34,15 @@ const SheetPreview = ({ sheet }: SheetPreviewProps) => {
     >
       <div className="flex justify-between gap-2">
         <span className="font-bold">{sheet.name}</span>
-        <span className="text-sm text-gray-500 underline">
-          zapísal ({sheet.SheetAuthor.nickname})
-        </span>
+
+        {sheet.SheetAuthor && (
+          <Link
+            href={`/user/${sheet.SheetAuthor.id}`}
+            className="text-sm text-gray-500 underline"
+          >
+            zapísal ({sheet.SheetAuthor.nickname})
+          </Link>
+        )}
       </div>
       <div className="flex mt-1 gap-1 flex-wrap">
         {sheet.scale && <TagPill>{formatScaleId(sheet.scale)}</TagPill>}

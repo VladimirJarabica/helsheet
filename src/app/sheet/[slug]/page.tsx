@@ -72,7 +72,7 @@ const Sheet = async (props: PageProps) => {
     return <div>not found</div>;
   }
 
-  const user = authUser ? await getOrCreateUser(authUser.id) : null;
+  const user = authUser ? await getOrCreateUser(authUser) : null;
 
   const isAuthor = sheet.SheetAuthor.id === user?.id;
 

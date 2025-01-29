@@ -14,7 +14,6 @@ const Filter = ({ songAuthors }: FilterProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  console.log("router", { router, pathname, searchParams });
 
   const filter = parseFilter({
     country: searchParams.get("country") ?? "",
@@ -36,16 +35,19 @@ const Filter = ({ songAuthors }: FilterProps) => {
   };
 
   return (
-    <div className="pt-5 flex flex-col sm:flex-row sm:items-end gap-1 justify-between">
+    <div className="pt-5 flex flex-col flex-wrap sm:flex-row sm:items-start gap-y-1 justify-start">
       {/* <Button variant="secondary" className="flex gap-1">
         <HeartIcon className="w-4" /> Obľúbené
       </Button> */}
       <Select
         label="Krajina"
         value={filter.country ?? ""}
+        className="w-full sm:w-1/4 sm:px-0.5"
+        inlineLabel
         onChange={(e) => setFilter("country", e.target.value as Country)}
+        resetValue={() => setFilter("country", undefined)}
         options={[
-          { value: "", label: "-" },
+          // { value: "", label: "Krajina" },
           ...Object.keys(Country).map((country) => ({
             value: country,
             label: COUNTRY_VALUE[country as Country],
@@ -55,9 +57,11 @@ const Filter = ({ songAuthors }: FilterProps) => {
       <Select
         label="Žáner"
         value={filter.genre ?? ""}
+        className="w-full sm:w-1/4 sm:px-0.5"
+        inlineLabel
         onChange={(e) => setFilter("genre", e.target.value as Genre)}
+        resetValue={() => setFilter("genre", undefined)}
         options={[
-          { value: "", label: "-" },
           ...Object.keys(GENRE_VALUE).map((genre) => ({
             value: genre,
             label: GENRE_VALUE[genre as Genre],
@@ -67,9 +71,11 @@ const Filter = ({ songAuthors }: FilterProps) => {
       <Select
         label="Ladenie heligónky"
         value={filter.tuning ?? ""}
+        className="w-full sm:w-1/4 sm:px-0.5"
+        inlineLabel
         onChange={(e) => setFilter("tuning", e.target.value as Tuning)}
+        resetValue={() => setFilter("tuning", undefined)}
         options={[
-          { value: "", label: "-" },
           ...Object.keys(Tuning).map((tuning) => ({
             value: tuning,
             label: tuning,
@@ -79,9 +85,11 @@ const Filter = ({ songAuthors }: FilterProps) => {
       <Select
         label="Stupnica"
         value={filter.scale ?? ""}
+        className="w-full sm:w-1/4 sm:px-0.5"
+        inlineLabel
         onChange={(e) => setFilter("scale", e.target.value as Tuning)}
+        resetValue={() => setFilter("scale", undefined)}
         options={[
-          { value: "", label: "-" },
           ...Object.keys(Scale).map((scale) => ({
             value: scale,
             label: formatScaleId(scale as Scale),
@@ -91,9 +99,11 @@ const Filter = ({ songAuthors }: FilterProps) => {
       <Select
         label="Autor"
         value={filter.songAuthor ?? ""}
+        className="w-full sm:w-1/4 sm:px-0.5"
+        inlineLabel
         onChange={(e) => setFilter("songAuthor", e.target.value)}
+        resetValue={() => setFilter("songAuthor", undefined)}
         options={[
-          { value: "", label: "-" },
           { value: SongAuthorType.folk_song, label: "Ludová pieseň" },
           ...songAuthors.map((author) => ({
             value: author,

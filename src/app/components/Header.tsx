@@ -1,21 +1,27 @@
-"use server";
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+"use client";
+import { SignInButton, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { HomeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import Button from "./Button";
 import MenuItem from "./HeaderButton";
-import NewSheetButton from "./NewSheetButtonServer";
 
-const Header = async () => {
+interface HeaderProps {
+  newSheetButton: React.ReactNode;
+}
+
+const Header = ({ newSheetButton }: HeaderProps) => {
+  const { user } = useUser();
+
   return (
-    <header className="w-full shadow mb-1 flex justify-center print:hidden">
+    <header className="w-full shadow mb-1 flex justify-center print:hidden h-11">
       <div className="max-w-[700px] w-11/12 flex justify-between items-center">
         <div className="h-full flex">
           <MenuItem href="/" exact>
-            Domov
+            <HomeIcon className="w-4" />
           </MenuItem>
           <MenuItem href="/sheet">Piesne</MenuItem>
         </div>
         <div className="flex items-center gap-4 py-2">
-          <NewSheetButton size="small" />
+          {newSheetButton}
           <SignedOut>
             <SignInButton>
               <Button variant="primary" size="small">
@@ -23,9 +29,15 @@ const Header = async () => {
               </Button>
             </SignInButton>
           </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          <UserButton>
+            <UserButton.MenuItems>
+              <UserButton.Link
+                label="Moje piesne"
+                labelIcon={<PencilSquareIcon className="w-4 h-4" />}
+                href={`/user/${user?.id}`}
+              />
+            </UserButton.MenuItems>
+          </UserButton>
         </div>
       </div>
     </header>

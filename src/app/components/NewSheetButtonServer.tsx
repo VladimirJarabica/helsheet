@@ -12,7 +12,7 @@ interface NewSheetButtonProps {
 const NewSheetButton = async ({ size }: NewSheetButtonProps) => {
   const authUser = await currentUser();
 
-  const user = authUser ? await getOrCreateUser(authUser.id) : null;
+  const user = authUser ? await getOrCreateUser(authUser) : null;
 
   return (
     <SignedIn>

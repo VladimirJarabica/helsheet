@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Header from "./components/Header";
+import NewSheetButton from "./components/NewSheetButtonServer";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -32,7 +33,7 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-hel-bgDefault`}
         >
-          <Header />
+          <Header newSheetButton={<NewSheetButton size="small" />} />
           <main className="flex justify-center">{children}</main>
         </body>
       </html>

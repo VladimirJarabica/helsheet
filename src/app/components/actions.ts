@@ -67,7 +67,7 @@ export const updateSheet = async (sheet: Pick<Sheet, "id">, data: FormData) => {
   if (!authUser) {
     return;
   }
-  const user = await getOrCreateUser(authUser.id);
+  const user = await getOrCreateUser(authUser);
   // if (user.nickname !== data.author) {
   //   await dbClient.user.update({
   //     where: { id: user.id },
@@ -105,7 +105,7 @@ export const deleteSheet = async (sheet: Pick<Sheet, "id" | "name">) => {
   if (!authUser) {
     return;
   }
-  const user = await getOrCreateUser(authUser.id);
+  const user = await getOrCreateUser(authUser);
   if (!user) {
     return;
   }
@@ -123,7 +123,7 @@ export const changeSheetAccess = async (
   if (!authUser) {
     return;
   }
-  const user = await getOrCreateUser(authUser.id);
+  const user = await getOrCreateUser(authUser);
   const updatedSheet = await dbClient.sheet.update({
     where: { id: sheet.id, sheetAuthorId: user.id },
     data: { access },
