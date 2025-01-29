@@ -2,7 +2,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { SheetAccess, SongAuthorType, User } from "@prisma/client";
 import { dbClient } from "../../services/db";
-import { parseFilter } from "../../utils/filter";
+import { FilterSortBy, parseFilter } from "../../utils/filter";
 import { notEmpty } from "../../utils/fnUtils";
 import { getSongAuthors } from "./actions";
 import Filter from "./Filter";
@@ -70,7 +70,12 @@ const FilterableSheets = async ({
         ,
       ].filter(notEmpty),
     },
-    orderBy: { name: "asc" },
+    orderBy: {
+      ...(filter.sortBy === FilterSortBy.name && { name: filter.sortByOrder }),
+      ...(filter.sortBy === FilterSortBy.date_created && {
+        createdAt: filter.sortByOrder,
+      }),
+    },
   });
 
   return (
