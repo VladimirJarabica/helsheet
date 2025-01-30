@@ -3,6 +3,7 @@ import { atom, useAtom } from "jotai";
 import { Notes } from "../../../utils/consts";
 import { Scale, Scales } from "../../../utils/scale";
 import { Note } from "../../types";
+import Select from "../Select";
 
 export const transposeNote = ({
   from,
@@ -206,76 +207,66 @@ const MusicSheetSelector = ({
   return (
     <div className="max-w-[100vw] overflow-auto">
       <div className="relative mb-20 w-[510px]">
-        <div className="flex mb-16 gap-2">
-          <div className="flex">
-            <label>Stupnica</label>
-            <select
-              className="bg-transparent text-sm border-b border-gray-400 outline-none"
-              value={scale.id}
+        <div className="flex items-center mb-16 gap-2">
+          <label>Stupnica</label>
+          <Select
+            label="Stupnica"
+            value={scale.id}
+            inlineLabel
+            onChange={(e) => {
+              const newScale = Scales.find(
+                (scale) => scale.id === e.target.value
+              );
+              if (newScale) {
+                setScale(newScale);
+              }
+            }}
+            options={Scales.map((scale) => ({
+              value: scale.id,
+              label: `${scale.name}${
+                scale.signature ? ` (${scale.signature})` : ""
+              }`,
+            }))}
+          />
+          <Select
+            label="Transpozícia"
+            value={transposeScale?.id ?? ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              const newScale = value
+                ? Scales.find((scale) => scale.id === value) ?? null
+                : null;
+              setTransposeScale(newScale);
+            }}
+            options={[
+              ...Scales.map((scale) => ({
+                value: scale.id,
+                label: `${scale.name}${
+                  scale.signature ? ` (${scale.signature})` : ""
+                }`,
+              })),
+            ]}
+            inlineLabel
+          />
+          {transposeScale && (
+            <Select
+              label="Posun oktávy"
+              value={pitchOffset || ""}
+              resetValue={() => setPitchOffset(0)}
               onChange={(e) => {
-                const newScale = Scales.find(
-                  (scale) => scale.id === e.target.value
-                );
-                if (newScale) {
-                  setScale(newScale);
+                const value = Number(e.target.value);
+                if (!Number.isNaN(value)) {
+                  setPitchOffset(value);
                 }
               }}
-            >
-              {Scales.map((scale) => (
-                <option key={scale.id} value={scale.id}>
-                  {`${scale.name}${
-                    scale.signature ? ` (${scale.signature})` : ""
-                  }`}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex">
-            <label>Transpozícia</label>
-            <select
-              className="bg-transparent text-sm border-b border-gray-400 outline-none"
-              value={transposeScale?.id ?? undefined}
-              onChange={(e) => {
-                const value = e.target.value;
-                const newScale = value
-                  ? Scales.find((scale) => scale.id === value) ?? null
-                  : null;
-                setTransposeScale(newScale);
-              }}
-            >
-              <option value="">Žiadna</option>
-              {Scales.map((scale) => (
-                <option key={scale.id} value={scale.id}>
-                  {`${scale.name}${
-                    scale.signature ? ` (${scale.signature})` : ""
-                  }`}
-                </option>
-              ))}
-            </select>
-          </div>
-          {transposeScale && (
-            <div className="flex">
-              <label>Posun oktávy</label>
-              <select
-                className="bg-transparent text-sm border-b border-gray-400 outline-none"
-                value={pitchOffset}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  if (!Number.isNaN(value)) {
-                    setPitchOffset(value);
-                  }
-                }}
-              >
-                {new Array(5).fill(0).map((_, index) => {
-                  const value = index - 2;
-                  return (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
+              options={[
+                { value: "2", label: "2" },
+                { value: "1", label: "1" },
+                { value: "-1", label: "-1" },
+                { value: "-2", label: "-2" },
+              ]}
+              inlineLabel
+            />
           )}
         </div>
 

@@ -101,18 +101,18 @@ const ColumnSettings = () => {
   });
 
   return (
-    <div className="print:hidden min-h-0 h-[50vh] fixed bottom-0 left-0 right-0 z-10 flex justify-center border-t border-black">
+    <div className="print:hidden min-h-0 h-[50vh] fixed bottom-0 left-0 right-0 z-10 flex justify-center border-t border-gray-700">
       <div className="flex gap-4 fixed bottom-[50vh] translate-y-2 bg-hel-bgDefault border-gray-700 shadow rounded shadow-gray-700 border-b-0 px-3 py-2 z-20">
         <div onClick={() => setTab("notes")}>Noty</div>
         <div onClick={() => setTab("length")}>Dĺžka nôt</div>
         <div onClick={() => setTab("fingers")}>Prstoklad</div>
       </div>
       <div className="min-h-0 h-[50vh] overflow-y-scroll bg-hel-bgDefault">
-        <div className="w-screen p-5 flex flex-col items-center shadow shadow-gray-700 h-fit">
+        <div className="w-screen p-5 flex flex-col items-center">
           <div className="flex flex-col items-center min-h-0 justify-center">
             <div>
-              {tab === "length" && <NoteLengthSelect />}
               {tab === "notes" && <ColumnNotes />}
+              {tab === "length" && <NoteLengthSelect />}
             </div>
           </div>
         </div>

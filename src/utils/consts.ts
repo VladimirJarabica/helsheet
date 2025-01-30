@@ -133,3 +133,11 @@ export const MUSIC_INSTRUCTIONS: Instruction[] = [
     renderText: "2.",
   },
 ];
+
+export const ROMAN_NUMBER: Record<number, string> = {
+  1: "I",
+  2: "II",
+  3: "III",
+  4: "IV",
+  5: "V",
+};

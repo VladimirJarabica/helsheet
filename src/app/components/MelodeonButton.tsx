@@ -29,51 +29,75 @@ export const MelodeonButtonWrapper = ({
           }
         : {})}
       className={`
-      ${!noPadding ? "px-3" : ""}
-      h-8
-      flex
-      justify-center
-      items-center
+      min-w-11
       mx-1
-      my-0.5
+      mt-2.5
       text-sm
       whitespace-nowrap
-      
       rounded-xl
-      border
+      //border
+      overflow-visible
+      transition-all
       border-solid
-      border-black
+      border-gray-600
       cursor-pointer
       
       ${
         !selected
           ? `
-      border-b-[6px]
-    //hover:border-b-[8px]
+      //border-b-[6px]
+      //hover:border-b-[4px]
     //hover:-translate-y-[2px]
-      //bg-green-50
-      bg-[#e3d9bc]
+      //bg-////green-50
+      //bg-///[#e3d9bc]
       `
           : ""
       }
       
-      active:border-b-[1px]
-      active:translate-y-[2px]
+      //active:border-b-[1px]
+      //active:translate-y-[2px]
 
       overflow-hidden
 
       ${
         selected
           ? `
-      border-b-[1px]
-      //bg-green-300
-      bg-[#dbc991]
+      //border-//b-[1px]
+      //bg-//green-300
+      //bg-//[#dbc991]
       `
           : ""
       }
-      `}
+      group
+      bg-stone-500
+    //bg-[#A30036]
+    `}
     >
-      {children}
+      <div
+        className={`
+      ${!noPadding ? "px-3" : ""}
+      h-8
+      flex
+      justify-center
+      items-center
+      transition-all      
+      rounded-xl
+      w-full
+      //bg-[#ef003b]
+      //bg-hel-bgEmphasis
+      bg-stone-200
+      //text-white
+      
+      ${
+        selected
+          ? "-translate-y-0.5"
+          : "-translate-y-1.5 group-hover:-translate-y-2 group-active:-translate-y-0.5"
+      }
+      
+      `}
+      >
+        {children}
+      </div>
     </div>
   );
 };
@@ -104,7 +128,7 @@ const MelodeonButton = <
   selected,
 }: MelodeonButtonProps<ButtonType>) => {
   return (
-    <div className="flex items-center flex-col-reverse sm:flex-row">
+    <div className="flex items-center flex-col-reverse md:flex-row-reverse max-w-full overflow-visible">
       <MelodeonButtonWrapper selected={selected} noPadding>
         <div className="w-14 h-full flex justify-center">
           {direction !== "pull" && (
@@ -116,7 +140,8 @@ const MelodeonButton = <
               ("pitch" in button.push && "pitch" in hoveredNote
                 ? button.push.pitch === hoveredNote.pitch
                 : true)
-                ? "bg-[#dbc991]"
+                ? // ? "bg-[#dbc991]"
+                  ""
                 : ""
             }
             `}
@@ -134,13 +159,14 @@ const MelodeonButton = <
             <div
               className={`flex-1 text-center h-full flex items-center justify-center
             ${direction === "pull" ? "w-full" : ""}
-            ${direction === "empty" ? "border-l border-black" : ""}
+            ${direction === "empty" ? "border-l border-gray-600" : ""}
             ${
               hoveredNote?.note === button.pull.note &&
               ("pitch" in button.pull && "pitch" in hoveredNote
                 ? button.pull.pitch === hoveredNote.pitch
                 : true)
-                ? "bg-[#dbc991]"
+                ? // ? "bg-[#dbc991]"
+                  ""
                 : ""
             }
             `}
