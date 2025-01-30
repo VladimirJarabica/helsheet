@@ -49,7 +49,7 @@ export const useSaveContent = ({
         // Otherwise wait X seconds after the last change
         const timeout = setTimeout(() => {
           save();
-        }, 2500);
+        }, 1500);
 
         return () => clearTimeout(timeout);
       }

@@ -81,10 +81,19 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
       </div>
       <div
         className={`text-xs 
-          ${instruction ? "border-t-2 px-3" : ""}
-          ${previousBar?.instruction !== bar.instruction ? "border-l-2" : ""}
-          ${followingBar?.instruction !== bar.instruction ? "border-r-2" : ""}
-          border-black`}
+          -ml-[2px]
+          ${instruction ? "border-t-2 px-3 border-black" : "border-transparent"}
+          ${
+            previousBar?.instruction === bar.instruction
+              ? "border-l-0"
+              : "border-l-2"
+          }
+          ${
+            followingBar?.instruction === bar.instruction
+              ? "border-r-0"
+              : "border-r-2"
+          }
+          `}
         style={{ height: VARIANT_CELL_HEIGHT }}
       >
         {previousBar?.instruction !== bar.instruction && instruction

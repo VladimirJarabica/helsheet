@@ -98,10 +98,8 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
             <div className="text-2xl font-bold flex gap-2 items-end">
               {sheet.name}
               {isEditing && (
-                <div className="text-base font-normal mb-0.5">
-                  ({saveStatus === "saved" && "uložené"}
-                  {saveStatus === "saving" && "ukladám..."}
-                  {saveStatus === "unsaved" && "neuložené"})
+                <div className="text-sm text-gray-600 font-normal mb-1">
+                  ({saveStatus === "saved" ? "uložené" : "ukladám..."})
                 </div>
               )}
             </div>
