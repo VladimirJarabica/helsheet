@@ -1,9 +1,5 @@
 "use client";
-import {
-  Cog6ToothIcon,
-  GlobeEuropeAfricaIcon,
-  LockClosedIcon,
-} from "@heroicons/react/24/outline";
+import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { Sheet, SheetAccess, SongAuthorType, User } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -21,6 +17,7 @@ import { getSheetUrl } from "../../../utils/sheet";
 import { SongContent } from "../../types";
 import { changeSheetAccess, deleteSheet, updateSheet } from "../actions";
 import Button from "../Button";
+import ToggleButton from "../ToggleButton";
 import Bar from "./Bar";
 import ColumnSettings from "./ColumnSettings";
 import {
@@ -137,47 +134,35 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                   </Button>
                 </>
               )}
-              {!isEditing && editable && (
+              {editable && (
                 <>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setEditing(true);
+                  {!isEditing && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setEditing(true);
+                      }}
+                    >
+                      Upraviť
+                    </Button>
+                  )}
+                  <ToggleButton
+                    options={[
+                      { label: "Verejné", value: SheetAccess.public },
+                      { label: "Skryté", value: SheetAccess.private },
+                    ]}
+                    value={sheet.access}
+                    onChange={async (value) => {
+                      await changeSheetAccess(sheet, value);
                     }}
-                  >
-                    Upraviť
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={async () => {
-                      await changeSheetAccess(
-                        sheet,
-                        sheet.access === SheetAccess.private
-                          ? SheetAccess.public
-                          : SheetAccess.private
-                      );
-                    }}
-                    className="flex"
-                  >
-                    {sheet.access === SheetAccess.private ? (
-                      <>
-                        <LockClosedIcon className="w-4 mr-1" />
-                        Súkromné
-                      </>
-                    ) : (
-                      <>
-                        <GlobeEuropeAfricaIcon className="w-4 mr-1" />
-                        Verejné
-                      </>
-                    )}
-                  </Button>
+                  />
                 </>
               )}
             </div>
           </div>
         </div>
       </div>
-      <div className={`px-2 pt-5 print:pt-5 sm:px-4`}>
+      <div className={`px-2 pt-5 print:pt-5 sm:px-4 max-w-[930px] w-11/12`}>
         <div className="flex justify-between text-sm flex-wrap">
           <div className="flex gap-4">
             {sheet.tempo && (
@@ -210,7 +195,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
           flex flex-1 flex-wrap justify-center
           sm:justify-start
           print:w-full
-          max-w-[930px]
+          
           ${activeColumn ? "pb-[50vh]" : ""}
           `}
           ref={barsWrapperRef}
