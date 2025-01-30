@@ -28,6 +28,7 @@ const Instructions = ({ onSelect }: InstructionsProps) => {
                 className="flex justify-between items-center"
               >
                 {instruction.name}
+                {instruction.renderText ? ` (${instruction.renderText})` : ""}
                 <Button
                   variant="secondary"
                   onClick={() => onSelect(instruction.id)}

@@ -27,13 +27,13 @@ export const WHOLE_NOTE_LENGTH_FOR_TIME_SIGNATURE = {
 export const BAR_LINES_PER_PAGE = 5;
 
 export const AUTHOR_TYPE_VALUE: Record<SongAuthorType, string> = {
-  [SongAuthorType.folk_song]: "Ľudová pieseň",
-  [SongAuthorType.original_song]: "Autorská pieseň",
+  [SongAuthorType.folk_song]: "Ľudová",
+  [SongAuthorType.original_song]: "Autorská",
 };
 
 export const GENRE_VALUE: Record<Genre, string> = {
   [Genre.country]: "Country",
-  [Genre.folk_music]: "Ľudová pieseň",
+  [Genre.folk_music]: "Ľudová",
   [Genre.sea_shanty]: "Sea shanty",
 };
 

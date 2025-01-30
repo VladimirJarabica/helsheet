@@ -493,7 +493,6 @@ const ColumnNotes = () => {
           {hasBassPart && (
             <div className="flex items-center flex-row">
               {tuning.bass.map((row) => {
-                console.log("activeBasses", activeBasses);
                 return (
                   <div key={row.row} className="flex flex-col">
                     {row.buttons.map((button) => (

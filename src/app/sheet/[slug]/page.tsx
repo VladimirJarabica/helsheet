@@ -1,8 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { SheetAccess } from "@prisma/client";
 import { Metadata } from "next";
-import { dbClient } from "../../../services/db";
 import {
+  getSheetDetail,
   getSheetIdFromParam,
   getSheetNameFromSlug,
 } from "../../../utils/sheet";
@@ -34,39 +33,7 @@ const Sheet = async (props: PageProps) => {
 
   const authUser = await currentUser();
 
-  const sheet = await dbClient.sheet.findFirst({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      tuning: true,
-      scale: true,
-      timeSignature: true,
-      content: true,
-      version: true,
-      tempo: true,
-      genre: true,
-      country: true,
-      songAuthorType: true,
-      songAuthor: true,
-      originalSheetAuthor: true,
-      source: true,
-      SheetAuthor: { select: { id: true, nickname: true } },
-      access: true,
-      updatedAt: true,
-    },
-    where: {
-      AND: [
-        { id: sheetId },
-        {
-          OR: [
-            { access: SheetAccess.public },
-            { sheetAuthorId: authUser?.id ?? "" },
-          ],
-        },
-      ],
-    },
-  });
+  const sheet = await getSheetDetail(sheetId, authUser?.id);
 
   if (!sheet) {
     return <div>not found</div>;

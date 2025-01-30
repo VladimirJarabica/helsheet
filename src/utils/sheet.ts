@@ -1,5 +1,7 @@
-import { Sheet, TimeSignature } from "@prisma/client";
+import { Sheet, SheetAccess, TimeSignature } from "@prisma/client";
+import { unstable_cache as cache } from "next/cache";
 import { CellItem, CellRow, Column, Direction, Tuning } from "../app/types";
+import { dbClient } from "../services/db";
 import { COLUMNS_FOR_TIME_SIGNATURES } from "./consts";
 
 export const getSheetUrl = (sheet: Pick<Sheet, "id" | "name">) => {
@@ -81,3 +83,66 @@ export const sortNoteItems = <Item extends CellItem>(items: Item[]): Item[] =>
     }
     return 0;
   });
+
+export const getGlobalSheetCacheTag = (sheetId: number) => `sheet-${sheetId}`;
+export const getSheetForUserCacheTag = (sheetId: number, userId: string) =>
+  `sheet-${sheetId}-${userId}`;
+
+export const getSheetDetail = async (
+  sheetId: number,
+  authUserId: string = ""
+) => {
+  const getCachedSheet = cache(
+    async (sId: number, userId: string) => {
+      const sheet = await dbClient.sheet.findFirst({
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          tuning: true,
+          scale: true,
+          timeSignature: true,
+          content: true,
+          version: true,
+          tempo: true,
+          genre: true,
+          country: true,
+          songAuthorType: true,
+          songAuthor: true,
+          originalSheetAuthor: true,
+          source: true,
+          SheetAuthor: { select: { id: true, nickname: true } },
+          access: true,
+          updatedAt: true,
+        },
+        where: {
+          AND: [
+            { id: sId },
+            {
+              OR: [{ access: SheetAccess.public }, { sheetAuthorId: userId }],
+            },
+          ],
+        },
+      });
+
+      return sheet;
+    },
+    [],
+    {
+      tags: [
+        getGlobalSheetCacheTag(sheetId),
+        getSheetForUserCacheTag(sheetId, authUserId),
+      ],
+    }
+  );
+
+  const cachedSheet = await getCachedSheet(sheetId, authUserId);
+
+  return cachedSheet
+    ? {
+        ...cachedSheet,
+        // Cached value might be a string
+        updatedAt: new Date(cachedSheet.updatedAt),
+      }
+    : cachedSheet;
+};

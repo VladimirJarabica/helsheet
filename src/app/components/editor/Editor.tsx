@@ -61,6 +61,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
   const router = useRouter();
   const {
     song,
+    saveStatus,
     activeColumn,
     addBar,
     save,
@@ -94,8 +95,15 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
       <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-2 flex-col gap-4 justify-between">
         <div className="flex items-end gap-2 justify-between">
           <div>
-            <div className="text-2xl font-bold flex gap-2 items-center">
+            <div className="text-2xl font-bold flex gap-2 items-end">
               {sheet.name}
+              {isEditing && (
+                <div className="text-base font-normal mb-0.5">
+                  ({saveStatus === "saved" && "uložené"}
+                  {saveStatus === "saving" && "ukladám..."}
+                  {saveStatus === "unsaved" && "neuložené"})
+                </div>
+              )}
             </div>
             {sheet.songAuthorType === SongAuthorType.original_song &&
               sheet.songAuthor && <div>{sheet.songAuthor}</div>}
@@ -106,7 +114,8 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                 ({sheet.SheetAuthor.nickname})
               </span>
             )}
-            <div className="print:hidden flex gap-2">
+
+            <div className="print:hidden flex items-center gap-2">
               {isEditing && (
                 <>
                   <Button
@@ -120,18 +129,13 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                   <Button
                     variant="secondary"
                     onClick={async () => {
-                      await save();
-                    }}
-                  >
-                    Uložiť
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
+                      if (saveStatus === "unsaved") {
+                        await save();
+                      }
                       setEditing(false);
                     }}
                   >
-                    Ukončiť
+                    Hotovo
                   </Button>
                 </>
               )}

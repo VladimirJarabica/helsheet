@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import { uniqBy } from "ramda";
 import { createContext, useContext, useState } from "react";
 import { CFTuning } from "../../../data/tunings/cf";
+import { MUSIC_INSTRUCTIONS } from "../../../utils/consts";
 import { groupByFn } from "../../../utils/fnUtils";
 import {
   getColumnsInBar,
@@ -26,9 +27,8 @@ import {
   SubCell,
   Tuning,
 } from "../../types";
-import { saveSong } from "./actions";
 import { useLigatures } from "./useLigatures";
-import { MUSIC_INSTRUCTIONS } from "../../../utils/consts";
+import { SaveStatus, useSaveContent } from "./useSaveContent";
 
 const TUNINGS: Record<TuningType, Tuning> = {
   [TuningType.CF]: CFTuning,
@@ -72,6 +72,7 @@ type SheetContext = {
     Sheet,
     "id" | "name" | "tempo" | "tuning" | "scale" | "timeSignature" | "access"
   >;
+  saveStatus: SaveStatus;
   ligatures: Ligatures;
   activeCell: CellPosition | null;
   activeColumn: SubColumnPosition | null;
@@ -128,6 +129,7 @@ const sheetContext = createContext<SheetContext>({
   tuning: CFTuning,
   // @ts-expect-error will be set in provider
   sheet: null,
+  saveStatus: "saved",
   ligatures: {},
   activeCell: null,
   activeColumn: null,
@@ -176,6 +178,13 @@ export const SheetContextProvider = ({
   );
   const [isEditing, setIsEditing] = useState(false);
 
+  const { save, status: saveStatus } = useSaveContent({
+    canSave: editable && isEditing,
+    sheetId: sheet.id,
+    initialSong,
+    currentSong: song,
+  });
+
   const setEditing = (editing: boolean) => {
     setIsEditing(editable && editing);
   };
@@ -183,12 +192,6 @@ export const SheetContextProvider = ({
   const columnsInBar = getColumnsInBar(sheet.timeSignature);
 
   const tuning = TUNINGS[sheet.tuning];
-
-  const save = async () => {
-    if (editable && isEditing) {
-      await saveSong({ id: sheet.id, song });
-    }
-  };
 
   const getNewEmptyColumn = (): Column => ({
     melodic: tuning.melodic.map<Cell<CellNote | EmptyCell>>((row) => ({
@@ -787,6 +790,7 @@ export const SheetContextProvider = ({
           setEditing,
           tuning,
           sheet,
+          saveStatus,
           song,
           instructions: [...MUSIC_INSTRUCTIONS, ...(song.instructions ?? [])],
           ligatures,

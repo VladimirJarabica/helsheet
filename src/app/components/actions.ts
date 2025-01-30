@@ -7,10 +7,11 @@ import {
   revalidateTag,
 } from "next/cache";
 import { dbClient } from "../../services/db";
-import { getSheetUrl } from "../../utils/sheet";
-import { getOrCreateUser } from "../../utils/user";
-import { FormData } from "./editor/SheetSettings";
 import { notEmpty } from "../../utils/fnUtils";
+import { getGlobalSheetCacheTag, getSheetUrl } from "../../utils/sheet";
+import { getOrCreateUser } from "../../utils/user";
+import { SongContent } from "../types";
+import { FormData } from "./editor/SheetSettings";
 
 export const getSongAuthors = cache(async () => {
   const authors = await dbClient.sheet.findMany({
@@ -28,14 +29,6 @@ export const createSheet = async (
   user: Pick<User, "id" | "nickname">,
   data: FormData
 ) => {
-  // if (user.nickname !== data.author) {
-  //   await dbClient.user.update({
-  //     where: { id: user.id },
-  //     data: {
-  //       nickname: data.author,
-  //     },
-  //   });
-  // }
   const newSheet = await dbClient.sheet.create({
     data: {
       name: data.name,
@@ -62,20 +55,31 @@ export const createSheet = async (
   return newSheet;
 };
 
+export const saveSheetContent = async ({
+  sheetId,
+  content,
+}: {
+  content: SongContent;
+  sheetId: number;
+}) => {
+  const user = await currentUser();
+  if (!user) {
+    return;
+  }
+  await dbClient.sheet.update({
+    where: { id: sheetId, SheetAuthor: { id: user.id } },
+    data: { content },
+  });
+  revalidateTag(getGlobalSheetCacheTag(sheetId));
+};
+
 export const updateSheet = async (sheet: Pick<Sheet, "id">, data: FormData) => {
   const authUser = await currentUser();
   if (!authUser) {
     return;
   }
   const user = await getOrCreateUser(authUser);
-  // if (user.nickname !== data.author) {
-  //   await dbClient.user.update({
-  //     where: { id: user.id },
-  //     data: {
-  //       nickname: data.author,
-  //     },
-  //   });
-  // }
+
   const updatedSheet = await dbClient.sheet.update({
     where: { id: sheet.id, sheetAuthorId: user.id },
     data: {
