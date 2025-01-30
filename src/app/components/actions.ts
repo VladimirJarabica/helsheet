@@ -135,5 +135,6 @@ export const changeSheetAccess = async (
   if (updatedSheet) {
     revalidatePath(getSheetUrl(sheet));
   }
+  revalidateTag(getGlobalSheetCacheTag(sheet.id));
   return updatedSheet;
 };

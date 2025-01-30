@@ -1,6 +1,10 @@
 "use client";
 import { SignInButton, SignedOut, UserButton, useUser } from "@clerk/nextjs";
-import { HomeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  MusicalNoteIcon,
+  PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 import Button from "./Button";
 import MenuItem from "./HeaderButton";
 
@@ -18,7 +22,20 @@ const Header = ({ newSheetButton }: HeaderProps) => {
           <MenuItem href="/" exact>
             <HomeIcon className="w-4" />
           </MenuItem>
-          <MenuItem href="/sheet">Piesne</MenuItem>
+          <MenuItem href="/sheet">
+            <div className="flex gap-1 items-center">
+              <MusicalNoteIcon className="w-4 h-4" />
+              Piesne
+            </div>
+          </MenuItem>
+          {user && (
+            <MenuItem href={`/user/${user?.id}`}>
+              <div className="flex gap-1 items-center">
+                <PencilSquareIcon className="w-4 h-4" />
+                Moje zápisy
+              </div>
+            </MenuItem>
+          )}
         </div>
         <div className="flex items-center gap-4 py-2">
           {newSheetButton}
@@ -32,7 +49,7 @@ const Header = ({ newSheetButton }: HeaderProps) => {
           <UserButton>
             <UserButton.MenuItems>
               <UserButton.Link
-                label="Moje piesne"
+                label="Moje zápisy"
                 labelIcon={<PencilSquareIcon className="w-4 h-4" />}
                 href={`/user/${user?.id}`}
               />
