@@ -238,16 +238,16 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
               style={{ marginTop: VARIANT_CELL_HEIGHT }}
             >
               <button
-                className="border border-black p-1 py-4 px-2 ml-4 rounded-xl hover:bg-hel-bgHover text-black text-xs bg-hel-test"
+                className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
                 onClick={() => {
                   addBar();
                 }}
-                // style={{
-                //   height:
-                //     (tuning.melodic.length + 1) * CELL_SIZE +
-                //     DIRECTION_CELL_SIZE +
-                //     3,
-                // }}
+                style={{
+                  height:
+                    (tuning.melodic.length + 1) * CELL_SIZE +
+                    DIRECTION_CELL_SIZE +
+                    3,
+                }}
               >
                 Nový takt
               </button>
