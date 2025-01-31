@@ -1,5 +1,9 @@
 "use client";
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+import {
+  CheckIcon,
+  Cog6ToothIcon,
+  PencilIcon,
+} from "@heroicons/react/24/outline";
 import { Sheet, SheetAccess, SongAuthorType, User } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -90,7 +94,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
       }}
       ref={wrapperRef}
     >
-      <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-2 flex-col gap-4 justify-between">
+      <div className="flex max-w-[930px] print:max-w-[700px] w-11/12 pt-5 print:pt-2 flex-col gap-4 justify-between">
         <div className="flex items-start gap-2 justify-between ">
           <div>
             <div className="text-2xl font-bold flex gap-2 items-start">
@@ -111,7 +115,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
               </span>
             )}
 
-            <div className="print:hidden flex items-center gap-2 flex-wrap md:flex-nowrap">
+            <div className="print:hidden flex items-center gap-2 justify-end flex-wrap md:flex-nowrap">
               {isEditing && (
                 <>
                   <Button
@@ -119,8 +123,10 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                     onClick={() => {
                       setSettingOpen(true);
                     }}
+                    icon={<Cog6ToothIcon className="w-5" />}
+                    smOnlyIcon
                   >
-                    <Cog6ToothIcon className="w-5" />
+                    Nastavenia
                   </Button>
                   <Button
                     variant="secondary"
@@ -130,6 +136,8 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                       }
                       setEditing(false);
                     }}
+                    icon={<CheckIcon className="w-5" />}
+                    smOnlyIcon
                   >
                     Hotovo
                   </Button>
@@ -144,6 +152,8 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                       onClick={() => {
                         setEditing(true);
                       }}
+                      icon={<PencilIcon className="w-5" />}
+                      smOnlyIcon
                     >
                       Upraviť
                     </Button>
