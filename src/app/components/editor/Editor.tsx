@@ -238,7 +238,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
               style={{ marginTop: VARIANT_CELL_HEIGHT }}
             >
               <button
-                className="border border-black p-1 ml-4 rounded-sm bg-[#e3d9bc] hover:bg-hel-bgEmphasis text-black w-10 text-xs"
+                className="border border-black p-1 ml-4 rounded-md bg-hel-bgEmphasis hover:bg-hel-bgHover text-black w-10 text-xs"
                 onClick={() => {
                   addBar();
                 }}
