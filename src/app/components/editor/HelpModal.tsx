@@ -120,7 +120,7 @@ const HelpButton = () => {
       </Button>
       {isHelpModalOpen && (
         <div
-          className="z-20 right-0 bottom-0 fixed shadow-lg shadow-gray-400 border border-gray-400 sm:rounded px-4 sm:m-2 py-3 w-full sm:w-[600px] bg-hel-bgDefault"
+          className="z-20 right-0 bottom-0 fixed shadow-lg shadow-gray-400 border-t sm:border border-gray-400 sm:rounded px-4 sm:m-2 py-3 w-full sm:w-[600px] bg-hel-bgDefault"
           onClick={(e) => {
             e.stopPropagation();
           }}
