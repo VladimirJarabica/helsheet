@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import ToggleButton from "../ToggleButton";
 import ColumnNotes from "./ColumnNotes";
 import { useKeyboardListener } from "./keyboardListenerContext";
 import NoteLengthSelect from "./NoteLengthSelect";
@@ -102,10 +103,17 @@ const ColumnSettings = () => {
 
   return (
     <div className="print:hidden min-h-0 h-[50vh] fixed bottom-0 left-0 right-0 z-10 flex justify-center border-t border-gray-700">
-      <div className="flex gap-4 fixed bottom-[50vh] translate-y-2 bg-hel-bgDefault border-gray-700 shadow rounded shadow-gray-700 border-b-0 px-3 py-2 z-20">
-        <div onClick={() => setTab("notes")}>Noty</div>
-        <div onClick={() => setTab("length")}>Dĺžka nôt</div>
-        <div onClick={() => setTab("fingers")}>Prstoklad</div>
+      <div className="fixed bottom-[50vh] translate-y-1.5">
+        <ToggleButton
+          value={tab}
+          onChange={setTab}
+          options={[
+            { label: "Noty", value: "notes" },
+            { label: "Dĺžka nôt", value: "length" },
+            { label: "Prstoklad", value: "fingers" },
+          ]}
+          floating
+        />
       </div>
       <div className="min-h-0 h-[50vh] overflow-y-scroll bg-hel-bgDefault">
         <div className="w-screen p-5 flex flex-col items-center">

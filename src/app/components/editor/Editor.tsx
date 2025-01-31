@@ -153,7 +153,9 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                     ]}
                     value={sheet.access}
                     onChange={async (value) => {
-                      await changeSheetAccess(sheet, value);
+                      if (value !== sheet.access) {
+                        await changeSheetAccess(sheet, value);
+                      }
                     }}
                   />
                 </>
