@@ -91,12 +91,12 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
       ref={wrapperRef}
     >
       <div className="flex max-w-[700px] w-11/12 pt-5 print:pt-2 flex-col gap-4 justify-between">
-        <div className="flex items-end gap-2 justify-between">
+        <div className="flex items-start gap-2 justify-between ">
           <div>
-            <div className="text-2xl font-bold flex gap-2 items-end">
+            <div className="text-2xl font-bold flex gap-2 items-start">
               {sheet.name}
               {isEditing && (
-                <div className="text-sm text-gray-600 font-normal mb-1">
+                <div className="text-sm text-gray-600 font-normal mt-2">
                   ({saveStatus === "saved" ? "uložené" : "ukladám..."})
                 </div>
               )}
@@ -111,7 +111,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
               </span>
             )}
 
-            <div className="print:hidden flex items-center gap-2">
+            <div className="print:hidden flex items-center gap-2 flex-wrap md:flex-nowrap">
               {isEditing && (
                 <>
                   <Button

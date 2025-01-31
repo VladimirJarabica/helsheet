@@ -111,7 +111,7 @@ const HelpButton = () => {
         variant="secondary"
         onClick={(e) => {
           e.stopPropagation();
-          setIsHelpModalOpen(true);
+          setIsHelpModalOpen((o) => !o);
         }}
         icon={<LightBulbIcon className="w-5" />}
       >
