@@ -128,6 +128,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                   >
                     Nastavenia
                   </Button>
+                  <HelpButton />
                   <Button
                     variant="secondary"
                     onClick={async () => {
@@ -139,9 +140,8 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                     icon={<CheckIcon className="w-5" />}
                     smOnlyIcon
                   >
-                    Hotovo
+                    Uložiť
                   </Button>
-                  <HelpButton />
                 </>
               )}
               {editable && (

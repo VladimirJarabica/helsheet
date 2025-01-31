@@ -206,21 +206,38 @@ const HelpButton = () => {
               (shortcut) => shortcut.shortcut,
               [
                 ...tuning.bass.flatMap((row) =>
-                  row.buttons.map((button) => ({
-                    shortcut: button.push.shortcutKey ?? button.push.note,
-                    description: `bas ${button.push.note}`,
-                  }))
+                  row.buttons.map((button) => {
+                    const bass = button.push.note;
+                    return {
+                      shortcut: button.push.shortcutKey ?? button.push.note,
+                      description:
+                        bass === bass.toUpperCase()
+                          ? `bas ${bass}`
+                          : `akord ${bass}`,
+                    };
+                  })
                 ),
                 ...tuning.bass.flatMap((row) =>
-                  row.buttons.map((button) => ({
-                    shortcut: button.pull.shortcutKey ?? button.pull.note,
-                    description: `bas ${button.pull.note}`,
-                  }))
+                  row.buttons.map((button) => {
+                    const bass = button.pull.note;
+                    return {
+                      shortcut: button.pull.shortcutKey ?? button.pull.note,
+                      description:
+                        bass === bass.toUpperCase()
+                          ? `bas ${bass}`
+                          : `akord ${bass}`,
+                    };
+                  })
                 ),
               ]
             )}
           >
             Vyber basy kliknutím na tlačítko alebo použitím skratky
+            <hr className="my-1" />
+            Sedmičkové akordy (c7, a7...) je možné nahradiť obyčajnými akordami
+            (c, a...).
+            <br />
+            Naopak to však nejde, narušilo by to harmóniu piesne.
           </StepContent>
           <StepContent
             isCollapsed={isCollapsed}
