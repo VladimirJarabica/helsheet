@@ -21,13 +21,19 @@ const KeyboardShortcuts = ({ shortcuts }: KeyboardShortcutsProps) => {
       <h2 className="font-semibold">
         {shortcuts.length > 1 ? "Klávesové skratky" : "Klávesová skratka"}:
       </h2>
-      <ol>
+      <table>
         {shortcuts.map((shortcut, index) => (
-          <li key={index} className="flex">
-            {shortcut.shortcut} : {shortcut.description}
-          </li>
+          <tr
+            key={index}
+            className={`${index > 0 ? "border-t border-gray-400" : ""}`}
+          >
+            <td className="px-2 flex border-r border-gray-400 pr-2 mr-2 min-w-10">
+              {shortcut.shortcut}
+            </td>
+            <td>{shortcut.description}</td>
+          </tr>
         ))}
-      </ol>
+      </table>
     </>
   );
 };
