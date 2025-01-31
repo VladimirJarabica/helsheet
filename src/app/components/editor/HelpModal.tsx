@@ -27,7 +27,7 @@ const KeyboardShortcuts = ({ shortcuts }: KeyboardShortcutsProps) => {
             key={index}
             className={`${index > 0 ? "border-t border-gray-400" : ""}`}
           >
-            <td className="px-2 flex border-r border-gray-400 pr-2 mr-2 min-w-10">
+            <td className="flex border-r border-gray-400 pr-2 mr-2 min-w-10">
               {shortcut.shortcut}
             </td>
             <td>{shortcut.description}</td>

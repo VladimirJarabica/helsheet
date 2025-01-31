@@ -103,6 +103,11 @@ const NoteLengthSelect = () => {
     column.bass.subCells[activeColumn.subColumnIndex]
   );
 
+  const basItems = hasBassPart
+    ? column.bass.subCells[activeColumn.subColumnIndex].items.filter(
+        (item) => item.type === "bass"
+      ).length
+    : 0;
   const maxIndex = useMemo(() => {
     if (!activeColumn || !column) {
       return 0;
@@ -110,9 +115,6 @@ const NoteLengthSelect = () => {
     const melodicItems = column.melodic.flatMap(
       (row) => row.subCells[activeColumn.subColumnIndex].items
     ).length;
-    const basItems = hasBassPart
-      ? column.bass.subCells[activeColumn.subColumnIndex].items.length
-      : 0;
     return melodicItems + basItems - 1;
   }, [activeColumn, column, hasBassPart]);
 
@@ -180,7 +182,7 @@ const NoteLengthSelect = () => {
               return (
                 <div
                   key={row.row + item.button}
-                  className="flex items-center justify-between min-h-14 flex-wrap"
+                  className="flex items-center gap-6 min-h-14 flex-wrap"
                 >
                   <div className="flex items-center">
                     <MelodeonButtonWrapper
@@ -220,61 +222,64 @@ const NoteLengthSelect = () => {
         );
       })}
       <div>
-        <div>Basy</div>
-        {hasBassPart &&
-          column.bass.subCells[activeColumn.subColumnIndex].items.map(
-            (item) => {
-              if (item.type === "bass") {
-                const isMulti = column.bass.subCells.length > 1;
-                const length =
-                  // If split, allow minimum 0.5 length, 1 otherwise
-                  item.length ?? (column.bass.subCells.length > 1 ? 0.5 : 1);
+        {hasBassPart && (
+          <>
+            {basItems > 0 && <div>Basy</div>}
+            {column.bass.subCells[activeColumn.subColumnIndex].items.map(
+              (item) => {
+                if (item.type === "bass") {
+                  const isMulti = column.bass.subCells.length > 1;
+                  const length =
+                    // If split, allow minimum 0.5 length, 1 otherwise
+                    item.length ?? (column.bass.subCells.length > 1 ? 0.5 : 1);
 
-                const currentIndex = globalIndex;
-                const isActive = currentIndex === activeIndex;
-                globalIndex += 1;
+                  const currentIndex = globalIndex;
+                  const isActive = currentIndex === activeIndex;
+                  globalIndex += 1;
 
-                return (
-                  <div
-                    key={item.note.note}
-                    className="flex items-center justify-between min-h-14 flex-wrap"
-                  >
-                    <div className="flex items-center">
-                      <MelodeonButtonWrapper
-                        selected={isActive}
-                        onClick={() => {
-                          setActiveIndex(currentIndex);
-                        }}
-                      >
-                        {item.note.note}
-                      </MelodeonButtonWrapper>
-                      <div>
-                        <div>Nota:</div>
-                        <div>Stĺpce:</div>
+                  return (
+                    <div
+                      key={item.note.note}
+                      className="flex items-center gap-6 min-h-14 flex-wrap"
+                    >
+                      <div className="flex items-center">
+                        <MelodeonButtonWrapper
+                          selected={isActive}
+                          onClick={() => {
+                            setActiveIndex(currentIndex);
+                          }}
+                        >
+                          {item.note.note}
+                        </MelodeonButtonWrapper>
+                        <div>
+                          <div>Nota:</div>
+                          <div>Stĺpce:</div>
+                        </div>
+                        <NoteWithLength
+                          timeSignature={sheet.timeSignature}
+                          length={length}
+                        />
                       </div>
-                      <NoteWithLength
-                        timeSignature={sheet.timeSignature}
-                        length={length}
-                      />
+                      {isActive && (
+                        <NoteLengthSelector
+                          timeSignature={sheet.timeSignature}
+                          length={item.length ?? 1}
+                          onChange={(length) =>
+                            setLength(length, {
+                              row: "bass",
+                              bass: item.note,
+                            })
+                          }
+                          min={isMulti ? 0.5 : 1}
+                        />
+                      )}
                     </div>
-                    {isActive && (
-                      <NoteLengthSelector
-                        timeSignature={sheet.timeSignature}
-                        length={item.length ?? 1}
-                        onChange={(length) =>
-                          setLength(length, {
-                            row: "bass",
-                            bass: item.note,
-                          })
-                        }
-                        min={isMulti ? 0.5 : 1}
-                      />
-                    )}
-                  </div>
-                );
+                  );
+                }
               }
-            }
-          )}
+            )}
+          </>
+        )}
       </div>
     </div>
   );
