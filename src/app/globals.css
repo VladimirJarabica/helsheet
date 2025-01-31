@@ -10,12 +10,13 @@
   /* --bgDefault: #e0dac8; */
   --bgDefault: #fff;
   /* Background of the "push" columns */
-  --bgEmphasis: #dfd5b7;
+  /* #f5f1e6,#eee3cf,#e4d5b6,#dec89f,#d5b987 */
+  --bgEmphasis: #eee3cf;
   /* Hover of column */
-  --bgHover: #e3d9bc;
+  --bgHover: #e4d5b6;
   --textHover: #000;
   /* Active column */
-  --bgActive: #dbc991;
+  --bgActive: #dec89f;
   --textActive: #000;
   /* Text color */
   --textColor: #000;
@@ -26,7 +27,7 @@
 
   @media print {
     --bgDefault: #fff;
-    --bgEmphasis: #ccc;
+    --bgEmphasis: #ddd;
   }
 }
 

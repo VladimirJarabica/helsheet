@@ -33,7 +33,7 @@ CellItemProps<Item>) => {
   const items = subCell.items;
   return (
     <div
-      className={`flex flex-1 items-center flex-col justify-around leading-none overflow-hidden
+      className={`flex flex-1 items-center cursor-pointer flex-col justify-around leading-none overflow-hidden
         ${!isFirst ? "border-l border-gray-700 border-dashed" : ""}
         ${isActive && false ? "bg-green-50" : ""}
         ${(() => {
