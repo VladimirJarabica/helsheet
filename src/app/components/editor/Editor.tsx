@@ -130,7 +130,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                   </Button>
                   <HelpButton />
                   <Button
-                    variant="secondary"
+                    variant="primary"
                     onClick={async () => {
                       if (saveStatus === "unsaved") {
                         await save();

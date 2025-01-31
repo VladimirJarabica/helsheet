@@ -189,6 +189,11 @@ export const SheetContextProvider = ({
     setIsEditing(editable && editing);
   };
 
+  const handleSetActiveColumn = (position: SubColumnPosition | null) => {
+    if (!isEditing) return;
+    setActiveColumn(position);
+  };
+
   const columnsInBar = getColumnsInBar(sheet.timeSignature);
 
   const tuning = TUNINGS[sheet.tuning];
@@ -257,7 +262,7 @@ export const SheetContextProvider = ({
   };
 
   const removeBar = (barIndex: number) => {
-    setActiveColumn(null);
+    handleSetActiveColumn(null);
     setSong((prev) => {
       return {
         ...prev,
@@ -799,7 +804,7 @@ export const SheetContextProvider = ({
           columnsInBar,
           //   setMelodicSubCells,
           activeColumn,
-          setActiveColumn,
+          setActiveColumn: handleSetActiveColumn,
           setMelodicButton,
           setBassButton,
           setDirection,

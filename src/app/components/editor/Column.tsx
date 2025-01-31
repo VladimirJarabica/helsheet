@@ -55,6 +55,7 @@ const Column = ({
         className={`border-t-2 border-b-2 border-black ${
           lastColumnInBar ? "border-r-2" : "border-r"
         }
+        ${isEditing ? "cursor-pointer" : ""}
          `}
       >
         {column.melodic

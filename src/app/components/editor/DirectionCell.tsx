@@ -30,9 +30,18 @@ const DirectionCell = ({
             ? "border-l border-l-gray-700 [border-left-style:dashed]"
             : ""
         }
-        ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
-        ${active ? "bg-hel-bgActive text-hel-textActive" : ""}
-        ${direction === "push" && !active ? "bg-hel-bgEmphasis" : ""}
+          ${(() => {
+            if (active) {
+              return "bg-hel-bgActive text-hel-textActive";
+            }
+            if (hovered) {
+              return "bg-hel-bgHover text-hel-textHover";
+            }
+            if (direction === "push") {
+              return "bg-hel-bgEmphasis";
+            }
+            return "";
+          })()}
         ${onHoverChange ? "cursor-pointer" : ""}
         `}
       style={{ height: DIRECTION_CELL_SIZE }}

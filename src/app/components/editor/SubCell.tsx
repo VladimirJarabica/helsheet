@@ -55,9 +55,19 @@ CellItemProps<Item>) => {
           }
           return "text-[7px]";
         })()}
-        ${hovered ? "bg-hel-bgHover text-hel-textHover" : ""}
-        ${isActive ? "bg-hel-bgActive text-hel-textActive" : ""}
-        ${direction === "push" && !isActive ? "bg-hel-bgEmphasis" : ""}
+        ${(() => {
+          if (isActive) {
+            return "bg-hel-bgActive text-hel-textActive";
+          }
+          if (hovered) {
+            return "bg-hel-bgHover text-hel-textHover";
+          }
+          if (direction === "push") {
+            return "bg-hel-bgEmphasis";
+          }
+          return "";
+        })()}
+
         `}
       onClick={onClick ? () => onClick() : undefined}
       onMouseOver={() => onHoverChange(true)}
