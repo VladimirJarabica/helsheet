@@ -194,6 +194,22 @@ const ColumnNotes = () => {
     },
   });
 
+  useKeyboardListener({
+    id: "splitMelodic",
+    key: "m",
+    listener: () => {
+      isMelodicPartSplit ? joinMelodicPart() : splitMelodicPart();
+    },
+  });
+
+  useKeyboardListener({
+    id: "splitBass",
+    key: "n",
+    listener: () => {
+      isBasPartSplit ? joinBassPart() : splitBassPart();
+    },
+  });
+
   const handleAddSelectedNote = (note: Note) => {
     const possibleNoteButton = tuning.melodic.flatMap((row) => {
       return row.buttons

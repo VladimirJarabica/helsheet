@@ -20,6 +20,7 @@ import Button from "../Button";
 import ToggleButton from "../ToggleButton";
 import Bar from "./Bar";
 import ColumnSettings from "./ColumnSettings";
+import HelpButton from "./HelpModal";
 import {
   KeyboardListenerContextProvider,
   useKeyboardListener,
@@ -132,6 +133,7 @@ const SongWrapper = ({ sheet, editable }: SongWrapperProps) => {
                   >
                     Hotovo
                   </Button>
+                  <HelpButton />
                 </>
               )}
               {editable && (

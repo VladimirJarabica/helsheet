@@ -6,6 +6,7 @@ import { useState } from "react";
 interface ButtonProps {
   href?: React.ComponentProps<typeof Link>["href"];
   children: React.ReactNode;
+  icon?: React.ReactNode;
   onClick?: (
     e: ReactMouseEvent<HTMLButtonElement, MouseEvent>
   ) => void | Promise<void>;
@@ -16,6 +17,7 @@ interface ButtonProps {
 
 const Button = ({
   href,
+  icon,
   children,
   onClick,
   className,
@@ -30,7 +32,7 @@ const Button = ({
       // transition-colors duration-300 flex items-center justify-center text-foreground gap-2
       // hover:border-foreground px-2 py-1 text-sm
       // `}
-      className={`inline-flex w-auto justify-center rounded-md tracking-wide
+      className={`inline-flex w-auto items-center justify-center rounded-md tracking-wide flex-nowrap text-nowrap
         ${size === "medium" ? "px-3 py-1.5" : ""}
         ${size === "small" ? "px-2 py-1" : ""}
         text-sm 
@@ -63,9 +65,10 @@ const Button = ({
       }
     >
       <div
-        className={`${isLoading ? "invisible" : ""} 
+        className={`flex gap-1 ${isLoading ? "invisible" : ""} 
         ${className}`}
       >
+        {icon}
         {children}
       </div>
       {isLoading && <div className="absolute">...</div>}
