@@ -114,7 +114,7 @@ const NoteLengthSelect = () => {
       ? column.bass.subCells[activeColumn.subColumnIndex].items.length
       : 0;
     return melodicItems + basItems - 1;
-  }, [activeColumn, column]);
+  }, [activeColumn, column, hasBassPart]);
 
   const melodicRows =
     column && activeColumn

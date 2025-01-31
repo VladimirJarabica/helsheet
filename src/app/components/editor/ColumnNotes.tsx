@@ -198,7 +198,8 @@ const ColumnNotes = () => {
     id: "splitMelodic",
     key: "m",
     listener: () => {
-      isMelodicPartSplit ? joinMelodicPart() : splitMelodicPart();
+      if (isMelodicPartSplit) joinMelodicPart();
+      else splitMelodicPart();
     },
   });
 
@@ -206,7 +207,8 @@ const ColumnNotes = () => {
     id: "splitBass",
     key: "n",
     listener: () => {
-      isBasPartSplit ? joinBassPart() : splitBassPart();
+      if (isBasPartSplit) joinBassPart();
+      else splitBassPart();
     },
   });
 

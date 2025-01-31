@@ -151,7 +151,7 @@ const HelpButton = () => {
               { shortcut: "Tlačidlo +", description: "pridá nový takt" },
             ]}
           >
-            Pridaj nový takt kliknutím na tlačítko "Nový takt".
+            Pridaj nový takt kliknutím na tlačítko &quot;Nový takt&quot;.
           </StepContent>
           <StepContent
             isCollapsed={isCollapsed}
@@ -350,7 +350,7 @@ const HelpButton = () => {
             ]}
           >
             <ol>
-              <li>1. Vyber záložku "Dĺžka nôt"</li>
+              <li>1. Vyber záložku &quot;Dĺžka nôt&quot;</li>
               <li>2. Vyber aktívny gombík alebo bas</li>
               <li>3. Nastav požadovanú dĺžku trvania</li>
             </ol>
@@ -361,8 +361,8 @@ const HelpButton = () => {
             activeStepIndex={currentStepIndex}
             title="Zverejnenie"
           >
-            Zápis je možné zverejniť prepnutím na "Verejné" v pravom hornom
-            rohu.
+            Zápis je možné zverejniť prepnutím na &quot;Verejné&quot; v pravom
+            hornom rohu.
             <br />
             Po zverejnení je zápis dostupný pre všetkých používateľov.
           </StepContent>
