@@ -139,6 +139,7 @@ const Column = ({
       <textarea
         ref={textRef}
         disabled={!isEditing}
+        onFocus={() => setActiveColumn(null)}
         rows={1}
         className={`
           border-gray-500 mt-1 bg-transparent w-full text-xs outline-none mx-[1px] resize-none print:border-none
