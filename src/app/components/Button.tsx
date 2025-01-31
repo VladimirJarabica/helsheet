@@ -13,6 +13,7 @@ interface ButtonProps {
   className?: string;
   variant: "primary" | "secondary" | "danger" | "link";
   size?: "small" | "medium";
+  smOnlyIcon?: boolean;
 }
 
 const Button = ({
@@ -23,6 +24,7 @@ const Button = ({
   className,
   variant,
   size = "medium",
+  smOnlyIcon = false,
 }: ButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,7 +71,9 @@ const Button = ({
         ${className}`}
       >
         {icon}
-        {children}
+        <div className={icon && smOnlyIcon ? "hidden sm:block" : undefined}>
+          {children}
+        </div>
       </div>
       {isLoading && <div className="absolute">...</div>}
     </button>

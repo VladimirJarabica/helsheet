@@ -1,10 +1,10 @@
 import {
-  LightBulbIcon,
-  XMarkIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  ChevronDownIcon,
+  LightBulbIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import * as R from "ramda";
 import { useState } from "react";
@@ -114,12 +114,13 @@ const HelpButton = () => {
           setIsHelpModalOpen((o) => !o);
         }}
         icon={<LightBulbIcon className="w-5" />}
+        smOnlyIcon
       >
         Nápoveda
       </Button>
       {isHelpModalOpen && (
         <div
-          className="z-20 right-0 bottom-0 fixed shadow-lg shadow-gray-400 border border-gray-400 rounded px-4 py-3 m-2 w-[600px] bg-hel-bgDefault max-w-[80%]"
+          className="z-20 right-0 bottom-0 fixed shadow-lg shadow-gray-400 border border-gray-400 sm:rounded px-4 sm:m-2 py-3 w-full sm:w-[600px] bg-hel-bgDefault"
           onClick={(e) => {
             e.stopPropagation();
           }}
@@ -136,6 +137,7 @@ const HelpButton = () => {
                   <ChevronDownIcon className="w-5" />
                 )
               }
+              smOnlyIcon
             >
               {isCollapsed ? "Rozbaliť" : "Zbaliť"}
             </Button>
@@ -144,6 +146,7 @@ const HelpButton = () => {
               size="small"
               onClick={() => close()}
               icon={<XMarkIcon className="w-5" />}
+              smOnlyIcon
             >
               Zavrieť
             </Button>

@@ -1,4 +1,5 @@
 "use client";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { Sheet, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,6 +31,8 @@ const NewSheetButtonClient = ({
         onClick={() => setIsNewSheetOpen(true)}
         variant="secondary"
         size={size}
+        icon={<PlusIcon className="w-5" />}
+        smOnlyIcon
       >
         Nový zápis
       </Button>
