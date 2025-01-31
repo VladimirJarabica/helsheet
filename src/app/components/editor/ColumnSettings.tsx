@@ -102,8 +102,8 @@ const ColumnSettings = () => {
   });
 
   return (
-    <div className="print:hidden min-h-0 h-[50vh] fixed bottom-0 left-0 right-0 z-10 flex justify-center border-t border-gray-700">
-      <div className="fixed bottom-[50vh] translate-y-1.5">
+    <div className="print:hidden min-h-0 h-[50vh] fixed bottom-0 left-0 right-0 z-10 flex justify-center border-t border-gray-700 px-2">
+      <div className="fixed bottom-[50vh] translate-y-1.5 z-10">
         <ToggleButton
           value={tab}
           onChange={setTab}
@@ -115,14 +115,10 @@ const ColumnSettings = () => {
           floating
         />
       </div>
-      <div className="min-h-0 h-[50vh] overflow-y-scroll bg-hel-bgDefault">
-        <div className="w-screen p-5 flex flex-col items-center">
-          <div className="flex flex-col items-center min-h-0 justify-center">
-            <div>
-              {tab === "notes" && <ColumnNotes />}
-              {tab === "length" && <NoteLengthSelect />}
-            </div>
-          </div>
+      <div className="min-h-0 w-full h-[50vh] overflow-y-scroll bg-hel-bgDefault">
+        <div className="flex flex-col p-5 items-center">
+          {tab === "notes" && <ColumnNotes />}
+          {tab === "length" && <NoteLengthSelect />}
         </div>
       </div>
     </div>

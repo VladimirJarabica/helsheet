@@ -34,7 +34,7 @@ const Select = ({
         className={`
           block w-full appearance-none rounded-md bg-white
           px-3 py-1.5
-          pr-10
+          ${clearable ? "pr-10" : "pr-5"}
           text-base outline 
           ${props.value === "" ? "text-gray-500" : "text-gray-900"}
           sm:text-sm/6

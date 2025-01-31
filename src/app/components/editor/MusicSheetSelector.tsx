@@ -205,8 +205,12 @@ const MusicSheetSelector = ({
       : hoveredNote;
 
   return (
-    <div className="max-w-[100vw] overflow-auto">
-      <div className="relative mb-20 w-[510px]">
+    <div className="max-w-[90vw] overflow-auto">
+      <div
+        className={`relative mb-14 ${
+          transposeScale ? "w-[510px]" : "w-[350px]"
+        }`}
+      >
         <div className="flex items-center mb-16 gap-2">
           <label>Stupnica</label>
           <Select
@@ -231,6 +235,7 @@ const MusicSheetSelector = ({
           <Select
             label="Transpozícia"
             value={transposeScale?.id ?? ""}
+            resetValue={() => setTransposeScale(null)}
             onChange={(e) => {
               const value = e.target.value;
               const newScale = value

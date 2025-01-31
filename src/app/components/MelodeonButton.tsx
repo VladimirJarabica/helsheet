@@ -128,7 +128,7 @@ const MelodeonButton = <
   selected,
 }: MelodeonButtonProps<ButtonType>) => {
   return (
-    <div className="flex items-center flex-col-reverse md:flex-row-reverse max-w-full overflow-visible">
+    <div className="flex items-center flex-col md:flex-row-reverse max-w-full overflow-visible">
       <MelodeonButtonWrapper selected={selected} noPadding>
         <div className="w-14 h-full flex justify-center">
           {direction !== "pull" && (

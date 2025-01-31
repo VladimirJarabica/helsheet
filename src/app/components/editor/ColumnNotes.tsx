@@ -336,8 +336,8 @@ const ColumnNotes = () => {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4">
-      <div className="flex gap-4 w-full mb-4 flex-col sm:flex-col">
-        <div className="flex gap-1 flex-col sm:flex-row">
+      <div className="flex gap-4 w-full flex-col sm:flex-col">
+        <div className="flex gap-1 flex-row flex-wrap sm:flex-row">
           <Button
             variant="secondary"
             onClick={() => {
@@ -365,7 +365,7 @@ const ColumnNotes = () => {
           </Button>
         </div>
         <div className="flex gap-4">
-          <div className="flex flex-col w-60">
+          <div className="flex flex-col w-1/2">
             <div>Noty:</div>
             <div className="flex flex-wrap">
               {notes.map((note) => (
