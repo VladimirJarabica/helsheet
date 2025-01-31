@@ -52,7 +52,7 @@ const SheetPreview = ({ sheet, showPrivate = false }: SheetPreviewProps) => {
         {sheet.SheetAuthor && (
           <Link
             href={`/user/${sheet.SheetAuthor.id}`}
-            className="text-sm text-gray-500 underline"
+            className="text-sm text-hel-textSubtle underline"
           >
             zapísal ({sheet.SheetAuthor.nickname})
           </Link>

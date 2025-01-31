@@ -11,7 +11,8 @@ const TagPill = ({ children, onRemove }: TagPillProps) => {
       className="inline-flex text-nowrap items-center rounded-md
     px-2 py-1 text-xs font-medium
     ring-1 ring-stone-800/10 ring-inset
-    text-stone-800
+    
+    text-hel-textPrimary
     bg-stone-100
     "
     >

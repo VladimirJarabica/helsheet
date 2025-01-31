@@ -37,7 +37,7 @@ const UserPage = async ({ params, searchParams }: PageProps) => {
   return (
     <div className="flex flex-col max-w-[700px] w-11/12 mb-52 mt-2">
       <div className="flex flex-col">
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-hel-textSubtle">
           {isMyProfile ? "Tvoj profil" : "Profil autora"}
         </span>
         <EditableName

@@ -76,7 +76,7 @@ const StepContent = ({
         <div className="flex justify-between">
           <h2 className="text-lg font-semibold">
             {title}{" "}
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-hel-textSubtle">
               ({activeStepIndex + 1} / {STEPS.length})
             </span>
           </h2>

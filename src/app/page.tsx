@@ -21,15 +21,15 @@ export default async function Home() {
         </div>
         <div className="mx-auto max-w-2xl py-20 sm:py-32 py- lg:py-36">
           <div className="relative text-center">
-            <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
+            <h1 className="text-5xl font-semibold tracking-tight text-balance text-hel-textPrimary sm:text-7xl">
               Heli&nbsp;Notes
             </h1>
-            <hr className="-z-10 absolute w-5/6 right-4 top-3 sm:top-4 bg-gray-600" />
-            <hr className="-z-10 absolute w-5/6 right-6 top-5 sm:top-6 bg-gray-600" />
-            <hr className="-z-10 absolute w-5/6 right-8 top-7 sm:top-8 bg-gray-600" />
-            <hr className="-z-10 absolute w-5/6 right-10 top-9 sm:top-10 bg-gray-600" />
-            <hr className="-z-10 absolute w-5/6 right-12 top-11 sm:top-12 bg-gray-600" />
-            <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
+            <hr className="-z-10 absolute w-5/6 right-4 top-3 sm:top-4 bg-hel-textSubtle" />
+            <hr className="-z-10 absolute w-5/6 right-6 top-5 sm:top-6 bg-hel-textSubtle" />
+            <hr className="-z-10 absolute w-5/6 right-8 top-7 sm:top-8 bg-hel-textSubtle" />
+            <hr className="-z-10 absolute w-5/6 right-10 top-9 sm:top-10 bg-hel-textSubtle" />
+            <hr className="-z-10 absolute w-5/6 right-12 top-11 sm:top-12 bg-hel-textSubtle" />
+            <p className="mt-8 text-lg font-medium text-pretty text-hel-textSubtle sm:text-xl/8">
               Databáza piesní pre Heligónku.
               <br />
               Vytvor si vlastný zápis v jednoduchom editore a zdieľaj s
@@ -41,21 +41,23 @@ export default async function Home() {
                 Prezeraj
               </Button>
               <SignedOut>
-                <span className="text-sm text-gray-500">alebo sa</span>
+                <span className="text-sm text-hel-textSubtle">alebo sa</span>
                 <SignInButton>
                   <Button variant="secondary">Prihlás</Button>
                 </SignInButton>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-hel-textSubtle">
                   a vytvor nový záznam
                 </span>
               </SignedOut>
               <SignedIn>
-                <span className="text-sm text-gray-500">alebo vytvor</span>
+                <span className="text-sm text-hel-textSubtle">
+                  alebo vytvor
+                </span>
                 <NewSheetButton />
               </SignedIn>
             </div>
             <a
-              className="text-gray-500 inline-block mt-8 text-sm"
+              className="text-hel-textSubtle inline-block mt-8 text-sm"
               href="https://martincernansky.com/"
               target="_blank"
             >

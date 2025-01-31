@@ -133,13 +133,13 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
             <div>
               <button
                 type="button"
-                className="hidden group-hover:inline-flex w-full justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50"
+                className="hidden group-hover:inline-flex w-full justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold ext-hel-textPrimary ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50"
                 id="menu-button"
                 aria-expanded="true"
                 aria-haspopup="true"
                 onClick={() => setIsMenuOpen(true)}
               >
-                <ChevronDownIcon className="w-4 text-gray-400" />
+                <ChevronDownIcon className="w-4 text-hel-textSubtle" />
               </button>
             </div>
             // <button
@@ -228,7 +228,7 @@ const Bar = ({ bar, previousBar, followingBar, barIndex }: BarProps) => {
                   item ? (
                     <div
                       key={i}
-                      className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 hover:outline-hidden"
+                      className="cursor-pointer block px-4 py-2 text-sm text-hel-textSubtle hover:bg-gray-100 hover:text-hel-textPrimary hover:outline-hidden"
                       role="menuitem"
                       id="menu-item-0"
                       onClick={item.onClick}

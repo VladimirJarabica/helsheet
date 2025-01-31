@@ -45,7 +45,7 @@ const ToggleButton = <Value extends string>({
             px-3 py-1.5 h-full
             ${
               currentValue === option.value
-                ? "bg-indigo-600 hover:bg-indigo-500 text-white"
+                ? "bg-hel-buttonPrimary hover:bg-hel-buttonPrimaryHover text-hel-buttonPrimaryColor"
                 : "bg-gray-100 hover:bg-gray-50"
             }`}
         >

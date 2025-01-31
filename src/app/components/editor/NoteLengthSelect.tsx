@@ -155,7 +155,7 @@ const NoteLengthSelect = () => {
   let globalIndex = 0;
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="flex w-fit flex-col items-start">
       {melodicRows.map((row) => {
         const subCells = column.melodic[row.row - 1].subCells;
 

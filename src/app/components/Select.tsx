@@ -36,10 +36,10 @@ const Select = ({
           px-3 py-1.5
           ${clearable ? "pr-10" : "pr-5"}
           text-base outline 
-          ${props.value === "" ? "text-gray-500" : "text-gray-900"}
+          ${props.value === "" ? "text-hel-textSubtle" : "text-hel-textPrimary"}
           sm:text-sm/6
           outline-1 -outline-offset-1 outline-gray-300 
-          placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600
+          placeholder:text-hel-textSubtle focus:outline-2 focus:-outline-offset-2 focus:outline-hel-buttonPrimary
      
           `}
       >

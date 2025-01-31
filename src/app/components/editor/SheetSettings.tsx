@@ -91,7 +91,7 @@ const SheetSettings = ({
             Názov piesne
           </label>
           <input
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-hel-textPrimary outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-hel-textSubtle focus:outline-2 focus:-outline-offset-2 focus:outline-hel-buttonPrimary sm:text-sm/6"
             defaultValue=""
             placeholder="Meno piesne"
             {...register("name", { required: true })}
@@ -102,7 +102,7 @@ const SheetSettings = ({
             Popis
           </label>
           <input
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-hel-textPrimary outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-hel-textSubtle focus:outline-2 focus:-outline-offset-2 focus:outline-hel-buttonPrimary sm:text-sm/6"
             defaultValue=""
             placeholder="Popis"
             {...register("description")}
@@ -158,7 +158,7 @@ const SheetSettings = ({
               =
             </div>
             <input
-              className="pl-8 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="pl-8 block w-full rounded-md bg-white px-3 py-1.5 text-base text-hel-textPrimary outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-hel-textSubtle focus:outline-2 focus:-outline-offset-2 focus:outline-hel-buttonPrimary sm:text-sm/6"
               defaultValue=""
               type="number"
               placeholder="160 / 120 / ..."
@@ -205,7 +205,7 @@ const SheetSettings = ({
               Autor piesne
             </label>
             <input
-              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-hel-textPrimary outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-hel-textSubtle focus:outline-2 focus:-outline-offset-2 focus:outline-hel-buttonPrimary sm:text-sm/6"
               defaultValue=""
               placeholder="spevák, kapela, skladateľ (viac autorov oddeliť čiarkou)"
               {...register("songAuthor")}
@@ -217,7 +217,7 @@ const SheetSettings = ({
             Autor zápisu (ak ním nie si ty)
           </label>
           <input
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-hel-textPrimary outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-hel-textSubtle focus:outline-2 focus:-outline-offset-2 focus:outline-hel-buttonPrimary sm:text-sm/6"
             defaultValue=""
             {...register("originalSheetAuthor")}
           />
@@ -227,7 +227,7 @@ const SheetSettings = ({
             Zdroj
           </label>
           <input
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-hel-textPrimary outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-hel-textSubtle focus:outline-2 focus:-outline-offset-2 focus:outline-hel-buttonPrimary sm:text-sm/6"
             defaultValue=""
             placeholder="Napríklad pesnicky.orava.sk / harmonika.cz"
             {...register("source")}

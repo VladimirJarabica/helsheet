@@ -41,16 +41,24 @@ const Button = ({
         shadow-xs
         ${
           variant === "primary"
-            ? "bg-indigo-600 hover:bg-indigo-500 text-white"
+            ? "bg-hel-buttonPrimary hover:bg-hel-buttonPrimaryHover text-hel-buttonPrimaryColor"
             : ""
         }
         ${
           variant === "secondary"
-            ? "bg-white hover:bg-gray-50 text-gray-600 ring-1 ring-inset ring-gray-300"
+            ? "hover:bg-hel-buttonSecondaryHover text-hel-buttonSecondaryColor bg-hel-buttonSecondary ring-1 ring-inset ring-gray-300"
             : ""
         }
-        ${variant === "danger" ? "bg-red-600 hover:bg-red-500 text-white" : ""}
-        ${variant === "link" ? "text-gray-800 hover:text-gray-950" : ""}
+        ${
+          variant === "danger"
+            ? "bg-hel-buttonDanger hover:bg-hel-buttonDangerHover text-hel-buttonDangerColor"
+            : ""
+        }
+        ${
+          variant === "link"
+            ? "text-hel-buttonLinkColor hover:text-hel-buttonLinkHoverColor"
+            : ""
+        }
         `}
       onClick={
         onClick

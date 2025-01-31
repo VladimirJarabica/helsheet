@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testingTheme = {
@@ -43,7 +44,19 @@ export default {
           textActive: "var(--textActive)",
           bgButton: "var(--bgButton)",
           fgButton: "var(--fgButton)",
-          // ...testingTheme,
+          textPrimary: colors.gray[900],
+          textSubtle: colors.gray[500],
+          buttonPrimary: colors.sky[600],
+          buttonPrimaryHover: colors.sky[500],
+          buttonPrimaryColor: colors.white,
+          buttonSecondary: colors.white,
+          buttonSecondaryHover: colors.gray[50],
+          buttonSecondaryColor: colors.gray[600],
+          buttonDanger: colors.red[600],
+          buttonDangerHover: colors.red[500],
+          buttonDangerColor: colors.white,
+          buttonLinkColor: colors.gray[800],
+          buttonLinkHoverColor: colors.gray[950],
         },
       },
     },
