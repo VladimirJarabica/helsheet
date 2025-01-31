@@ -342,7 +342,7 @@ const HelpButton = () => {
                     <ChevronDownIcon className="w-5" />
                   </>
                 ),
-                description: "Presun aktívnej noty/base",
+                description: "Presun aktívnej noty/basu",
               },
               {
                 shortcut: (
